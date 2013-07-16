@@ -2,7 +2,7 @@ if GetBuildInfo() ~= "5.4.0" then return end
 local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetRevision(("$Revision: 2 $"):sub(12, -3))
 mod:SetZone()
 
 --mod:RegisterCombat("scenario", 1148)
