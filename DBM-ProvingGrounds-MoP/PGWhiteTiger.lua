@@ -30,6 +30,7 @@ local warnWindBlast			= mod:NewSpellAnnounce(144106, 4)--Threat wipe & knockback
 local warnEnrage			= mod:NewTargetAnnounce(144404, 3)
 local warnPowerfulSlam		= mod:NewSpellAnnounce(144401, 4)
 --Damager
+local warnBanshee			= mod:NewSpellAnnounce(142838, 4)
 local warnAmberGlobule		= mod:NewSpellAnnounce(142189, 4)
 local warnHealIllusion		= mod:NewCastAnnounce(142238, 4)
 --Healer
@@ -46,6 +47,7 @@ local specWarnPowerfulSlam	= mod:NewSpecialWarningMove(144401)
 --Damager
 local specWarnAmberGlob		= mod:NewSpecialWarningSpell(142189)
 local specWarnHealIllusion	= mod:NewSpecialWarningInterrupt(142238)
+local specWarnBanshee		= mod:NewSpecialWarningSwitch(142838)
 --Healer
 local specWarnAquaBomb		= mod:NewSpecialWarningTarget(145206)--It's cast too often to dispel them off, so it's better as a target warning.
 
@@ -90,7 +92,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 144383 and args:IsPlayer() then
+	if args.spellId == 144383 and args:IsPlayer() and self:AntiSpam(1.5) then
 		specWarnInvokeLavaSIS:Show()
 	elseif args.spellId == 144404 then
 		warnEnrage:Show(args.destName)
@@ -138,6 +140,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnWindGuard:Show()
 	elseif args.spellId == 145260 then
 		warnBurrow:Show(args.destName)
+	elseif args.spellId == 142838 then
+		warnBanshee:Show()
+		specWarnBanshee:Show()
 	end
 end
 
