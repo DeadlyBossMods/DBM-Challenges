@@ -118,20 +118,20 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 "<328.4 18:05:29> [CLEU] SPELL_CAST_SUCCESS#false#0xF1311A93000006C8#Large Illusionary Flamecaller#2632#0##nil#-2147483648#-2147483648#145401#Illusionary Flamecaller#1", -- [9132]
 --]]
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 144084 then
+	if args.spellId == 144084 and self:AntiSpam(2, 4) then
 		warnRipperTank:Show()
-	elseif args.spellId == 144091 then
+	elseif args.spellId == 144091 and self:AntiSpam(2, 10) then
 		warnFlamecallerTank:Show()
-	elseif args.spellId == 144088 then
+	elseif args.spellId == 144088 and self:AntiSpam(2, 5) then
 		warnConquerorTank:Show()
-	elseif args.spellId == 144086 then
+	elseif args.spellId == 144086 and self:AntiSpam(2, 6) then
 		warnAmbusher:Show()
 		specWarnAmbusher:Show()
-	elseif args.spellId == 144087 then
+	elseif args.spellId == 144087 and self:AntiSpam(2, 7) then
 		warnWindGuard:Show()
-	elseif args.spellId == 145260 then
+	elseif args.spellId == 145260 and self:AntiSpam(2, 8) then
 		warnBurrow:Show(args.destName)
-	elseif args.spellId == 142838 then
+	elseif args.spellId == 142838 and self:AntiSpam(2, 9) then
 		warnBanshee:Show()
 		specWarnBanshee:Show()
 	end
