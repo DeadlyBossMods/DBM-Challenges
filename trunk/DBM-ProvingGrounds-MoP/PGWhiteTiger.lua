@@ -11,9 +11,9 @@ mod:RegisterEvents(
 	"SPELL_CAST_START",
 	"SPELL_AURA_APPLIED",
 	"SPELL_AURA_APPLIED_DOSE",
-	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_SUCCESS",
-	"UNIT_DIED"
+	"UNIT_DIED",
+	"SCENARIO_UPDATE"
 )
 
 --Tank
@@ -100,18 +100,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnAquaBomb:Show(args.destName)
 		specWarnAquaBomb:Show(args.destName)
 		timerAquaBombCD:Start(args.sourceGUID)
-	elseif args.spellId == 141582 then
-		local _, _, _, _, _, duration, expires = UnitDebuff("player", args.spellName)
-		countdownTimer:Start(duration-1)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
-
-function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 141582 then
-		countdownTimer:Cancel()
-	end
-end
 
 --[[
 --new Damager adds (at this time not worth adding that i can see. They don't spawn mid round like tank ones, they all spawn at wave start)
@@ -146,6 +137,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
+--local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 71076 or cid == 71069 then--Illusionary Mystic
@@ -158,5 +151,15 @@ function mod:UNIT_DIED(args)
 		timerPowerfulSlamCD:Cancel(args.destGUID)
 	elseif cid == 72344 then--Illusionary Aqualyte (Missing ID for large)
 		timerAquaBombCD:Cancel(args.destGUID)
+	end
+end
+
+function mod:SCENARIO_UPDATE(newStep)
+	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+	if diffID > 0 then
+		countdownTimer:Cancel()
+		countdownTimer:Start(duration)
+	else
+		countdownTimer:Cancel()
 	end
 end
