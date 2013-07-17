@@ -24,7 +24,7 @@ local warnWindGuard			= mod:NewSpellAnnounce(144087, 3)
 local warnAmbusher			= mod:NewSpellAnnounce(144086, 4)
 local warnConquerorTank		= mod:NewSpellAnnounce(144088, 3)--145409 is healer version of mob
 ----Adds spawning
-local warnPyroBlast			= mod:NewCastAnnounce(147601, 3)
+local warnPyroBlast			= mod:NewCastAnnounce(147601, 3, 3)--Tooltip says 2 but it actually has 3 sec cast
 local warnInvokeLava		= mod:NewSpellAnnounce(144374, 3)
 local warnWindBlast			= mod:NewSpellAnnounce(144106, 4)--Threat wipe & knockback, must taunt, very important
 local warnEnrage			= mod:NewTargetAnnounce(144404, 3)
@@ -72,11 +72,11 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 144374 then
 		warnInvokeLava:Show()
 		specWarnInvokeLava:Show()
-	elseif args.spellId == 144106 then
+	elseif args.spellId == 144106 and self:AntiSpam(2.5, 2) then
 		warnWindBlast:Show()
 		specWarnWindBlast:Show()
 		timerWindBlastCD:Start(args.sourceGUID)
-	elseif args.spellId == 144401 then
+	elseif args.spellId == 144401 and self:AntiSpam(2.5, 3) then
 		warnPowerfulSlam:Show()
 		specWarnPowerfulSlam:Show()
 		timerPowerfulSlamCD:Start(args.sourceGUID)
@@ -92,7 +92,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 144383 and args:IsPlayer() and self:AntiSpam(1.5) then
+	if args.spellId == 144383 and args:IsPlayer() and self:AntiSpam(1.5, 1) then
 		specWarnInvokeLavaSIS:Show()
 	elseif args.spellId == 144404 then
 		warnEnrage:Show(args.destName)
