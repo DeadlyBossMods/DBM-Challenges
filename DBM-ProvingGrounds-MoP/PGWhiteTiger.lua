@@ -147,9 +147,9 @@ function mod:UNIT_DIED(args)
 		timerAmberGlobCD:Cancel(args.destGUID)
 	elseif cid == 71834 or cid == 71833 then--Illusionary Wind-Guard
 		timerWindBlastCD:Cancel(args.destGUID)
-	elseif cid == 71842 or cid == 71841 then--Illusionary Conqueror (Tank)
+	elseif cid == 71842 or cid == 71841 then--Illusionary Conqueror (Tank version of mob)
 		timerPowerfulSlamCD:Cancel(args.destGUID)
-	elseif cid == 72344 then--Illusionary Aqualyte (Missing ID for large)
+	elseif cid == 72344 or cid == 72346 then--Illusionary Aqualyte
 		timerAquaBombCD:Cancel(args.destGUID)
 	end
 end
