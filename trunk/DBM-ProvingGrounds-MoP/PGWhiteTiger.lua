@@ -34,6 +34,8 @@ local warnBanshee			= mod:NewSpellAnnounce(142838, 4)
 local warnAmberGlobule		= mod:NewSpellAnnounce(142189, 4)
 local warnHealIllusion		= mod:NewCastAnnounce(142238, 4)
 --Healer
+local warnStinger			= mod:NewSpellAnnounce(145198, 3)
+local warnSonicBlast		= mod:NewSpellAnnounce(145200, 3)
 local warnAquaBomb			= mod:NewTargetAnnounce(145206, 3)
 local warnBurrow			= mod:NewTargetAnnounce(145260, 2)
 
@@ -49,6 +51,8 @@ local specWarnAmberGlob		= mod:NewSpecialWarningSpell(142189)
 local specWarnHealIllusion	= mod:NewSpecialWarningInterrupt(142238)
 local specWarnBanshee		= mod:NewSpecialWarningSwitch(142838)
 --Healer
+local specWarnStinger		= mod:NewSpecialWarningSpell(145198, false)
+local specWarnSonicBlast	= mod:NewSpecialWarningInterrupt(145200, false)--have to be pretty damn fast to interrupt this, off by default and for the very skilled mainly
 local specWarnAquaBomb		= mod:NewSpecialWarningTarget(145206)--It's cast too often to dispel them off, so it's better as a target warning.
 
 --Tank
@@ -59,6 +63,7 @@ local timerAmberGlobCD		= mod:NewNextTimer(10.5, 142189)
 local timerHealIllusionCD	= mod:NewNextTimer(25, 142238)
 --Healer
 local timerAquaBombCD		= mod:NewCDTimer(12, 145206, nil, false)--12-22 second variation? off by default do to this
+local timerSonicBlastCD		= mod:NewCDTimer(8, 145200)--8-11sec variation
 
 local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
@@ -88,6 +93,10 @@ function mod:SPELL_CAST_START(args)
 		warnHealIllusion:Show()
 		specWarnHealIllusion:Show(args.sourceName)
 		timerHealIllusionCD:Start(args.sourceGUID)
+	elseif args.spellId == 145200 then
+		warnSonicBlast:Show()
+		specWarnSonicBlast:Show(args.sourceName)
+		timerSonicBlastCD:Start(args.sourceGUID)
 	end
 end
 
@@ -134,10 +143,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 142838 and self:AntiSpam(2, 9) then
 		warnBanshee:Show()
 		specWarnBanshee:Show()
+	elseif args.spellId == 145198 and self:AntiSpam(2, 11) then
+		warnStinger:Show()
+		specWarnStinger:Show()
 	end
 end
-
---local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -151,6 +161,8 @@ function mod:UNIT_DIED(args)
 		timerPowerfulSlamCD:Cancel(args.destGUID)
 	elseif cid == 72344 or cid == 72346 then--Illusionary Aqualyte
 		timerAquaBombCD:Cancel(args.destGUID)
+	elseif cid == 72342 or cid == 72343 then--Illusionary Hive-Singer
+		timerSonicBlastCD:Cancel(args.destGUID)
 	end
 end
 
