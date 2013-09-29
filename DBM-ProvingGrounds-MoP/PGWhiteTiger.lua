@@ -1,4 +1,4 @@
-local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP")
+local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, nil, ":", 2)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
