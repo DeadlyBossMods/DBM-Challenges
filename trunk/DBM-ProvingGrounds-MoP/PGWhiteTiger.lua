@@ -1,4 +1,3 @@
-if GetBuildInfo() ~= "5.4.0" then return end
 local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP")
 local L		= mod:GetLocalizedStrings()
 
@@ -23,7 +22,7 @@ local warnFlamecallerTank	= mod:NewSpellAnnounce(144091, 2)--145401 is healer ve
 local warnWindGuard			= mod:NewSpellAnnounce(144087, 3)
 local warnAmbusher			= mod:NewSpellAnnounce(144086, 4)
 local warnConquerorTank		= mod:NewSpellAnnounce(144088, 3)--145409 is healer version of mob
-----Adds spawning
+----Other Stuff
 local warnPyroBlast			= mod:NewCastAnnounce(147601, 3, 3)--Tooltip says 2 but it actually has 3 sec cast
 local warnInvokeLava		= mod:NewSpellAnnounce(144374, 3)
 local warnWindBlast			= mod:NewSpellAnnounce(144106, 4)--Threat wipe & knockback, must taunt, very important
