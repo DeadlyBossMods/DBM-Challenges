@@ -1,4 +1,4 @@
-local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, nil, ":", 2)
+local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, function(t) return select(2, string.match(t, "(%S+.%S+): (%S+.%S+)")) end)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
