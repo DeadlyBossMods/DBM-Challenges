@@ -11,6 +11,7 @@
 ## X-DBM-Mod: 1
 ## X-DBM-Mod-Type: SCENARIO
 ## X-DBM-Mod-Category: MOP
+## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-Name: Proving Grounds (MoP)
 ## X-DBM-Mod-Name-koKR: 수련의 장(판다리아의 안개)
 ## X-DBM-Mod-Sort: 40
