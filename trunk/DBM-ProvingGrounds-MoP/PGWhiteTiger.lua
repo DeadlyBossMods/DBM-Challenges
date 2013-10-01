@@ -1,4 +1,10 @@
-local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, function(t) return select(2, string.match(t, "(%S+.%S+): (%S+.%S+)")) or select(2, string.match(t, "(%S+.%S+):(%S+.%S+)")) end)
+local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, function(t)
+	if( GetLocale() == "deDE") then
+		return select(2, string.match(t, "(%S+): (%S+.%S+.%S+.%S+)")) -- "Feuerprobe: Tempel des Weiﬂen Tigers QUEST nil"
+	else
+		return select(2, string.match(t, "(%S+.%S+): (%S+.%S+)")) or select(2, string.match(t, "(%S+.%S+):(%S+.%S+)"))
+	end
+end)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
