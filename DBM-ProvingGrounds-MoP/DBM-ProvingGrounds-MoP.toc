@@ -1,6 +1,7 @@
 ﻿## Interface: 50400
 ## X-Min-Interface: 50400
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Proving Grounds-MoP|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Feuerprobe-MoP|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0수련의 장-판다리아의 안개|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎試練場|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎试练场|r
@@ -13,6 +14,7 @@
 ## X-DBM-Mod-Category: MOP
 ## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-Name: Proving Grounds (MoP)
+## X-DBM-Mod-Name-deDE: Feuerprobe (MoP)
 ## X-DBM-Mod-Name-koKR: 수련의 장(판다리아의 안개)
 ## X-DBM-Mod-Sort: 40
 ## X-DBM-Mod-MapID: 1148
