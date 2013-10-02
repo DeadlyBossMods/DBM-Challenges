@@ -1,6 +1,6 @@
 ﻿local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, function(t)
 	if( GetLocale() == "deDE") then
-		return select(2, string.match(t, "(%S+): (%S+.%S+.%S+.%S+)")) -- "Feuerprobe: Tempel des Weißn Tigers QUEST nil"
+		return select(2, string.match(t, "(%S+): (%S+.%S+.%S+.%S+)")) -- "Feuerprobe: Tempel des Weißen Tigers QUEST nil"
 	else
 		return select(2, string.match(t, "(%S+.%S+): (%S+.%S+)")) or select(2, string.match(t, "(%S+.%S+):(%S+.%S+)"))
 	end
