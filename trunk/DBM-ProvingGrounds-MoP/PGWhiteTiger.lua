@@ -65,15 +65,17 @@ local timerWindBlastCD		= mod:NewNextTimer(21, 144106)
 local timerPowerfulSlamCD	= mod:NewCDTimer(15, 144401)--15-17sec variation
 --Damager
 local timerAmberGlobCD		= mod:NewNextTimer(10.5, 142189)
-local timerHealIllusionCD	= mod:NewNextTimer(25, 142238)
+local timerHealIllusionCD	= mod:NewNextTimer(20, 142238)
 --Healer
 local timerAquaBombCD		= mod:NewCDTimer(12, 145206, nil, false)--12-22 second variation? off by default do to this
-local timerSonicBlastCD		= mod:NewCDTimer(8, 145200)--8-11sec variation
+local timerSonicBlastCD		= mod:NewCDTimer(6, 145200)--8-11sec variation
 
 local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
 mod:RemoveOption("HealthFrame")
 mod:RemoveOption("SpeedKillTimer")
+
+local started = false
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 147601 then
@@ -174,9 +176,11 @@ end
 function mod:SCENARIO_UPDATE(newStep)
 	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
 	if diffID > 0 then
+		started = true
 		countdownTimer:Cancel()
 		countdownTimer:Start(duration)
-	else
+	elseif started then
+		started = false
 		countdownTimer:Cancel()
 	end
 end
