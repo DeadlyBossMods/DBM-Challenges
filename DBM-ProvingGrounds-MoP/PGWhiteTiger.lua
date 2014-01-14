@@ -13,10 +13,10 @@ mod:SetZone()
 --mod:RegisterCombat("scenario", 1148)
 
 mod:RegisterEvents(
-	"SPELL_CAST_START",
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_APPLIED_DOSE",
-	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_START 147601 144374 144106 144401 142189 142238 145200",
+	"SPELL_AURA_APPLIED 144383 144404 145206",
+	"SPELL_AURA_APPLIED_DOSE 144383",
+	"SPELL_CAST_SUCCESS 144084 144091 144088 144086 144087 145260 142838 145198",
 	"UNIT_DIED",
 	"SCENARIO_UPDATE"
 )
@@ -78,29 +78,30 @@ mod:RemoveOption("SpeedKillTimer")
 local started = false
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 147601 then
+	local spellId = args.spellId
+	if spellId == 147601 then
 		warnPyroBlast:Show()
 		specWarnPyroBlast:Show(args.sourceName)
-	elseif args.spellId == 144374 then
+	elseif spellId == 144374 then
 		warnInvokeLava:Show()
 		specWarnInvokeLava:Show()
-	elseif args.spellId == 144106 and self:AntiSpam(2.5, 2) then
+	elseif spellId == 144106 and self:AntiSpam(2.5, 2) then
 		warnWindBlast:Show()
 		specWarnWindBlast:Show()
 		timerWindBlastCD:Start(args.sourceGUID)
-	elseif args.spellId == 144401 and self:AntiSpam(2.5, 3) then
+	elseif spellId == 144401 and self:AntiSpam(2.5, 3) then
 		warnPowerfulSlam:Show()
 		specWarnPowerfulSlam:Show()
 		timerPowerfulSlamCD:Start(args.sourceGUID)
-	elseif args.spellId == 142189 then
+	elseif spellId == 142189 then
 		warnAmberGlobule:Show()
 		specWarnAmberGlob:Show()
 		timerAmberGlobCD:Start(args.sourceGUID)
-	elseif args.spellId == 142238 then
+	elseif spellId == 142238 then
 		warnHealIllusion:Show()
 		specWarnHealIllusion:Show(args.sourceName)
 		timerHealIllusionCD:Start(args.sourceGUID)
-	elseif args.spellId == 145200 then
+	elseif spellId == 145200 then
 		warnSonicBlast:Show()
 		specWarnSonicBlast:Show(args.sourceName)
 		timerSonicBlastCD:Start(args.sourceGUID)
@@ -108,11 +109,12 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 144383 and args:IsPlayer() and self:AntiSpam(1.5, 1) then
+	local spellId = args.spellId
+	if spellId == 144383 and args:IsPlayer() and self:AntiSpam(1.5, 1) then
 		specWarnInvokeLavaSIS:Show()
-	elseif args.spellId == 144404 then
+	elseif spellId == 144404 then
 		warnEnrage:Show(args.destName)
-	elseif args.spellId == 145206 then
+	elseif spellId == 145206 then
 		warnAquaBomb:Show(args.destName)
 		specWarnAquaBomb:Show(args.destName)
 		timerAquaBombCD:Start(args.sourceGUID)
@@ -134,23 +136,24 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 "<328.4 18:05:29> [CLEU] SPELL_CAST_SUCCESS#false#0xF1311A93000006C8#Large Illusionary Flamecaller#2632#0##nil#-2147483648#-2147483648#145401#Illusionary Flamecaller#1", -- [9132]
 --]]
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 144084 and self:AntiSpam(2, 4) then
+	local spellId = args.spellId
+	if spellId == 144084 and self:AntiSpam(2, 4) then
 		warnRipperTank:Show()
-	elseif args.spellId == 144091 and self:AntiSpam(2, 10) then
+	elseif spellId == 144091 and self:AntiSpam(2, 10) then
 		warnFlamecallerTank:Show()
-	elseif args.spellId == 144088 and self:AntiSpam(2, 5) then
+	elseif spellId == 144088 and self:AntiSpam(2, 5) then
 		warnConquerorTank:Show()
-	elseif args.spellId == 144086 and self:AntiSpam(2, 6) then
+	elseif spellId == 144086 and self:AntiSpam(2, 6) then
 		warnAmbusher:Show()
 		specWarnAmbusher:Show()
-	elseif args.spellId == 144087 and self:AntiSpam(2, 7) then
+	elseif spellId == 144087 and self:AntiSpam(2, 7) then
 		warnWindGuard:Show()
-	elseif args.spellId == 145260 and self:AntiSpam(2, 8) then
+	elseif spellId == 145260 and self:AntiSpam(2, 8) then
 		warnBurrow:Show(args.destName)
-	elseif args.spellId == 142838 and self:AntiSpam(2, 9) then
+	elseif spellId == 142838 and self:AntiSpam(2, 9) then
 		warnBanshee:Show()
 		specWarnBanshee:Show()
-	elseif args.spellId == 145198 and self:AntiSpam(2, 11) then
+	elseif spellId == 145198 and self:AntiSpam(2, 11) then
 		warnStinger:Show()
 		specWarnStinger:Show()
 	end
