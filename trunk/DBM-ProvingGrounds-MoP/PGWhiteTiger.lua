@@ -182,8 +182,36 @@ function mod:SCENARIO_UPDATE(newStep)
 		started = true
 		countdownTimer:Cancel()
 		countdownTimer:Start(duration)
+		if DBM.Options.AutoRespond then--Use global whisper option
+			self:RegisterShortTermEvents(
+				"CHAT_MSG_WHISPER"
+			)
+		end
 	elseif started then
 		started = false
 		countdownTimer:Cancel()
+		self:UnregisterShortTermEvents()
+	end
+end
+
+local mode = {
+	[1] = CHALLENGE_MODE_MEDAL1,
+	[2] = CHALLENGE_MODE_MEDAL2,
+	[3] = CHALLENGE_MODE_MEDAL3,
+	[4] = L.Endless,
+}
+function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
+	if status ~= "GM" then--Filter GMs
+		if msg and msg:sub(1, 3) == "OQ," then--Filter outdated OQ mods.
+			return
+		end
+		name = Ambiguate(name, "none")
+		local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+		local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
+		if msg == "status" then
+			SendChatMessage(message, "WHISPER", nil, name)
+		elseif self:AntiSpam(30, 12) then--If not "status" then auto respond only once per 30 seconds.
+			SendChatMessage(message, "WHISPER", nil, name)
+		end
 	end
 end
