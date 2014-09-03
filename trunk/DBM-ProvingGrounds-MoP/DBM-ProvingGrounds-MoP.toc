@@ -1,23 +1,23 @@
 ﻿## Interface: 50400
 ## X-Min-Interface: 50400
-## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Proving Grounds-MoP|r
-## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Feuerprobe-MoP|r
+## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Proving Grounds|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Feuerprobe|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0수련의 장-판다리아의 안개|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎試練場|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎试练场|r
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
-## SavedVariablesPerCharacter: DBMScenarioMoP_SavedVars, DBMScenarioMoP_SavedStats
+## SavedVariablesPerCharacter: DBMProvingGrounds_SavedVars, DBMProvingGrounds_SavedStats
 ## X-DBM-Mod: 1
 ## X-DBM-Mod-Type: SCENARIO
 ## X-DBM-Mod-Category: MOP
 ## X-DBM-Mod-No-Statistics: 1
-## X-DBM-Mod-Name: Proving Grounds (MoP)
-## X-DBM-Mod-Name-deDE: Feuerprobe (MoP)
-## X-DBM-Mod-Name-koKR: 수련의 장(판다리아의 안개)
-## X-DBM-Mod-Name-zhTW: 白虎試練場 (潘達利亞之謎)
-## X-DBM-Mod-Name-zhCN: 白虎试练场 (熊猫人之谜)
+## X-DBM-Mod-Name: Proving Grounds
+## X-DBM-Mod-Name-deDE: Feuerprobe
+## X-DBM-Mod-Name-koKR: 수련의 장
+## X-DBM-Mod-Name-zhTW: 白虎試練場
+## X-DBM-Mod-Name-zhCN: 白虎试练场
 ## X-DBM-Mod-Sort: 240
 ## X-DBM-Mod-MapID: 1148
 localization.en.lua
