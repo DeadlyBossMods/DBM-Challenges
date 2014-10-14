@@ -1,4 +1,4 @@
-﻿local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds-MoP", nil, nil, function(t)
+﻿local mod	= DBM:NewMod("d640", "DBM-ProvingGrounds", nil, nil, function(t)
 	if( GetLocale() == "deDE") then
 		return select(2, string.match(t, "(%S+): (%S+.%S+.%S+.%S+)")) -- "Feuerprobe: Tempel des Weißen Tigers QUEST nil"
 	else
@@ -202,15 +202,12 @@ local mode = {
 }
 function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
 	if status ~= "GM" then--Filter GMs
-		if msg and msg:sub(1, 3) == "OQ," then--Filter outdated OQ mods.
-			return
-		end
 		name = Ambiguate(name, "none")
 		local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
 		local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
 		if msg == "status" then
 			SendChatMessage(message, "WHISPER", nil, name)
-		elseif self:AntiSpam(30, 12) then--If not "status" then auto respond only once per 30 seconds.
+		elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
 			SendChatMessage(message, "WHISPER", nil, name)
 		end
 	end
