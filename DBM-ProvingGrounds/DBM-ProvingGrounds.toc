@@ -5,6 +5,7 @@
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0수련의 장|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎試練場|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎试练场|r
+## Title-ruRU:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Арена испытаний|r
 ## Author: MysticalOS
 ## LoadOnDemand: 1
 ## RequiredDeps: DBM-Core
@@ -18,6 +19,7 @@
 ## X-DBM-Mod-Name-koKR: 수련의 장
 ## X-DBM-Mod-Name-zhTW: 白虎試練場
 ## X-DBM-Mod-Name-zhCN: 白虎试练场
+## X-DBM-Mod-Name-ruRU: Арена испытаний
 ## X-DBM-Mod-Sort: 140
 ## X-DBM-Mod-MapID: 1148
 localization.en.lua
