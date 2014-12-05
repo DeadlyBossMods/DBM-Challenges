@@ -25,4 +25,5 @@ localization.de.lua
 localization.kr.lua
 localization.tw.lua
 localization.cn.lua
+localization.ru.lua
 PGWhiteTiger.lua
