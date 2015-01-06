@@ -72,6 +72,9 @@ local timerSonicBlastCD		= mod:NewCDTimer(6, 145200)--8-11sec variation
 
 local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
+local voiceHealIllusion		= mod:NewVoice(142238)
+local voicePowerfulSlam		= mod:NewVoice(144401)
+
 mod:RemoveOption("HealthFrame")
 mod:RemoveOption("SpeedKillTimer")
 
@@ -93,6 +96,7 @@ function mod:SPELL_CAST_START(args)
 		warnPowerfulSlam:Show()
 		specWarnPowerfulSlam:Show()
 		timerPowerfulSlamCD:Start(args.sourceGUID)
+		voicePowerfulSlam:Play("shockwave")
 	elseif spellId == 142189 then
 		warnAmberGlobule:Show()
 		specWarnAmberGlob:Show()
@@ -101,6 +105,7 @@ function mod:SPELL_CAST_START(args)
 		warnHealIllusion:Show()
 		specWarnHealIllusion:Show(args.sourceName)
 		timerHealIllusionCD:Start(args.sourceGUID)
+		voiceHealIllusion:Play("kickcast")
 	elseif spellId == 145200 then
 		warnSonicBlast:Show()
 		specWarnSonicBlast:Show(args.sourceName)
