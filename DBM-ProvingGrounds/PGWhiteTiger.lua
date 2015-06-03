@@ -76,7 +76,6 @@ local voiceHealIllusion		= mod:NewVoice(142238)
 local voicePowerfulSlam		= mod:NewVoice(144401)
 
 mod:RemoveOption("HealthFrame")
-mod:RemoveOption("SpeedKillTimer")
 
 local started = false
 
