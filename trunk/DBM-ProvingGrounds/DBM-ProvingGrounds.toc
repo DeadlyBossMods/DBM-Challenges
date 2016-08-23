@@ -2,6 +2,7 @@
 ## X-Min-Interface: 50400
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Proving Grounds|r
 ## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Feuerprobe|r
+## Title-esES:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Terreno de Pruebas|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0수련의 장|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎試練場|r
 ## Title-zhCN:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎试练场|r
@@ -17,6 +18,7 @@
 ## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-Name: Proving Grounds
 ## X-DBM-Mod-Name-deDE: Feuerprobe
+## X-DBM-Mod-Name-esES: Terreno de Pruebas
 ## X-DBM-Mod-Name-koKR: 수련의 장
 ## X-DBM-Mod-Name-zhTW: 白虎試練場
 ## X-DBM-Mod-Name-zhCN: 白虎试练场
@@ -26,6 +28,7 @@
 ## X-DBM-Mod-MinCoreRevision: 12473
 localization.en.lua
 localization.de.lua
+localization.es.lua
 localization.kr.lua
 localization.tw.lua
 localization.cn.lua
