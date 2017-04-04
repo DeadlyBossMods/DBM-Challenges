@@ -23,6 +23,9 @@ mod:RegisterEvents(
 	"UNIT_DIED",
 	"SCENARIO_UPDATE"
 )
+Notes: Need EVERYTHING
+--Tank
+-- Variss 177933 does things, but prot warriors can't get through him so didn't last long enough to see what
 
 --Tank
 local warnWindGuard			= mod:NewSpellAnnounce(144087, 3)
