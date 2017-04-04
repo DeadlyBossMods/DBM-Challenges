@@ -24,7 +24,7 @@
 ## X-DBM-Mod-Name-zhCN: 白虎试练场
 ## X-DBM-Mod-Name-ruRU: Арена испытаний
 ## X-DBM-Mod-Sort: 140
-## X-DBM-Mod-MapID: 1148, 1698
+## X-DBM-Mod-MapID: 1148, 1698, 1710, 1703
 ## X-DBM-Mod-MinCoreRevision: 16130
 localization.en.lua
 localization.de.lua
