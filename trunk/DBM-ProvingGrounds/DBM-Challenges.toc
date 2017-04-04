@@ -25,7 +25,7 @@
 ## X-DBM-Mod-Name-ruRU: Арена испытаний
 ## X-DBM-Mod-Sort: 140
 ## X-DBM-Mod-MapID: 1148
-## X-DBM-Mod-MinCoreRevision: 12473
+## X-DBM-Mod-MinCoreRevision: 16130
 localization.en.lua
 localization.de.lua
 localization.es.lua
