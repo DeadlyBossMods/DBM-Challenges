@@ -1,21 +1,13 @@
 ﻿local mod	= DBM:NewMod("LegionMageTower", "DBM-WorldEvents")
---[[local mod	= DBM:NewMod("d640", "DBM-Challenges", nil, nil, function(t)
-	if( GetLocale() == "deDE") then
-		return select(2, string.match(t, "(%S+): (%S+.%S+.%S+.%S+)")) -- "Feuerprobe: Tempel des Weißen Tigers QUEST nil"
-	else
-		return select(2, string.match(t, "(%S+.%S+): (%S+.%S+)")) or select(2, string.match(t, "(%S+.%S+):(%S+.%S+)"))
-	end
-end)
---]]
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
-mod:SetZone()
+mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury)
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 234423 233473",
-	"SPELL_AURA_APPLIED 234422",
-	"SPELL_AURA_APPLIED_DOSE 234422",
+	"SPELL_AURA_APPLIED 234422 235984",
+	"SPELL_AURA_APPLIED_DOSE 234422 235833",
 	"SPELL_CAST_SUCCESS",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
@@ -29,6 +21,8 @@ mod:RegisterEvents(
 -- Variss 177933 does things, Only have very little of it. Need more CDs, more warnings
 -- Boss after does things, have no logs of that
 --Healer
+-- Need ignite soul equiv name/ID.
+-- Need fear name/Id
 --Damage
 
 --Tank
@@ -40,6 +34,7 @@ local warnNetherAberration	= mod:NewSpellAnnounce(235110, 2)
 local warnInfernal			= mod:NewSpellAnnounce(235112, 2)
 --Damager
 --Healer
+local warnArcaneBlitz		= mod:NewStackAnnounce(235833, 2)
 
 
 --Tank
@@ -47,6 +42,8 @@ local specWarnDecay			= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 
 local specWarnDrainLife		= mod:NewSpecialWarningInterrupt(234423)
 --Damager
 --Healer
+local specWarnManaSling		= mod:NewSpecialWarningMoveTo(235984, nil, nil, nil, 1, 2)
+local specWarnArcaneBlitz	= mod:NewSpecialWarningStack(235833, nil, 6, nil, nil, 1, 6)--Fine tune the numbers
 
 
 --Tank
@@ -61,8 +58,12 @@ local timerInfernalCD			= mod:NewAITimer(15, 235112, nil, nil, nil, 1, nil, DBM_
 
 --local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
+--Tank
 local voiceDecay			= mod:NewVoice(234422)--stackhigh
 local voiceDrainLife		= mod:NewVoice(234423)--kickcast
+--Healer
+local voiceManaSling		= mod:NewVoice(235984)--findshelter
+local voiceArcaneBlitz		= mod:NewVoice(235833)--stackhigh
 
 mod:RemoveOption("HealthFrame")
 
@@ -92,6 +93,19 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			warnDecay:Show(args.destName, amount)
 		end
+	elseif spellId == 235833 then
+		local amount = args.amount or 1
+		if amount % 2 == 0 then
+			if amount >= 6 then
+				specWarnArcaneBlitz:Show(args.destName)
+				voiceArcaneBlitz:Play("stackhigh")
+			else
+				warnArcaneBlitz:Show(args.destName, amount)
+			end
+		end
+	elseif spellId == 235984 and args:IsPlayer() then
+		specWarnManaSling:Show(DBM_ALLY)
+		voiceManaSling:Play("findshelter")
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
