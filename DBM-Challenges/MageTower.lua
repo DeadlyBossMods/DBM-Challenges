@@ -37,6 +37,7 @@ local warnDecay				= mod:NewStackAnnounce(234422, 3)
 ----Add Spawns
 local warnTormentingEye		= mod:NewSpellAnnounce(234428, 2)
 local warnNetherAberration	= mod:NewSpellAnnounce(235110, 2)
+local warnInfernal			= mod:NewSpellAnnounce(235112, 2)
 --Damager
 --Healer
 
@@ -54,6 +55,7 @@ local timerHolyWardCD			= mod:NewAITimer(15, 233473, nil, nil, nil, 3, nil, DBM_
 local timerHolyWard				= mod:NewCastTimer(8, 233473, nil, false, nil, 3, nil, DBM_CORE_HEALER_ICON)
 local timerTormentingEyeCD		= mod:NewAITimer(15, 234428, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 local timerNetherAbberationCD	= mod:NewAITimer(15, 235110, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
+local timerInfernalCD			= mod:NewAITimer(15, 235112, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 --Damager
 --Healer
 
@@ -101,6 +103,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 
 	end
 end
+--]]
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -129,6 +132,9 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	elseif spellId == 235110 then--Nether Aberration
 		warnNetherAberration:Show()
 		timerNetherAbberationCD:Start()
+	elseif spellId == 235112 then--Smoldering Infernal Summon
+		warnInfernal:Show()
+		timerInfernalCD:Start()
 	end
 end
 
@@ -139,6 +145,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 		if UnitExists(unitID) and not activeBossGUIDS[unitGUID] then
 			local bossName = UnitName(unitID)
 			local cid = self:GetUnitCreatureId(unitID)
+			--Tank
 			if cid == 177933 then--Variss
 				started = true
 				timerTormentingEyeCD:Start(1)--3.8?
