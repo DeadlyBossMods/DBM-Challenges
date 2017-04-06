@@ -11,13 +11,68 @@ L:SetMiscLocalization({
 })
 
 ------------------------
--- Mage Tower --
+-- Mage Tower: TANK --
 ------------------------
-L= DBM:GetModLocalization("LegionMageTower")
+L= DBM:GetModLocalization("Kruul")
+
+L:SetGeneralLocalization({
+	name =	"The Highlord's Return"
+})
+
+L:SetMiscLocalization({
+})
+
+------------------------
+-- Mage Tower: Healer --
+------------------------
+L= DBM:GetModLocalization("ArtifactHealer")
+
+L:SetGeneralLocalization({
+	name =	"End of the Risen Threat"
+})
+
+------------------------
+-- Mage Tower: DPS --
+------------------------
+L= DBM:GetModLocalization("ArtifactFelTotem")
+
+L:SetGeneralLocalization({
+	name =	"Feltotem's Fall"
+})
+
+------------------------
+-- Mage Tower: DPS --
+------------------------
+L= DBM:GetModLocalization("ArtifactImpossibleFoe")
+
+L:SetGeneralLocalization({
+	name =	"An Impossible Foe"
+})
+
+------------------------
+-- Mage Tower: DPS --
+------------------------
+L= DBM:GetModLocalization("ArtifactQueen")
+
+L:SetGeneralLocalization({
+	name =	"The God-Queen's Fury"
+})
+
+------------------------
+-- Mage Tower: DPS --
+------------------------
+L= DBM:GetModLocalization("ArtifactTwins")
 
 L:SetGeneralLocalization({
 	name =	"Legion Mage Tower"
 })
 
-L:SetMiscLocalization({
+------------------------
+-- Mage Tower: DPS --
+------------------------
+L= DBM:GetModLocalization("ArtifactXylem")
+
+L:SetGeneralLocalization({
+	name =	"Closing the Eye"
 })
+

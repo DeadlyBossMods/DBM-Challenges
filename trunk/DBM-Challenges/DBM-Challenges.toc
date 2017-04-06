@@ -16,6 +16,7 @@
 ## X-DBM-Mod-Type: SCENARIO
 ## X-DBM-Mod-Category: LEG
 ## X-DBM-Mod-No-Statistics: 1
+## X-DBM-Mod-SubCategories: Proving Grounds,Legion Artifacts
 ## X-DBM-Mod-Name: Challenges
 ## X-DBM-Mod-Name-deDE: Herausforderungen
 ## X-DBM-Mod-Name-esES: Terreno de Pruebas
@@ -34,3 +35,4 @@ localization.tw.lua
 localization.cn.lua
 localization.ru.lua
 PGWhiteTiger.lua
+
