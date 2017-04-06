@@ -1,7 +1,7 @@
 ﻿## Interface: 70200
 ## X-Min-Interface: 50400
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Challenges|r
-## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Feuerprobe|r
+## Title-deDE:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Herausforderungen|r
 ## Title-esES:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Terreno de Pruebas|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0수련의 장|r
 ## Title-zhTW:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0白虎試練場|r
@@ -17,7 +17,7 @@
 ## X-DBM-Mod-Category: LEG
 ## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-Name: Challenges
-## X-DBM-Mod-Name-deDE: Feuerprobe
+## X-DBM-Mod-Name-deDE: Herausforderungen
 ## X-DBM-Mod-Name-esES: Terreno de Pruebas
 ## X-DBM-Mod-Name-koKR: 수련의 장
 ## X-DBM-Mod-Name-zhTW: 白虎試練場
