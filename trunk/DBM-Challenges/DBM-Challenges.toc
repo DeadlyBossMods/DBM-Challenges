@@ -35,4 +35,10 @@ localization.tw.lua
 localization.cn.lua
 localization.ru.lua
 PGWhiteTiger.lua
-
+LegionArtifacts\DPSFelTotem.lua
+LegionArtifacts\DPSImpossibleFoe.lua
+LegionArtifacts\DPSQueen.lua
+LegionArtifacts\DPSTwins.lua
+LegionArtifacts\DPSXylem.lua
+LegionArtifacts\Healer.lua
+LegionArtifacts\Tank.lua
