@@ -17,6 +17,7 @@
 ## X-DBM-Mod-Category: LEG
 ## X-DBM-Mod-No-Statistics: 1
 ## X-DBM-Mod-SubCategories: Proving Grounds,Legion Artifacts
+## X-DBM-Mod-SubCategories-deDE: Feuerprobe,Legion Artefakte
 ## X-DBM-Mod-Name: Challenges
 ## X-DBM-Mod-Name-deDE: Herausforderungen
 ## X-DBM-Mod-Name-esES: Terreno de Pruebas
