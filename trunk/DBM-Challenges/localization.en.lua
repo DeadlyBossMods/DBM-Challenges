@@ -64,7 +64,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("ArtifactTwins")
 
 L:SetGeneralLocalization({
-	name =	"Legion Mage Tower"
+	name =	"Thwarting the Twins"
 })
 
 ------------------------
