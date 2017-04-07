@@ -14,7 +14,6 @@ mod:RegisterEvents(
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
-	"ENCOUNTER_START",
 	"CHAT_MSG_MONSTER_EMOTE"
 --	"SCENARIO_UPDATE"
 )
@@ -28,15 +27,15 @@ local warnFelShock			= mod:NewSpellAnnounce(242730, 2, nil, false)
 local warnRupture			= mod:NewSpellAnnounce(241664, 2)
 local warnScale				= mod:NewStackAnnounce(238471, 2)
 
-local specWarnSonicScream	= mod:NewSpecialWarningCast(235984, nil, nil, nil, 1, 2)
+local specWarnSonicScream	= mod:NewSpecialWarningCast(241687, nil, nil, nil, 1, 2)
 local specWarnEarthquake	= mod:NewSpecialWarningSpell(237950, nil, nil, nil, 2, 2)
 local specWarnCharge		= mod:NewSpecialWarningYou(100, nil, nil, nil, 1, 2)--Not real spell ID, but closest match
 local specWarnFelSurge		= mod:NewSpecialWarningSpell(242496, nil, nil, nil, 1, 2)
 local specWarnFelBurst		= mod:NewSpecialWarningSpell(242733, nil, nil, nil, 1, 2)
 
-local timerEarthquakeCD			= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
-local timerFelSurgeCD			= mod:NewCDTimer(25, 242496, nil, nil, nil, 3)--25-33
-local timerFelRuptureCD			= mod:NewCDTimer(10.9, 241664, nil, nil, nil, 3)--10.9-13.4
+local timerEarthquakeCD		= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
+local timerFelSurgeCD		= mod:NewCDTimer(25, 242496, nil, nil, nil, 3)--25-33
+local timerFelRuptureCD		= mod:NewCDTimer(10.9, 241664, nil, nil, nil, 3)--10.9-13.4
 
 --local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
@@ -52,7 +51,7 @@ local activeBossGUIDS = {}
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 158093 then
+	if spellId == 241687 then
 		specWarnSonicScream:Show()
 		voiceSonicScream:Play("stopcast")
 	elseif spellId == 242496 then--Fel Surge

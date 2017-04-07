@@ -5,14 +5,14 @@ mod:SetRevision(("$Revision$"):sub(12, -3))
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
 mod:RegisterEvents(
---	"SPELL_CAST_START",
+	"SPELL_CAST_START 238694 237870 237947 237945",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 --	"SPELL_AURA_REMOVED_DOSE",
---	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_SUCCESS 237849",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
+	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3",
 --	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
 	"ENCOUNTER_START"
 --	"CHAT_MSG_MONSTER_EMOTE"
@@ -22,61 +22,80 @@ mod:RegisterEvents(
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
 --Damage
 
---local warnTormentingEye		= mod:NewSpellAnnounce(234428, 2)
+--Sigryn
+local warnHurlAxe				= mod:NewSpellAnnounce(237870, 2, nil, false)
+local warnAdvance				= mod:NewSpellAnnounce(237849, 2)
 
---local specWarnDecay			= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 6)
---local specWarnDrainLife		= mod:NewSpecialWarningInterrupt(234423)
+--Sigryn
+local specWarnThrowSpear		= mod:NewSpecialWarningDodge(238694, nil, nil, nil, 1, 2)
+local specWarnBloodFeather		= mod:NewSpecialWarningTarget(237945, nil, nil, nil, 3, 7)
+--Jarl Velbrand
+local specWarnBerserkersRage	= mod:NewSpecialWarningDodge(237947, nil, nil, nil, 4, 2)
 
---local timerDrainLifeCD			= mod:NewAITimer(15, 234423, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+--Sigryn
+local timerThrowSpearCD			= mod:NewCDTimer(13.4, 238694, nil, nil, nil, 3)
+local timerAdvanceCD			= mod:NewCDTimer(13.4, 237849, nil, nil, nil, 2)
+local timerBloodFeatherCD		= mod:NewCDTimer(13.4, 237945, nil, nil, nil, 2)
+--Jarl Velbrand
+local timerBerserkersRageCD		= mod:NewCDTimer(13.4, 237947, nil, nil, nil, 3)
 
 --local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
---local voiceDecay			= mod:NewVoice(234422)--stackhigh
+--Sigryn
+local voiceThrowSpear			= mod:NewVoice(238694)--watchstep
+local voiceBloodFeather			= mod:NewVoice(237945)--crowdcontrol (new)
+--Jarl Velbrand
+local voiceBerserkersRage		= mod:NewVoice(237947)--justrun
 
 mod:RemoveOption("HealthFrame")
 
 local started = false
 local activeBossGUIDS = {}
 
---[[
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 234423 then
-
+	if spellId == 238694 then
+		specWarnThrowSpear:Show()
+		voiceThrowSpear:Play("watchstep")
+		timerThrowSpearCD:Start()
+	elseif spellId == 237870 then
+		warnHurlAxe:Show()
+	elseif spellId == 237947 then
+		specWarnBerserkersRage:Show()
+		voiceBerserkersRage:Play("justrun")
+	elseif spellId == 237945 then
+		specWarnBloodFeather:Show(args.destName)
+		voiceBloodFeather:Play("crowdcontrol")
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 237950 then
-
+	if spellId == 237849 then
+		warnAdvance:Show()
+		--timerAdvanceCD:Start()
 	end
 end
+
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 234422 then
-		local amount = args.amount or 1
-		if amount >= 5 then
-			specWarnDecay:Show(args.destName)
-			voiceDecay:Play("stackhigh")
-		else
-			warnDecay:Show(args.destName, amount)
-		end
+	if spellId == 237945 then--Blood of the Father
+		timerThrowSpearCD:Stop()
+		timerAdvanceCD:Stop()
 	end
 end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+--mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
-	if spellId == 238471 then
-		local amount = args.amount or 1
-		warnScale:Show(args.destName, amount)
+	if spellId == 237945 then--Blood of the Father
+
 	end
 end
-mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
+--mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
 
-
+--[[
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 144084 and self:AntiSpam(2, 4) then
@@ -97,14 +116,16 @@ function mod:UNIT_DIED(args)
 
 --	end
 end
+--]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
-	if spellId == 234428 then--Summon Tormenting Eye
+	if spellId == 237914 then--Runic Detonation
 
 	end
 end
 
+--[[
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	for i = 1, 5 do
 		local unitID = "boss"..i
@@ -133,6 +154,10 @@ end
 function mod:ENCOUNTER_START(id)
 	if id == 2059 then--Fury of the God Queen
 		started = true
+		timerThrowSpearCD:Start(14.4)
+		timerAdvanceCD:Start(20.5)
+		timerBerserkersRageCD:Start(26)
+		timerBloodFeatherCD:Start(61)
 	end
 end
 
