@@ -41,7 +41,6 @@ function mod:SPELL_CAST_START(args)
 	
 	end
 end
---]]
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
@@ -53,6 +52,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnFelShock:Show()
 	end
 end
+--]]
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
