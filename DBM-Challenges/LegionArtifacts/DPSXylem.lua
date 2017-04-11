@@ -2,71 +2,95 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetCreatureID(115244)
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
-mod:RegisterEvents(
---	"SPELL_CAST_START",
---	"SPELL_AURA_APPLIED",
+mod:RegisterCombat("combat")
+mod:RegisterEventsInCombat(
+	"SPELL_CAST_START 234728",
+	"SPELL_AURA_APPLIED 231443",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 --	"SPELL_AURA_REMOVED_DOSE",
---	"SPELL_CAST_SUCCESS",
-	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
-	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
---	"ENCOUNTER_START",
+	"SPELL_CAST_SUCCESS 232661 231522",
+--	"UNIT_DIED",
+	"UNIT_SPELLCAST_SUCCEEDED boss1"
+--	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
 --	"CHAT_MSG_MONSTER_EMOTE"
---	"SCENARIO_UPDATE"
 )
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
---Damage
+--TODO, more timer work/data.
+--TODO, phase 2
+--Frost Phase
+local warnFrostPhase				= mod:NewSpellAnnounce(242394, 2)
+--Arcane Phase
+local warnArcanePhase				= mod:NewSpellAnnounce(242386, 2)
 
---local warnTormentingEye		= mod:NewSpellAnnounce(234428, 2)
+--Frost Phase
+local specWarnRazorIce				= mod:NewSpecialWarningDodge(232661, nil, nil, nil, 1, 2)
+--Transition
+local specWarnArcaneAnnihilation	= mod:NewSpecialWarningInterrupt(234728, nil, nil, nil, 1, 2)
+--Arcane Phase
+local specWarnShadowBarrage			= mod:NewSpecialWarningDodge(231443, nil, nil, nil, 2, 2)
+local specWarnDrawPower				= mod:NewSpecialWarningInterrupt(231522, nil, nil, nil, 1, 2)
 
---local specWarnDecay			= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 6)
---local specWarnDrainLife		= mod:NewSpecialWarningInterrupt(234423)
+--Frost Phase
+local timerRazorIceCD				= mod:NewCDTimer(25.5, 232661, nil, nil, nil, 3)--25.5-38.9 (other casts can delay it a lot)
+--Transition
+local timerArcaneAnnihilationCD		= mod:NewNextTimer(5, 234728, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+local timerShadowBarrageCD			= mod:NewCDTimer(40.0, 231443, nil, nil, nil, 3)--Actually used both phases
+--Arcane Phase
+local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
 
---local timerDrainLifeCD			= mod:NewAITimer(15, 234423, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+--local countdownTimer				= mod:NewCountdownFades(10, 141582)
 
---local countdownTimer		= mod:NewCountdownFades(10, 141582)
+--Frost Phase
+local voiceRazorIce					= mod:NewVoice(232661)--watchstep
+--Transition
+local voiceArcaneAnnihilation		= mod:NewVoice(234728)--kickcast
+--Arcane Phase
+local voiceShadowBarrage			= mod:NewVoice(231443)--watchorb
+local voiceDrawPower				= mod:NewVoice(231522)--kickcast
 
---local voiceDecay			= mod:NewVoice(234422)--stackhigh
-
-mod:RemoveOption("HealthFrame")
-
-local started = false
 local activeBossGUIDS = {}
 
---[[
+function mod:OnCombatStart(delay)
+	timerRazorIceCD:Start(12-delay)
+end
+
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 234423 then
-
+		specWarnArcaneAnnihilation:Show(args.sourceName)
+		voiceArcaneAnnihilation:Play("kickcast")
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 237950 then
-
+	if spellId == 232661 then
+		specWarnRazorIce:Show()
+		voiceRazorIce:Play("watchstep")
+		timerRazorIceCD:Start()
+	elseif spellId == 231522 then
+		specWarnDrawPower:Show(args.sourceName)
+		voiceDrawPower:Play("kickcast")
+		timerDrawPowerCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 234422 then
-		local amount = args.amount or 1
-		if amount >= 5 then
-			specWarnDecay:Show(args.destName)
-			voiceDecay:Play("stackhigh")
-		else
-			warnDecay:Show(args.destName, amount)
-		end
+	if spellId == 231443 then
+		specWarnShadowBarrage:Show()
+		voiceShadowBarrage:Play("watchorb")
+		timerShadowBarrageCD:Start()
 	end
 end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+--mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
+--[[
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 238471 then
@@ -89,7 +113,6 @@ end
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
 		table.wipe(activeBossGUIDS)
 	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -97,14 +120,27 @@ function mod:UNIT_DIED(args)
 
 --	end
 end
+--]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
-	if spellId == 234428 then--Summon Tormenting Eye
-
+	if spellId == 242394 then--Frost Phase
+		timerDrawPowerCD:Stop()
+		warnFrostPhase:Show()
+		timerArcaneAnnihilationCD:Start()
+		timerRazorIceCD:Start(20)--20-33
+	elseif spellId == 242386 then--Arcane Phase
+		warnArcanePhase:Show()
+		timerRazorIceCD:Stop()
+		timerArcaneAnnihilationCD:Start()
+		--timerShadowBarrageCD:Start(11)
+		timerDrawPowerCD:Start(27)--27-42
+	elseif spellId == 164393 then--Cancel Channeling (Successfully interrupted Arcane Annihilation)
+		
 	end
 end
 
+--[[
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	for i = 1, 5 do
 		local unitID = "boss"..i
@@ -113,25 +149,10 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 			local bossName = UnitName(unitID)
 			local cid = self:GetUnitCreatureId(unitID)
 			--Tank
-			if cid == 177933 then--Variss (Tank/Kruul Scenario)
-				started = true
-				timerTormentingEyeCD:Start(1)--3.8?
-				timerHolyWardCD:Start(1)--8?
-				timerDrainLifeCD:Start(1)--9?
-				timerNetherAbberationCD:Start(1)
-			elseif cid == 117230 then--Tugar Bloodtotem (DPS Fel Totem Fall)
-				started = true
-				timerFelRuptureCD:Start(7.5)
-				timerEarthquakeCD:Start(20.5)
-				timerFelSurgeCD:Start(62)--Correct place to do it?
+			if cid == 115244 then--Archmage Xylem
+
 			end
 		end
-	end
-end
-
-function mod:ENCOUNTER_START(id)
-	if id == 2059 then--Fury of the God Queen
-		started = true
 	end
 end
 
