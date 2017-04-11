@@ -2,9 +2,13 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetCreatureID(116484, 116499, 116496)--Sigryn, Jarl Velbrand, Runeseer Faljar
+mod:SetEncounterID(2059)
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
+mod:SetBossHPInfoToHighest()
 
-mod:RegisterEvents(
+mod:RegisterCombat("combat")
+mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 238694 237870 237947 237945 237857",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
@@ -12,8 +16,7 @@ mod:RegisterEvents(
 --	"SPELL_AURA_REMOVED_DOSE",
 	"SPELL_CAST_SUCCESS 237849 238432",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3",
-	"ENCOUNTER_START"
+	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
 --	"CHAT_MSG_MONSTER_EMOTE"
 --	"SCENARIO_UPDATE"
 )
@@ -62,10 +65,7 @@ local voiceRunicDetonation		= mod:NewVoice(237914)--157060 (are runes yellow?)
 local voiceKnowledge			= mod:NewVoice(237952)--targetchange
 local voiceDarkWings			= mod:NewVoice(237772)--stilldanger
 
-mod:RemoveOption("HealthFrame")
-
-local started = false
-local activeBossGUIDS = {}
+--local activeBossGUIDS = {}
 --This may not be accurate way to do it, it may be some kind of shared CD like HFC council and just be grossly affected by CCs
 --These are ones consistent between 4 pulls (including kill) though
 local bladeStormTimers = {125.0, 105.0, 30.0}
@@ -83,6 +83,22 @@ local bladeCount = 0
 local berserkerCount = 0
 local runicDetonationCount = 0
 local knowledgeCast = 0
+
+function mod:OnCombatStart(delay)
+	bloodCount = 0
+	bladeCount = 0
+	berserkerCount = 0
+	runicDetonationCount = 0
+	knowledgeCast = 0
+	timerThrowSpearCD:Start(14.4)
+	--timerAdvanceCD:Start(20.5)
+	timerBerserkersRageCD:Start(26, 1)
+	timerRunicDetonationCD:Start(43, 1)
+	timerBloodFatherCD:Start(61, 1)
+	timerKnowledgeCD:Start(98, 1)
+	timerBladeStormCD:Start(125, 1)
+	timerDarkWingsCD:Start(146)
+end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -187,25 +203,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		specWarnDarkWings:Show()
 		voiceDarkWings:Play("stilldanger")
 		timerDarkWingsCD:Start()
-	end
-end
-
-function mod:ENCOUNTER_START(id)
-	if id == 2059 then--Fury of the God Queen
-		started = true
-		bloodCount = 0
-		bladeCount = 0
-		berserkerCount = 0
-		runicDetonationCount = 0
-		knowledgeCast = 0
-		timerThrowSpearCD:Start(14.4)
-		--timerAdvanceCD:Start(20.5)
-		timerBerserkersRageCD:Start(26, 1)
-		timerRunicDetonationCD:Start(43, 1)
-		timerBloodFatherCD:Start(61, 1)
-		timerKnowledgeCD:Start(98, 1)
-		timerBladeStormCD:Start(125, 1)
-		timerDarkWingsCD:Start(146)
 	end
 end
 

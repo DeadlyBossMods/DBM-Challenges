@@ -2,9 +2,12 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetCreatureID(117230, 117484)--Tugar, Jormog
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
+mod:SetBossHPInfoToHighest()
 
-mod:RegisterEvents(
+mod:RegisterCombat("combat")
+mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 241687 242496 242733",
 --	"SPELL_AURA_APPLIED 235984",
 --	"SPELL_AURA_APPLIED_DOSE",
@@ -44,10 +47,13 @@ local voiceEarthquake		= mod:NewVoice(237950)--aesoon
 local voiceCharge			= mod:NewVoice(100)--chargemove
 local voiceFelSurge			= mod:NewVoice(242496)--stunsoon
 
-mod:RemoveOption("HealthFrame")
-
-local started = false
 local activeBossGUIDS = {}
+
+function mod:OnCombatStart(delay)
+	timerFelRuptureCD:Start(7.5)
+	timerEarthquakeCD:Start(20.5)
+	timerFelSurgeCD:Start(62)--Correct place to do it?
+end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -111,7 +117,6 @@ end
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
 		table.wipe(activeBossGUIDS)
 		timerEarthquakeCD:Stop()
 		timerFelSurgeCD:Stop()
@@ -141,10 +146,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 			local bossName = UnitName(unitID)
 			local cid = self:GetUnitCreatureId(unitID)
 			if cid == 117230 then--Tugar Bloodtotem (DPS Fel Totem Fall)
-				started = true
-				timerFelRuptureCD:Start(7.5)
-				timerEarthquakeCD:Start(20.5)
-				timerFelSurgeCD:Start(62)--Correct place to do it?
+
 			end
 		end
 	end
@@ -157,42 +159,3 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg)
 		voiceCharge:Play("charge")
 	end
 end
-
---[[
-function mod:SCENARIO_UPDATE(newStep)
-	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-	if diffID > 0 then
-		started = true
-		countdownTimer:Cancel()
-		countdownTimer:Start(duration)
-		if DBM.Options.AutoRespond then--Use global whisper option
-			self:RegisterShortTermEvents(
-				"CHAT_MSG_WHISPER"
-			)
-		end
-	elseif started then
-		started = false
-		countdownTimer:Cancel()
-		self:UnregisterShortTermEvents()
-	end
-end
-
-local mode = {
-	[1] = CHALLENGE_MODE_MEDAL1,
-	[2] = CHALLENGE_MODE_MEDAL2,
-	[3] = CHALLENGE_MODE_MEDAL3,
-	[4] = L.Endless,
-}
-function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
-	if status ~= "GM" then--Filter GMs
-		name = Ambiguate(name, "none")
-		local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-		local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
-		if msg == "status" then
-			SendChatMessage(message, "WHISPER", nil, name)
-		elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
-			SendChatMessage(message, "WHISPER", nil, name)
-		end
-	end
-end
---]]
