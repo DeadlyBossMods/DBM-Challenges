@@ -9,8 +9,6 @@ mod:SetBossHPInfoToHighest()
 mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 241687 242496 242733",
---	"SPELL_AURA_APPLIED 235984",
---	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED 238471",
 	"SPELL_AURA_REMOVED_DOSE 238471",
 	"SPELL_CAST_SUCCESS 242730 237950",
@@ -18,7 +16,6 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
 	"CHAT_MSG_MONSTER_EMOTE"
---	"SCENARIO_UPDATE"
 )
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
@@ -80,22 +77,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
---[[
-function mod:SPELL_AURA_APPLIED(args)
-	local spellId = args.spellId
-	if spellId == 234422 then
-		local amount = args.amount or 1
-		if amount >= 5 then
-			specWarnDecay:Show(args.destName)
-			voiceDecay:Play("stackhigh")
-		else
-			warnDecay:Show(args.destName, amount)
-		end
-	end
-end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
---]]
-
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 238471 then
@@ -104,15 +85,6 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
-
---[[
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 144084 and self:AntiSpam(2, 4) then
-
-	end
-end
---]]
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)

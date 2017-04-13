@@ -73,15 +73,6 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
---[[
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 144084 and self:AntiSpam(2, 4) then
-
-	end
-end
---]]
-
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
