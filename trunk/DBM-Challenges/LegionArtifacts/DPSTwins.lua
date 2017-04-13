@@ -8,133 +8,116 @@ mod:SetBossHPInfoToHighest()
 
 mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
---	"SPELL_CAST_START",
---	"SPELL_AURA_APPLIED",
---	"SPELL_AURA_APPLIED_DOSE",
---	"SPELL_AURA_REMOVED",
---	"SPELL_AURA_REMOVED_DOSE",
---	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_START 235317 235578",
+	"SPELL_CAST_SUCCESS 235426",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2",
---	"ENCOUNTER_START",
---	"CHAT_MSG_MONSTER_EMOTE"
---	"SCENARIO_UPDATE"
+	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2"
 )
 
---local warnTormentingEye		= mod:NewSpellAnnounce(234428, 2)
+--General
+local warnPhase					= mod:NewPhaseChangeAnnounce()
+--Karam
+local warnRisingDragon			= mod:NewSpellAnnounce(235426, 3)
 
---local specWarnDecay			= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 6)
---local specWarnDrainLife		= mod:NewSpecialWarningInterrupt(234423)
+--Karam
+local specWarnFixate			= mod:NewSpecialWarningRun(202081, nil, nil, nil, 4, 2)
+local specWarnGrasp				= mod:NewSpecialWarningInterrupt(235578, nil, nil, nil, 1, 2)
+--Raest
+local specWarnRift				= mod:NewSpecialWarningSwitch(235446, nil, nil, nil, 1, 2)
+local specWarnRune				= mod:NewSpecialWarningMoveTo(236460, nil, nil, nil, 1, 2)
 
---local timerDrainLifeCD			= mod:NewAITimer(15, 234423, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+--Karam
+local timerRisingDragonCD		= mod:NewCDTimer(35, 235426, nil, nil, nil, 2)
+--Raest
+local timerHandCD				= mod:NewNextTimer(28, 235580, nil, nil, nil, 1, 235578, DBM_CORE_DAMAGE_ICON)
+local timerGraspCD				= mod:NewCDTimer(15, 235578, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+local timerRuneCD				= mod:NewCDTimer(35, 236460, nil, nil, nil, 5)
 
---local countdownTimer		= mod:NewCountdownFades(10, 141582)
+local countHand					= mod:NewCountdown(28, 235580)
+local countRune					= mod:NewCountdown("Alt35", 236460)
 
---local voiceDecay			= mod:NewVoice(234422)--stackhigh
+--Karam
+local voiceFixate				= mod:NewVoice(202081)--justrun/keepmove
+local voiceGrasp				= mod:NewVoice(235578)--kickcast/killmob
+--Raest
+local voiceRift					= mod:NewVoice(235446)--killmob
+local voiceRunes				= mod:NewVoice(236460)--157060 (temp, until diff voice added for non yellow runes)
 
-local activeBossGUIDS = {}
+mod.vb.phase = 1
 
 function mod:OnCombatStart(delay)
-
+	self.vb.phase = 1
 end
 
---[[
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 234423 then
-
-	end
-end
-
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 237950 then
-
-	end
-end
-
-function mod:SPELL_AURA_APPLIED(args)
-	local spellId = args.spellId
-	if spellId == 234422 then
-		local amount = args.amount or 1
-		if amount >= 5 then
-			specWarnDecay:Show(args.destName)
-			voiceDecay:Play("stackhigh")
-		else
-			warnDecay:Show(args.destName, amount)
+	if spellId == 235317 then--Dismiss (cast by Raest Magespear for phase 2 and phase 4 start)
+		self.vb.phase = self.vb.phase + 1
+		if self.vb.phase == 2 then
+			warnPhase:Show(DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase:format(2))
+		else--4
+			warnPhase:Show(DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase:format(4))
+			timerHandCD:Stop()
+			countHand:Cancel()
 		end
+	elseif spellId == 235578 then--Grasp from Beyond
+		specWarnGrasp:Show(args.sourceName)
+		voiceGrasp:Play("kickcast")
+		timerGraspCD:Start(15, args.sourceGUID)
 	end
 end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
-
-function mod:SPELL_AURA_REMOVED(args)
-	local spellId = args.spellId
-	if spellId == 238471 then
-		local amount = args.amount or 1
-		warnScale:Show(args.destName, amount)
-	end
-end
-mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
-
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 144084 and self:AntiSpam(2, 4) then
-
+	if spellId == 235426 then
+		warnRisingDragon:Show()
 	end
 end
---]]
 
---[[
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
-		table.wipe(activeBossGUIDS)
-	end
-	local cid = self:GetCIDFromGUID(args.destGUID)
---	if cid == 177933 then--Variss
-
---	end
-end
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
-	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
-	if spellId == 234428 then--Summon Tormenting Eye
-
+	if cid == 116409 then--Raest
+		DBM:EndCombat(self)
+	elseif cid == 118698 then--Hand
+		timerGraspCD:Stop(args.destGUID)
 	end
 end
 
-function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
-	for i = 1, 5 do
-		local unitID = "boss"..i
-		local unitGUID = UnitGUID(unitID)
-		if UnitExists(unitID) and not activeBossGUIDS[unitGUID] then
-			local bossName = UnitName(unitID)
-			local cid = self:GetUnitCreatureId(unitID)
-			--Tank
-			if cid == 177933 then--Variss (Tank/Kruul Scenario)
-				started = true
-				timerTormentingEyeCD:Start(1)--3.8?
-				timerHolyWardCD:Start(1)--8?
-				timerDrainLifeCD:Start(1)--9?
-				timerNetherAbberationCD:Start(1)
-			elseif cid == 117230 then--Tugar Bloodtotem (DPS Fel Totem Fall)
-				started = true
-				timerFelRuptureCD:Start(7.5)
-				timerEarthquakeCD:Start(20.5)
-				timerFelSurgeCD:Start(62)--Correct place to do it?
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID, spellId)
+	--local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
+	if spellId == 202081 then--Fixate (Karam Magespear returning in phase 3 and 5)
+		specWarnFixate:Show()
+		voiceFixate:Play("justrun")
+		voiceFixate:Schedule("keepmove")
+		if self.vb.phase >= 2 then--Should filter fixate done on pull
+			self.vb.phase = self.vb.phase + 1
+			timerHandCD:Start(9)
+			countHand:Start(9)
+			if self.vb.phase == 3 then
+				warnPhase:Show(DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase:format(3))
+			else--5
+				warnPhase:Show(DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase:format(5))
+				timerRuneCD:Start(18.2)
+				countRune:Start(18.2)
+				timerRisingDragonCD:Start(25)--Only one time? need more data to be sure
 			end
 		end
+	elseif spellId == 235580 then--Hand from Beyond
+		--voiceGrasp:Schedule(1, "killmob")
+		timerHandCD:Start()
+		countHand:Start()
+	elseif spellId == 236468 then--Rune of Summoning
+		specWarnRune:Show(RUNES)
+		voiceRunes:Play("157060")
+		timerRuneCD:Start()
+		countRune:Start()
+	elseif spellId == 235525 then--Tear Rift (about 3 seconds after Dismiss)
+		specWarnRift:Show()
+		voiceRift:Play("killmob")
 	end
 end
 
-function mod:ENCOUNTER_START(id)
-	if id == 2059 then--Fury of the God Queen
-		started = true
-	end
-end
-
+--[[
 --"<53.75 21:03:46> [CHAT_MSG_MONSTER_EMOTE] |TInterface\\Icons\\spell_shaman_earthquake:20|t%s readies itself to charge!#Jormog the Behemoth###Kylistà##0#0##0#12#nil#0#false#false#false#false", -- [133]
 function mod:CHAT_MSG_MONSTER_EMOTE(msg)
 	if msg:find("Interface\\Icons\\spell_shaman_earthquake") then

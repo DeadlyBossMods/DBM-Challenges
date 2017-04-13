@@ -11,12 +11,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 231443",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
---	"SPELL_AURA_REMOVED_DOSE",
 	"SPELL_CAST_SUCCESS 232661 231522",
 --	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
---	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
---	"CHAT_MSG_MONSTER_EMOTE"
 )
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
@@ -99,14 +96,6 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
-
-
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 144084 and self:AntiSpam(2, 4) then
-
-	end
-end
 --]]
 
 --[[

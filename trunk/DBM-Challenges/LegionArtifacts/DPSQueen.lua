@@ -10,15 +10,9 @@ mod:SetBossHPInfoToHighest()
 mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 238694 237870 237947 237945 237857",
---	"SPELL_AURA_APPLIED",
---	"SPELL_AURA_APPLIED_DOSE",
---	"SPELL_AURA_REMOVED",
---	"SPELL_AURA_REMOVED_DOSE",
 	"SPELL_CAST_SUCCESS 237849 238432",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
---	"CHAT_MSG_MONSTER_EMOTE"
---	"SCENARIO_UPDATE"
 )
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
@@ -159,7 +153,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		--timerAdvanceCD:Stop()
 	end
 end
---mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
@@ -167,16 +160,6 @@ function mod:SPELL_AURA_REMOVED(args)
 
 	end
 end
---mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
-
---[[
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 144084 and self:AntiSpam(2, 4) then
-
-	end
-end
---]]
 
 --[[
 function mod:UNIT_DIED(args)
