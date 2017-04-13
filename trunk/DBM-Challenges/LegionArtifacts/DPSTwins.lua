@@ -2,9 +2,12 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetCreatureID(116409, 116410)--Raest Magespear, Karam Magespear
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
+mod:SetBossHPInfoToHighest()
 
-mod:RegisterEvents(
+mod:RegisterCombat("combat")
+mod:RegisterEventsInCombat(
 --	"SPELL_CAST_START",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
@@ -12,15 +15,11 @@ mod:RegisterEvents(
 --	"SPELL_AURA_REMOVED_DOSE",
 --	"SPELL_CAST_SUCCESS",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
-	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
+	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2",
 --	"ENCOUNTER_START",
 --	"CHAT_MSG_MONSTER_EMOTE"
 --	"SCENARIO_UPDATE"
 )
---Notes:
---TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
---Damage
 
 --local warnTormentingEye		= mod:NewSpellAnnounce(234428, 2)
 
@@ -33,10 +32,11 @@ mod:RegisterEvents(
 
 --local voiceDecay			= mod:NewVoice(234422)--stackhigh
 
-mod:RemoveOption("HealthFrame")
-
-local started = false
 local activeBossGUIDS = {}
+
+function mod:OnCombatStart(delay)
+
+end
 
 --[[
 function mod:SPELL_CAST_START(args)
