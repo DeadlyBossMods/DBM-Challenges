@@ -2,9 +2,11 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
+mod:SetCreatureID(115638)
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
-mod:RegisterEvents(
+mod:RegisterCombat("combat")
+mod:RegisterEventsInCombat(
 --	"SPELL_CAST_START",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
@@ -85,7 +87,7 @@ function mod:UNIT_DIED(args)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
 		DBM:EndCombat(self, true)
 	end
-	local cid = self:GetCIDFromGUID(args.destGUID)
+	--local cid = self:GetCIDFromGUID(args.destGUID)
 --	if cid == 177933 then--Variss
 
 --	end
