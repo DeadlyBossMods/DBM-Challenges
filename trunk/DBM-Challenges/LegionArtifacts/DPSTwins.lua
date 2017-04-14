@@ -75,6 +75,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:UNIT_DIED(args)
+	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
+		DBM:EndCombat(self, true)
+	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 116409 then--Raest
 		DBM:EndCombat(self)

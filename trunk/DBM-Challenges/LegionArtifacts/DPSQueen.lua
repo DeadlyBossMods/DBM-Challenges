@@ -59,7 +59,6 @@ local voiceRunicDetonation		= mod:NewVoice(237914)--157060 (are runes yellow?)
 local voiceKnowledge			= mod:NewVoice(237952)--targetchange
 local voiceDarkWings			= mod:NewVoice(237772)--stilldanger
 
---local activeBossGUIDS = {}
 --This may not be accurate way to do it, it may be some kind of shared CD like HFC council and just be grossly affected by CCs
 --These are ones consistent between 4 pulls (including kill) though
 local bladeStormTimers = {125.0, 105.0, 30.0}
@@ -145,7 +144,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-
+--[[
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 237945 then--Blood of the Father
@@ -160,20 +159,17 @@ function mod:SPELL_AURA_REMOVED(args)
 
 	end
 end
+--]]
 
---[[
 function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
-		table.wipe(activeBossGUIDS)
+		DBM:EndCombat(self, true)
 	end
-	local cid = self:GetCIDFromGUID(args.destGUID)
+	--local cid = self:GetCIDFromGUID(args.destGUID)
 --	if cid == 177933 then--Variss
 
 --	end
 end
---]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
@@ -188,13 +184,3 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		timerDarkWingsCD:Start()
 	end
 end
-
---[[
---"<53.75 21:03:46> [CHAT_MSG_MONSTER_EMOTE] |TInterface\\Icons\\spell_shaman_earthquake:20|t%s readies itself to charge!#Jormog the Behemoth###Kylistà##0#0##0#12#nil#0#false#false#false#false", -- [133]
-function mod:CHAT_MSG_MONSTER_EMOTE(msg)
-	if msg:find("Interface\\Icons\\spell_shaman_earthquake") then
-		specWarnCharge:Show()
-		voiceCharge:Play("charge")
-	end
-end
---]]

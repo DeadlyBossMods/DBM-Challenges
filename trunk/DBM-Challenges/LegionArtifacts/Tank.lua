@@ -14,14 +14,13 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED_DOSE 234422",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
---	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
 )
 
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
 --Tank
 -- Stack warning? what amounts switch from reg warning to special warning?
--- Variss 177933 does things, Only have very little of it. Need more CDs, more warnings
+-- Variss 117933 does things, Only have very little of it. Need more CDs, more warnings
 -- Boss after does things, have no logs of that
 --Tank (Kruul)
 local warnHolyWard			= mod:NewCastAnnounce(233473, 1)
@@ -57,8 +56,9 @@ function mod:OnCombatStart(delay)
 	timerTormentingEyeCD:Start(3.8)--3.8-5
 	timerDrainLifeCD:Start(5)--5-9?
 	timerHolyWardCD:Start(8)
-	timerNetherAbberationCD:Start(12.3)
+	timerNetherAbberationCD:Start(9.6)--9.6-12.3
 	timerInfernalCD:Start(37.5)
+	DBM:AddMsg("There is a good chance a few of these timers are health based and can't be relied upon. More data is needed to determine what timers are cooldowns and what are just based on your dps")
 end
 
 function mod:SPELL_CAST_START(args)
@@ -98,7 +98,7 @@ function mod:UNIT_DIED(args)
 		timerNetherAbberationCD:Stop()
 	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 177933 then--Variss
+	if cid == 117933 then--Variss
 		self.vb.phase = 2
 		timerDrainLifeCD:Stop()
 		timerTormentingEyeCD:Stop()
@@ -120,20 +120,3 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		timerInfernalCD:Start()
 	end
 end
-
---[[
-function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
-	for i = 1, 5 do
-		local unitID = "boss"..i
-		local unitGUID = UnitGUID(unitID)
-		if UnitExists(unitID) and not activeBossGUIDS[unitGUID] then
-			local bossName = UnitName(unitID)
-			local cid = self:GetUnitCreatureId(unitID)
-			--Tank
-			if cid == 177933 then--Variss (Tank/Kruul Scenario)
-
-			end
-		end
-	end
-end
---]]
