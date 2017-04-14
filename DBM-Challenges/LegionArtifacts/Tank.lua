@@ -2,11 +2,12 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision(("$Revision$"):sub(12, -3))
-mod:SetCreatureID(177933, 117198)--Variss, Kruul
+mod:SetCreatureID(117933, 117198)--Variss, Kruul
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod:SetBossHPInfoToHighest()
 
 mod:RegisterCombat("combat")
+
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 234423 233473",
 	"SPELL_AURA_APPLIED 234422",
