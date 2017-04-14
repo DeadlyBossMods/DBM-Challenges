@@ -33,11 +33,6 @@ mod:RegisterEvents(
 
 --local voiceDecay			= mod:NewVoice(234422)--stackhigh
 
-mod:RemoveOption("HealthFrame")
-
-local started = false
-local activeBossGUIDS = {}
-
 --[[
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -85,12 +80,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 --]]
 
---[[
+
 function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
-		table.wipe(activeBossGUIDS)
+		DBM:EndCombat(self, true)
 	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
 --	if cid == 177933 then--Variss
@@ -98,6 +91,7 @@ function mod:UNIT_DIED(args)
 --	end
 end
 
+--[[
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 234428 then--Summon Tormenting Eye

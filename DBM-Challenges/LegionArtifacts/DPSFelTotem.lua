@@ -14,7 +14,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 242730 237950",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
-	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
 	"CHAT_MSG_MONSTER_EMOTE"
 )
 --Notes:
@@ -43,8 +42,6 @@ local voiceSonicScream		= mod:NewVoice(235984)--stopcast
 local voiceEarthquake		= mod:NewVoice(237950)--aesoon
 local voiceCharge			= mod:NewVoice(100)--chargemove
 local voiceFelSurge			= mod:NewVoice(242496)--stunsoon
-
-local activeBossGUIDS = {}
 
 function mod:OnCombatStart(delay)
 	timerFelRuptureCD:Start(7.5)
@@ -87,12 +84,8 @@ end
 mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
 
 function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		table.wipe(activeBossGUIDS)
-		timerEarthquakeCD:Stop()
-		timerFelSurgeCD:Stop()
-		timerFelRuptureCD:Stop()
+		DBM:EndCombat(self, true)
 	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 117230 then--Tugar Bloodtotem (DPS Fel Totem Fall)
@@ -107,20 +100,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	if spellId == 241664 then--Rupture
 		warnRupture:Show()
 		timerFelRuptureCD:Start()
-	end
-end
-
-function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
-	for i = 1, 5 do
-		local unitID = "boss"..i
-		local unitGUID = UnitGUID(unitID)
-		if UnitExists(unitID) and not activeBossGUIDS[unitGUID] then
-			local bossName = UnitName(unitID)
-			local cid = self:GetUnitCreatureId(unitID)
-			if cid == 117230 then--Tugar Bloodtotem (DPS Fel Totem Fall)
-
-			end
-		end
 	end
 end
 

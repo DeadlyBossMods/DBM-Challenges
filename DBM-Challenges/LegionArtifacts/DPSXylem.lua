@@ -99,18 +99,15 @@ end
 mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
 --]]
 
---[[
 function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		table.wipe(activeBossGUIDS)
+		DBM:EndCombat(self, true)
 	end
-	local cid = self:GetCIDFromGUID(args.destGUID)
+	--local cid = self:GetCIDFromGUID(args.destGUID)
 --	if cid == 177933 then--Variss
 
 --	end
 end
---]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
