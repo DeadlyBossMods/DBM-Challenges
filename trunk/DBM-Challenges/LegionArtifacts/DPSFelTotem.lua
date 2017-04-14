@@ -38,7 +38,7 @@ local timerFelRuptureCD		= mod:NewCDTimer(10.9, 241664, nil, nil, nil, 3)--10.9-
 
 --local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
-local voiceSonicScream		= mod:NewVoice(235984)--stopcast
+local voiceSonicScream		= mod:NewVoice(241687)--stopcast
 local voiceEarthquake		= mod:NewVoice(237950)--aesoon
 local voiceCharge			= mod:NewVoice(100)--chargemove
 local voiceFelSurge			= mod:NewVoice(242496)--stunsoon
