@@ -79,7 +79,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 234422 then
 		local amount = args.amount or 1
 		if amount >= 5 then
-			specWarnDecay:Show(args.destName)
+			specWarnDecay:Show(amount)
 			voiceDecay:Play("stackhigh")
 		else
 			warnDecay:Show(args.destName, amount)

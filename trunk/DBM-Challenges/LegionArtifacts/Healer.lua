@@ -60,7 +60,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		local amount = args.amount or 1
 		if amount % 2 == 0 then
 			if amount >= 6 then
-				specWarnArcaneBlitz:Show(args.destName)
+				specWarnArcaneBlitz:Show(amount)
 				voiceArcaneBlitz:Play("stackhigh")
 			else
 				warnArcaneBlitz:Show(args.destName, amount)
