@@ -19,9 +19,6 @@ L:SetGeneralLocalization({
 	name =	"The Highlord's Return"
 })
 
-L:SetMiscLocalization({
-})
-
 ------------------------
 -- Mage Tower: Healer --
 ------------------------
@@ -47,6 +44,10 @@ L= DBM:GetModLocalization("ArtifactImpossibleFoe")
 
 L:SetGeneralLocalization({
 	name =	"An Impossible Foe"
+})
+
+L:SetMiscLocalization({
+	impServants =	"Kill the Imp Servants before they energize Agatha!"
 })
 
 ------------------------
