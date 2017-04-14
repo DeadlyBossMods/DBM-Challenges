@@ -36,12 +36,12 @@ local specWarnDecay			= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 
 local specWarnDrainLife		= mod:NewSpecialWarningInterrupt(234423)
 
 --Tank
-local timerDrainLifeCD			= mod:NewAITimer(15, 234423, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
-local timerHolyWardCD			= mod:NewAITimer(15, 233473, nil, nil, nil, 3, nil, DBM_CORE_HEALER_ICON)
+local timerDrainLifeCD			= mod:NewCDTimer(24.3, 234423, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+local timerHolyWardCD			= mod:NewCDTimer(33, 233473, nil, nil, nil, 3, nil, DBM_CORE_HEALER_ICON)
 local timerHolyWard				= mod:NewCastTimer(8, 233473, nil, false, nil, 3, nil, DBM_CORE_HEALER_ICON)
-local timerTormentingEyeCD		= mod:NewAITimer(15, 234428, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
-local timerNetherAbberationCD	= mod:NewAITimer(15, 235110, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
-local timerInfernalCD			= mod:NewAITimer(15, 235112, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
+local timerTormentingEyeCD		= mod:NewCDTimer(16.6, 234428, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
+local timerNetherAbberationCD	= mod:NewCDTimer(38, 235110, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
+local timerInfernalCD			= mod:NewCDTimer(53, 235112, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 
 --local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
@@ -54,10 +54,11 @@ local activeBossGUIDS = {}
 
 function mod:OnCombatStart(delay)
 	self.vb.phase = 1
-	timerTormentingEyeCD:Start(1)--3.8?
-	timerHolyWardCD:Start(1)--8?
-	timerDrainLifeCD:Start(1)--9?
-	timerNetherAbberationCD:Start(1)
+	timerTormentingEyeCD:Start(3.8)--3.8-5
+	timerDrainLifeCD:Start(5)--5-9?
+	timerHolyWardCD:Start(8)
+	timerNetherAbberationCD:Start(12.3)
+	timerInfernalCD:Start(37.5)
 end
 
 function mod:SPELL_CAST_START(args)
