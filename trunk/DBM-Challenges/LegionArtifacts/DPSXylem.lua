@@ -6,6 +6,7 @@ mod:SetCreatureID(115244)
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
 mod:RegisterCombat("combat")
+
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 234728",
 	"SPELL_AURA_APPLIED 231443",
