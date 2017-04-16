@@ -5,7 +5,7 @@ mod:SetRevision(("$Revision$"):sub(12, -3))
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
 mod:RegisterEvents(
-	"SPELL_AURA_APPLIED 235984",
+	"SPELL_AURA_APPLIED 235984 237188",
 	"SPELL_AURA_APPLIED_DOSE 235833",
 	"UNIT_DIED"
 --	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
@@ -17,22 +17,26 @@ mod:RegisterEvents(
 -- Need ignite soul equiv name/ID.
 -- Need fear name/Id
 
-local warnArcaneBlitz		= mod:NewStackAnnounce(235833, 2)
+local warnArcaneBlitz			= mod:NewStackAnnounce(235833, 2)
 
-local specWarnManaSling		= mod:NewSpecialWarningMoveTo(235984, nil, nil, nil, 1, 2)
-local specWarnArcaneBlitz	= mod:NewSpecialWarningStack(235833, nil, 6, nil, nil, 1, 6)--Fine tune the numbers
+local specWarnManaSling			= mod:NewSpecialWarningMoveTo(235984, nil, nil, nil, 1, 2)
+local specWarnArcaneBlitz		= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil, 1, 6)--Fine tune the numbers
+local specWarnIgniteSoul		= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
 
---local timerEarthquakeCD			= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
 
---local countdownTimer		= mod:NewCountdownFades(10, 141582)
+--local timerEarthquakeCD		= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
+local timerIgniteSoulCD			= mod:NewAITimer(25, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
 
-local voiceManaSling		= mod:NewVoice(235984)--findshelter
-local voiceArcaneBlitz		= mod:NewVoice(235833)--stackhigh
+local countdownIngiteSoul		= mod:NewCountdownFades("AltTwo9", 237188)
+
+local voiceManaSling			= mod:NewVoice(235984)--findshelter
+local voiceArcaneBlitz			= mod:NewVoice(235833)--stackhigh
+local voiceIgniteSoul			= mod:NewVoice(237188)
 
 mod:RemoveOption("HealthFrame")
 
-local started = false
-local activeBossGUIDS = {}
+--local started = false
+--local activeBossGUIDS = {}
 
 --[[
 function mod:SPELL_CAST_START(args)
@@ -59,7 +63,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 235833 then
 		local amount = args.amount or 1
 		if amount % 2 == 0 then
-			if amount >= 6 then
+			if amount >= 4 then
 				specWarnArcaneBlitz:Show(amount)
 				voiceArcaneBlitz:Play("stackhigh")
 			else
@@ -69,17 +73,22 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 235984 and args:IsPlayer() then
 		specWarnManaSling:Show(DBM_ALLY)
 		voiceManaSling:Play("findshelter")
+	elseif spellId == 237188 then
+		countdownIngiteSoul:Start()
+		specWarnIgniteSoul:Show()
+		voiceIgniteSoul:Play("targetyou")
+		timerIgniteSoulCD:Start()
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
-		started = false
-		table.wipe(activeBossGUIDS)
+		--started = false
+		--table.wipe(activeBossGUIDS)
+		timerIgniteSoulCD:Stop()
 	end
-	local cid = self:GetCIDFromGUID(args.destGUID)
+	--local cid = self:GetCIDFromGUID(args.destGUID)
 --	if cid == 177933 then--Variss
 
 --	end
