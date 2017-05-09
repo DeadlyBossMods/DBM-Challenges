@@ -11,6 +11,7 @@ mod:RegisterEvents(
 --	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
 --	"SCENARIO_UPDATE"
 )
+mod.noStatistics = true
 --Notes:
 --TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
 --Healer
