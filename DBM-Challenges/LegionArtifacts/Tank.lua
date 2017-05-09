@@ -6,6 +6,7 @@ mod:SetCreatureID(117933, 117198)--Variss, Kruul
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
+mod.onlyNormal = true
 
 mod:RegisterCombat("combat")
 
