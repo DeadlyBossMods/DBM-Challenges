@@ -19,10 +19,10 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
 )
 
---Notes:
---TODO, all. mapids, mob iDs, win event to stop timers (currently only death event stops them)
 --Tank
 -- Stack warning? what amounts switch from reg warning to special warning?
+-- Improve timers still with more data?
+-- Countdown prioriites?
 --Tank (Kruul)
 local warnHolyWard				= mod:NewCastAnnounce(233473, 1)
 local warnDecay					= mod:NewStackAnnounce(234422, 3)
@@ -46,11 +46,15 @@ local timerHolyWard				= mod:NewCastTimer(8, 233473, nil, false, nil, 3, nil, DB
 local timerTormentingEyeCD		= mod:NewCDTimer(15.4, 234428, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)--15.4-19.4
 local timerNetherAbberationCD	= mod:NewCDTimer(35, 235110, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 local timerInfernalCD			= mod:NewCDTimer(65, 235112, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
---PHase 2
+--Phase 2
 local timerShadowSweepCD		= mod:NewCDTimer(20, 234441, nil, nil, nil, 2)--20-27
 local timerAnnihilateCD			= mod:NewCDCountTimer(27, 236572, nil, nil, nil, 3, nil, DBM_CORE_TANK_ICON)
 
---local countdownTimer			= mod:NewCountdownFades(10, 141582)
+local countdownAbberation		= mod:NewCountdown(35, 235110)
+local countdownDrainLife		= mod:NewCountdown("Alt24", 234423)
+local countdownInfernal			= mod:NewCountdown("AltTwo65", 235112)
+--Phase 2
+local countdownAnnihilate		= mod:NewCountdown("Alt27", 236572)
 
 --Tank
 local voiceDecay				= mod:NewVoice(234422)--stackhigh
@@ -68,10 +72,13 @@ function mod:OnCombatStart(delay)
 	self.vb.annihilateCast = 0
 	timerTormentingEyeCD:Start(3.8)--3.8-5
 	timerDrainLifeCD:Start(5)--5-9?
+	countdownDrainLife:Start(5)
 	timerHolyWardCD:Start(8)--8-16
 	timerNetherAbberationCD:Start(9.6)--9.6-12.3
+	countdownAbberations:Start(9.6)
 	timerInfernalCD:Start(37.5)--37-43
-	DBM:AddMsg("There is a good chance a few of these timers are health based and can't be completely relied upon. More data is needed to determine this")
+	countdownInfernal:Start(37.5)
+	DBM:AddMsg("There is a chance some of these timers are health based and can't be completely relied upon. More data is needed")
 end
 
 function mod:SPELL_CAST_START(args)
@@ -80,6 +87,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnDrainLife:Show(args.sourceName)
 		voiceDrainLife:Play("kickcast")
 		timerDrainLifeCD:Start()
+		countdownDrainLife:Start()
 	elseif spellId == 233473 then
 		warnHolyWard:Show()
 		timerHolyWard:Start()
@@ -100,6 +108,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 236572 then--Timer here, boss sometimes stutter casts/interrupts his own annihilate cast to do soething else, then returns to annihilate 4-5 seconds later
 		self.vb.annihilateCast = self.vb.annihilateCast + 1
 		timerAnnihilateCD:Start(25, self.vb.annihilateCast+1)
+		countdownAnnihilate:Start()
 	end
 end
 
@@ -122,9 +131,12 @@ function mod:UNIT_DIED(args)
 	if cid == 117933 then--Variss
 		self.vb.phase = 2
 		timerDrainLifeCD:Stop()
+		countdownDrainLife:Cancel()
 		timerTormentingEyeCD:Stop()
 		timerNetherAbberationCD:Stop()
+		countdownAbberations:Cancel()
 		timerInfernalCD:Stop()
+		countdownInfernal:Cancel()
 		--timerAnnihilateCD:Start(16.5, 1)--16-28?, too variable, disabled for now
 		--Does holy ward reset here? reset timer here if it does
 	end
@@ -139,12 +151,15 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		warnNetherAberration:Show()
 		if self.vb.phase == 2 then
 			timerNetherAbberationCD:Start(30)
+			countdownAbberations:Start(30)
 		else
 			timerNetherAbberationCD:Start()--35
+			countdownAbberations:Start(35)
 		end
 	elseif spellId == 235112 then--Smoldering Infernal Summon
 		warnInfernal:Show()
 		timerInfernalCD:Start()
+		countdownInfernal:Start()
 	elseif spellId == 234920 then
 		warnShadowSweep:Show()
 		timerShadowSweepCD:Start()
