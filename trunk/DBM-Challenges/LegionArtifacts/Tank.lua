@@ -34,7 +34,7 @@ local warnInfernal				= mod:NewSpellAnnounce(235112, 2)
 
 --Tank
 local specWarnDecay				= mod:NewSpecialWarningStack(234422, nil, 5, nil, nil, 1, 6)
-local specWarnDrainLife			= mod:NewSpecialWarningInterrupt(234423, nil, nil, nil, 1, 2)
+local specWarnDrainLife			= mod:NewSpecialWarningInterrupt(234423, nil, nil, 2, 3, 2)
 local specWarnSmash				= mod:NewSpecialWarningDodge(234631, nil, nil, nil, 1, 2)
 local specWarnAnnihilate		= mod:NewSpecialWarningDefensive(236572, nil, nil, nil, 1, 2)
 local specWarnTwistedReflection	= mod:NewSpecialWarningInterrupt(234676, nil, nil, nil, 3, 2)
@@ -47,7 +47,7 @@ local timerTormentingEyeCD		= mod:NewCDTimer(15.4, 234428, nil, nil, nil, 1, nil
 local timerNetherAbberationCD	= mod:NewCDTimer(35, 235110, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 local timerInfernalCD			= mod:NewCDTimer(65, 235112, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
 --Phase 2
-local timerShadowSweepCD		= mod:NewCDTimer(20, 234441, nil, nil, nil, 2)--20-27
+local timerShadowSweepCD		= mod:NewCDTimer(20, 234441, nil, nil, nil, 3)--20-27
 local timerAnnihilateCD			= mod:NewCDCountTimer(27, 236572, nil, nil, nil, 3, nil, DBM_CORE_TANK_ICON)
 
 local countdownAbberations		= mod:NewCountdown(35, 235110)
@@ -118,7 +118,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		local amount = args.amount or 1
 		if amount >= 5 then
 			specWarnDecay:Show(amount)
-			voiceDecay:Play("stackhigh")
+			if amount > 10 then
+				voiceDecay:Play("runout")
+			else
+				voiceDecay:Play("stackhigh")
+			end
 		else
 			warnDecay:Show(args.destName, amount)
 		end
@@ -163,5 +167,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	elseif spellId == 234920 then
 		warnShadowSweep:Show()
 		timerShadowSweepCD:Start()
+	elseif spellId == 233456 then--Kill Credit
+		DBM:EndCombat(self)
 	end
 end
