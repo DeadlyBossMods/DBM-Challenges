@@ -98,7 +98,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if spellId == 236572 then--Timer here, boss sometimes stutter casts/interrupts his own annihilate cast to do soething else, then returns to annihilate 4-5 seconds later
+	if args.spellId == 236572 then--Timer here, boss sometimes stutter casts/interrupts his own annihilate cast to do soething else, then returns to annihilate 4-5 seconds later
 		self.vb.annihilateCast = self.vb.annihilateCast + 1
 		timerAnnihilateCD:Start(25, self.vb.annihilateCast+1)
 		countdownAnnihilate:Start()
