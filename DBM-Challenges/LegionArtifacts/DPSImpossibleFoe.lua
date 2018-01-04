@@ -26,9 +26,6 @@ local timerDarkFuryCD			= mod:NewCDTimer(51.1, 243111, nil, nil, nil, 5)
 
 local countdownDarkFury			= mod:NewCountdown(10, 243111)
 
-local voiceImpServants			= mod:NewVoice(235140)--bigmob
-local voiceDarkFury				= mod:NewVoice(243111)--attackshield/shieldover
-
 mod:AddInfoFrameOption(243113, true)
 
 mod.vb.phase = 1
@@ -50,7 +47,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 243113 then
 		specWarnDarkFury:Show()
-		voiceDarkFury:Play("attackshield")
+		specWarnDarkFury:Play("attackshield")
 		if self.vb.phase == 2 then
 			timerDarkFuryCD:Start(68)
 			countdownDarkFury:Start(68)
@@ -68,7 +65,7 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 243113 then
-		voiceDarkFury:Play("shieldover")
+		specWarnDarkFury:Play("shieldover")
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:Hide()
 		end
@@ -94,7 +91,7 @@ end
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if msg:find(L.impServants) or msg == L.impServants then
 		specWarnImpServants:Show()
-		voiceImpServants:Play("bigmob")
+		specWarnImpServants:Play("bigmob")
 		timerImpServantsCD:Start()
 	end
 end

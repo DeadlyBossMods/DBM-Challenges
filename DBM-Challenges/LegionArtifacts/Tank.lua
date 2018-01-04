@@ -56,13 +56,6 @@ local countdownInfernal			= mod:NewCountdown("AltTwo65", 235112)
 --Phase 2
 local countdownAnnihilate		= mod:NewCountdown("Alt27", 236572)
 
---Tank
-local voiceDecay				= mod:NewVoice(234422)--stackhigh
-local voiceDrainLife			= mod:NewVoice(234423)--kickcast
-local voiceSmash				= mod:NewVoice(234631)--shockwave
-local voiceAnnihilate			= mod:NewVoice(236572)--defensive
-local voiceTwistedReflection	= mod:NewVoice(234676)--kickcast
-
 mod.vb.phase = 1
 mod.vb.annihilateCast = 0
 local activeBossGUIDS = {}
@@ -85,7 +78,7 @@ function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 234423 then
 		specWarnDrainLife:Show(args.sourceName)
-		voiceDrainLife:Play("kickcast")
+		specWarnDrainLife:Play("kickcast")
 		timerDrainLifeCD:Start()
 		countdownDrainLife:Start()
 	elseif spellId == 233473 then
@@ -94,13 +87,13 @@ function mod:SPELL_CAST_START(args)
 		timerHolyWardCD:Start()
 	elseif spellId == 234631 or spellId == 241717 or spellId == 236537 then
 		specWarnSmash:Show()
-		voiceSmash:Play("shockwave")
+		specWarnSmash:Play("shockwave")
 	elseif spellId == 236572 then
 		specWarnAnnihilate:Show()
-		voiceAnnihilate:Play("defensive")
+		specWarnAnnihilate:Play("defensive")
 	elseif spellId == 234676 then
 		specWarnTwistedReflection:Show(args.sourceName)
-		voiceTwistedReflection:Play("kickcast")
+		specWarnTwistedReflection:Play("kickcast")
 	end
 end
 
@@ -119,9 +112,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if amount >= 5 then
 			specWarnDecay:Show(amount)
 			if amount > 10 then
-				voiceDecay:Play("runout")
+				specWarnDecay:Play("runout")
 			else
-				voiceDecay:Play("stackhigh")
+				specWarnDecay:Play("stackhigh")
 			end
 		else
 			warnDecay:Show(args.destName, amount)
