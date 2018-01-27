@@ -29,8 +29,6 @@ local timerIgniteSoulCD			= mod:NewAITimer(25, 237188, nil, nil, nil, 3, nil, DB
 
 local countdownIngiteSoul		= mod:NewCountdownFades("AltTwo9", 237188)
 
-mod:RemoveOption("HealthFrame")
-
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 235833 then
