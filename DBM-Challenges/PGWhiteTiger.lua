@@ -73,8 +73,6 @@ local timerSonicBlastCD		= mod:NewCDTimer(6, 145200, nil, nil, nil, 2)--8-11sec 
 
 local countdownTimer		= mod:NewCountdownFades(10, 141582)
 
-mod:RemoveOption("HealthFrame")
-
 local started = false
 
 function mod:SPELL_CAST_START(args)
