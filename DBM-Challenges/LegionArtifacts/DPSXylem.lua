@@ -11,7 +11,7 @@ mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 234728",
-	"SPELL_AURA_APPLIED 231443",
+	"SPELL_AURA_APPLIED 231443 233248",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_SUCCESS 232661 231522",
@@ -33,6 +33,8 @@ local specWarnArcaneAnnihilation	= mod:NewSpecialWarningInterrupt(234728, nil, n
 --Arcane Phase
 local specWarnShadowBarrage			= mod:NewSpecialWarningDodge(231443, nil, nil, nil, 2, 2)
 local specWarnDrawPower				= mod:NewSpecialWarningInterrupt(231522, nil, nil, nil, 1, 2)
+--Phase 2
+local specWarnSeeds					= mod:NewSpecialWarningRun(233248, nil, nil, nil, 4, 2)
 
 --Frost Phase
 local timerRazorIceCD				= mod:NewCDTimer(25.5, 232661, nil, nil, nil, 3)--25.5-38.9 (other casts can delay it a lot)
@@ -77,6 +79,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnShadowBarrage:Show()
 		specWarnShadowBarrage:Play("watchorb")
 		timerShadowBarrageCD:Start()
+	elseif spellId == 233248 and args:IsPlayer() then
+		specWarnSeeds:Show()
+		specWarnSeeds:Play("runout")
 	end
 end
 
