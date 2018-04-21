@@ -25,7 +25,7 @@ local specWarnArcaneBlitz		= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil
 local specWarnIgniteSoul		= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
 
 --local timerEarthquakeCD		= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
-local timerIgniteSoulCD			= mod:NewAITimer(25, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
+local timerIgniteSoulCD			= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
 
 local countdownIngiteSoul		= mod:NewCountdownFades("AltTwo9", 237188)
 
