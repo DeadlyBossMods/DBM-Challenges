@@ -85,7 +85,7 @@ function mod:SPELL_CAST_START(args)
 		warnHolyWard:Show()
 		timerHolyWard:Start()
 		timerHolyWardCD:Start()
-	elseif spellId == 234631 or spellId == 241717 or spellId == 236537 then
+	elseif (spellId == 234631 or spellId == 241717 or spellId == 236537) and self:AntiSpam(2.5, 1) then
 		specWarnSmash:Show()
 		specWarnSmash:Play("shockwave")
 	elseif spellId == 236572 then
@@ -116,7 +116,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			else
 				specWarnDecay:Play("stackhigh")
 			end
-		else
+		elseif amount % 2 == 0 then
 			warnDecay:Show(args.destName, amount)
 		end
 	end
@@ -139,8 +139,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
-	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 234428 then--Summon Tormenting Eye
 		warnTormentingEye:Show()
 		timerTormentingEyeCD:Start()
