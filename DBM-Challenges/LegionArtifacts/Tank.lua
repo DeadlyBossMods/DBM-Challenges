@@ -124,6 +124,9 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:UNIT_DIED(args)
+	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
+		DBM:EndCombat(self, true)
+	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 117933 then--Variss
 		self.vb.phase = 2
