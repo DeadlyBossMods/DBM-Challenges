@@ -103,7 +103,7 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif spellId == 237945 then
 		bloodCount = bloodCount + 1
-		specWarnBloodFather:Show(args.destName)
+		specWarnBloodFather:Show(args.sourceName)
 		specWarnBloodFather:Play("crowdcontrol")
 		local timer = bloodFatherTimers[bloodCount+1]
 		if timer then
@@ -131,7 +131,7 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 237849 or spellId == 238432 then
+	if (spellId == 237849 or spellId == 238432) and self:AntiSpam(5, 1) then
 		warnAdvance:Show()
 		--timerAdvanceCD:Start()
 	end
@@ -164,8 +164,7 @@ function mod:UNIT_DIED(args)
 --	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
-	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 237914 then--Runic Detonation
 		runicDetonationCount = runicDetonationCount + 1
 		specWarnRunicDetonation:Show(RUNES)
