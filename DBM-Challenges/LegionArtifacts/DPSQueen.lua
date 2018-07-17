@@ -164,7 +164,7 @@ function mod:UNIT_DIED(args)
 --	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 237914 then--Runic Detonation
 		runicDetonationCount = runicDetonationCount + 1
 		specWarnRunicDetonation:Show(RUNES)

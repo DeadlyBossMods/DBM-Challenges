@@ -81,8 +81,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID, spellId)
-	--local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 202081 then--Fixate (Karam Magespear returning in phase 3 and 5)
 		specWarnFixate:Show()
 		specWarnFixate:Play("justrun")

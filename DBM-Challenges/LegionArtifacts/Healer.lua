@@ -8,8 +8,6 @@ mod:RegisterEvents(
 	"SPELL_AURA_APPLIED 235984 237188",
 	"SPELL_AURA_APPLIED_DOSE 235833",
 	"UNIT_DIED"
---	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
---	"SCENARIO_UPDATE"
 )
 mod.noStatistics = true
 --Notes:
