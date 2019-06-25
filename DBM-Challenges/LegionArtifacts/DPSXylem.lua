@@ -44,8 +44,6 @@ local timerShadowBarrageCD			= mod:NewCDTimer(40.0, 231443, nil, nil, nil, 3)--A
 --Arcane Phase
 local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
 
---local countdownTimer				= mod:NewCountdownFades(10, 141582)
-
 local activeBossGUIDS = {}
 
 function mod:OnCombatStart(delay)

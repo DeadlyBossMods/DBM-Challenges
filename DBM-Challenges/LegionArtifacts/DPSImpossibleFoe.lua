@@ -22,9 +22,7 @@ local specWarnImpServants		= mod:NewSpecialWarningSwitch(235140, nil, nil, nil, 
 local specWarnDarkFury			= mod:NewSpecialWarningSwitch(243111, nil, nil, nil, 1, 7)
 
 local timerImpServantsCD		= mod:NewCDTimer(45, 235140, nil, nil, nil, 1)
-local timerDarkFuryCD			= mod:NewCDTimer(51.1, 243111, nil, nil, nil, 5)
-
-local countdownDarkFury			= mod:NewCountdown(10, 243111)
+local timerDarkFuryCD			= mod:NewCDTimer(51.1, 243111, nil, nil, nil, 5, nil, nil, nil, 1, 4)
 
 mod:AddInfoFrameOption(243113, true)
 
@@ -34,7 +32,6 @@ function mod:OnCombatStart(delay)
 	self.vb.phase = 1
 	timerImpServantsCD:Start(11-delay)--14 in one log, 11 in another
 	timerDarkFuryCD:Start(50-delay)
-	countdownDarkFury:Start(50-delay)
 end
 
 function mod:OnCombatEnd()
@@ -50,10 +47,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnDarkFury:Play("attackshield")
 		if self.vb.phase == 2 then
 			timerDarkFuryCD:Start(68)
-			countdownDarkFury:Start(68)
 		else
 			timerDarkFuryCD:Start()
-			countdownDarkFury:Start(51.1)
 		end
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(args.spellName)

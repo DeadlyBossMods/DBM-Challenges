@@ -39,8 +39,6 @@ local timerFelSurgeCD		= mod:NewCDTimer(25, 242496, nil, nil, nil, 3)--25-33
 local timerFelRuptureCD		= mod:NewCDTimer(10.9, 241664, nil, nil, nil, 3)--10.9-13.4
 local timerFelBurstCD		= mod:NewCDCountTimer(10.9, 242733, nil, nil, nil, 3)--HIGHLY variable
 
---local countdownTimer		= mod:NewCountdownFades(10, 141582)
-
 --[[
 ["242733-Fel Burst"] = "pull:40.2, 23.1, 21.8, 20.7, 21.9, 18.2, 17.7, 19.2, 15.4, 15.8, 14.6, 23.1, 13.3, 12.1, 12.1, 24.3, 10.9, 12.1, 12.1, 19.4",
 ["242733-Fel Burst"] = "pull:19.0, 23.1, 21.9, 20.6, 20.7, 19.5, 18.2, 24.3, 15.8, 15.8, 14.6, 17.0, 13.4, 12.1",
