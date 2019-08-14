@@ -2,5 +2,4 @@ package-as: DBM-Challenges
 enable-nolib-creation: no
 
 move-folders:
-    DBM-Challenges/DBM-Challenges: DBM-Challenges
-    
+	DBM-Challenges/DBM-Challenges: DBM-Challenges

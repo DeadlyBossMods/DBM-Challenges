@@ -16,14 +16,14 @@ mod.noStatistics = true
 -- Need ignite soul equiv name/ID.
 -- Need fear name/Id
 
-local warnArcaneBlitz			= mod:NewStackAnnounce(235833, 2)
+local warnArcaneBlitz		= mod:NewStackAnnounce(235833, 2)
 
-local specWarnManaSling			= mod:NewSpecialWarningMoveTo(235984, nil, nil, nil, 1, 2)
-local specWarnArcaneBlitz		= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil, 1, 6)--Fine tune the numbers
-local specWarnIgniteSoul		= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
+local specWarnManaSling		= mod:NewSpecialWarningMoveTo(235984, nil, nil, nil, 1, 2)
+local specWarnArcaneBlitz	= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil, 1, 6)--Fine tune the numbers
+local specWarnIgniteSoul	= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
 
---local timerEarthquakeCD		= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
-local timerIgniteSoulCD			= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON, nil, 3, 4)
+--local timerEarthquakeCD	= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
+local timerIgniteSoulCD		= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON, nil, 3, 4)
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId

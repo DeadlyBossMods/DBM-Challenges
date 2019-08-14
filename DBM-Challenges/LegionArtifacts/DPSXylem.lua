@@ -102,6 +102,5 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		--timerShadowBarrageCD:Start(11)
 		timerDrawPowerCD:Start(27)--27-42
 	elseif spellId == 164393 then--Cancel Channeling (Successfully interrupted Arcane Annihilation)
-		
 	end
 end
