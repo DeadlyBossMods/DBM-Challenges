@@ -73,6 +73,10 @@ L:SetGeneralLocalization({
 ------------------------
 L = DBM:GetModLocalization("ArtifactXylem")
 
+L:SetGeneralLocalization({
+	name	= "Closing the Eye"
+})
+
 ------------------------
 -- N'Zoth Visions --
 ------------------------
