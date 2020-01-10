@@ -73,6 +73,15 @@ L:SetGeneralLocalization({
 ------------------------
 L = DBM:GetModLocalization("ArtifactXylem")
 
+------------------------
+-- N'Zoth Visions --
+------------------------
 L:SetGeneralLocalization({
-	name	= "Closing the Eye"
+	name	= "N'Zoth Visions"
+})
+
+L= DBM:GetModLocalization("NZothVisions")
+
+L:SetMiscLocalization({
+	ReplyWhisper	= "<Deadly Boss Mods> %s is busy in an N'Zoth Vision right now."
 })
