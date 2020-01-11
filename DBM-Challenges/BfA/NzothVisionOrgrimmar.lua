@@ -7,16 +7,17 @@ mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
---RegisterEvents
+mod:RegisterEvents(
+	"ZONE_CHANGED_NEW_AREA"
+)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726",
 	"SPELL_AURA_APPLIED 311390 306955 315385 316481 311641",
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 310173",
+--	"SPELL_CAST_SUCCESS",
 --	"SPELL_PERIODIC_DAMAGE",
 --	"SPELL_PERIODIC_MISSED",
 	"UNIT_DIED"
---	"SCENARIO_UPDATE"
 )
 
 --TODO, detect engaging of end bosses for start timers
@@ -35,7 +36,7 @@ local specWarnScorchedFeet		= mod:NewSpecialWarningYou(315385, nil, nil, nil, 1,
 local yellScorchedFeet			= mod:NewYell(315385)
 local specWarnSplitPersonality	= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
 local specWarnWaveringWill		= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
-local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)
+--local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)--Not detectable apparently
 --Thrall
 local specWarnSurgingDarkness	= mod:NewSpecialWarningDodge(297822, nil, nil, nil, 2, 2)
 local specWarnSeismicSlam		= mod:NewSpecialWarningDodge(297746, nil, nil, nil, 2, 2)--Can this be dodged?
@@ -50,7 +51,7 @@ local timerSeismicSlamCD		= mod:NewAITimer(21, 297746, nil, nil, nil, 3)
 local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
 local timerDefiledGroundCD		= mod:NewAITimer(21, 306726, nil, nil, nil, 3)
 
---local started = false
+local started = false
 local playerName = UnitName("player")
 
 function mod:SPELL_CAST_START(args)
@@ -78,6 +79,7 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
+--[[
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 310173 then
@@ -85,6 +87,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnHauntingShadows:Play("watchstep")
 	end
 end
+--]]
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
@@ -131,6 +134,7 @@ function mod:UNIT_DIED(args)
 		timerCriesoftheVoidCD:Stop()
 		timerDefiledGroundCD:Stop()
 		DBM:EndCombat(self)
+		started = false
 	elseif cid == 156161 then--Inquisitor Gnshal
 		timerCriesoftheVoidCD:Stop()
 	--elseif cid == 153244 then--Oblivion Elemental
@@ -142,35 +146,13 @@ function mod:UNIT_DIED(args)
 	end
 end
 
---[[
---TODO, backup if scenario behavior doesn't work for combat detection and whisper use it to record stage progress etc and add status whispers
-function mod:SCENARIO_UPDATE(newStep)
-	local _, currentStage = C_Scenario.GetInfo()
-	if diffID > 0 then
-		started = true
-		if DBM.Options.AutoRespond then--Use global whisper option
-			self:RegisterShortTermEvents(
-				"CHAT_MSG_WHISPER"
-			)
-		end
-	elseif started then
+function mod:ZONE_CHANGED_NEW_AREA()
+	local uiMap = C_Map.GetBestMapForUnit("player")
+	if started and uiMap ~= 1469 then
+		DBM:EndCombat(self, true)
 		started = false
-		self:UnregisterShortTermEvents()
+	elseif not uiMap and uiMap == 1469 then
+		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
+		started = true
 	end
 end
-
-do
-	function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
-		if status ~= "GM" then--Filter GMs
-			name = Ambiguate(name, "none")
-			local message = L.ReplyWhisper:format(playerName)
-			if msg == "status" then
-				SendChatMessage(message, "WHISPER", nil, name)
-			elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
-				SendChatMessage(message, "WHISPER", nil, name)
-			end
-		end
-	end
-end
-
---]]

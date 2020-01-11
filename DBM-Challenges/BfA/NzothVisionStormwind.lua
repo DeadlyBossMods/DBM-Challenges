@@ -7,16 +7,17 @@ mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2213)--2212, 2213 (org, stormwind)
 
---RegisterEvents
+mod:RegisterEvents(
+	"ZONE_CHANGED_NEW_AREA"
+)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669",
 	"SPELL_AURA_APPLIED 311390 306955 315385 316481 311641",
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 305672 310173",
+	"SPELL_CAST_SUCCESS 305672",
 	"SPELL_PERIODIC_DAMAGE 312121",
 	"SPELL_PERIODIC_MISSED 312121",
 	"UNIT_DIED"
---	"SCENARIO_UPDATE"
 )
 
 --TODO, detect engaging of end bosses for start timers
@@ -39,7 +40,7 @@ local specWarnScorchedFeet		= mod:NewSpecialWarningYou(315385, nil, nil, nil, 1,
 local yellScorchedFeet			= mod:NewYell(315385)
 local specWarnSplitPersonality	= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
 local specWarnWaveringWill		= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
-local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)
+--local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)--Not detectable apparently
 --Alleria Windrunner
 local specWarnDarkenedSky		= mod:NewSpecialWarningDodge(308278, nil, nil, nil, 2, 2)
 local specWarnVoidEruption		= mod:NewSpecialWarningMoveTo(309819, nil, nil, nil, 3, 2)
@@ -56,7 +57,7 @@ local timerExplosiveOrdnanceCD	= mod:NewAITimer(21, 305672, nil, nil, nil, 3)
 local timerChainsofServitudeCD	= mod:NewAITimer(21, 298691, nil, nil, nil, 2)
 local timerDarkGazeCD			= mod:NewAITimer(21, 308669, nil, nil, nil, 3)
 
---local started = false
+local started = false
 local playerName = UnitName("player")
 
 function mod:SPELL_CAST_START(args)
@@ -88,9 +89,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 305672 then
 		warnExplosiveOrdnance:Show()
 		timerExplosiveOrdnanceCD:Start()
-	elseif spellId == 310173 then
-		specWarnHauntingShadows:Show()
-		specWarnHauntingShadows:Play("watchstep")
+	--elseif spellId == 310173 then
+	--	specWarnHauntingShadows:Show()
+	--	specWarnHauntingShadows:Play("watchstep")
 	end
 end
 
@@ -139,6 +140,7 @@ function mod:UNIT_DIED(args)
 		timerChainsofServitudeCD:Stop()
 		timerDarkGazeCD:Stop()--Stopped when she dies or eye?
 		DBM:EndCombat(self)
+		started = false
 	elseif cid == 158315 then--Eye of Chaos
 		timerDarkGazeCD:Stop()--Stopped when she dies or eye?
 	elseif cid == 156577 then--Therum Deepforge
@@ -152,36 +154,13 @@ function mod:UNIT_DIED(args)
 	end
 end
 
---[[
---TODO, backup if scenario behavior doesn't work for combat detection and whisper use it to record stage progress etc and add status whispers
-function mod:SCENARIO_UPDATE(newStep)
-	local _, currentStage = C_Scenario.GetInfo()
-	if diffID > 0 then
-		started = true
-		if DBM.Options.AutoRespond then--Use global whisper option
-			self:RegisterShortTermEvents(
-				"CHAT_MSG_WHISPER"
-			)
-		end
-	elseif started then
+function mod:ZONE_CHANGED_NEW_AREA()
+	local uiMap = C_Map.GetBestMapForUnit("player")
+	if started and uiMap ~= 1470 then
+		DBM:EndCombat(self, true)
 		started = false
-		self:UnregisterShortTermEvents()
+	elseif not uiMap and uiMap == 1470 then
+		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
+		started = true
 	end
 end
-
-do
-	local playerName = UnitName("player")
-	function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
-		if status ~= "GM" then--Filter GMs
-			name = Ambiguate(name, "none")
-			local message = L.ReplyWhisper:format(playerName)
-			if msg == "status" then
-				SendChatMessage(message, "WHISPER", nil, name)
-			elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
-				SendChatMessage(message, "WHISPER", nil, name)
-			end
-		end
-	end
-end
-
---]]
