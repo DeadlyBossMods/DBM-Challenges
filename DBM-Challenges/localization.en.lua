@@ -78,14 +78,11 @@ L:SetGeneralLocalization({
 })
 
 ------------------------
--- N'Zoth Visions --
+-- N'Zoth Visions: Stormwind --
 ------------------------
-L:SetGeneralLocalization({
-	name	= "N'Zoth Visions"
-})
+L= DBM:GetModLocalization("d1993")
 
-L= DBM:GetModLocalization("NZothVisions")
-
-L:SetMiscLocalization({
-	ReplyWhisper	= "<Deadly Boss Mods> %s is busy in an N'Zoth Vision right now."
-})
+------------------------
+-- N'Zoth Visions: Orgrimmar --
+------------------------
+L= DBM:GetModLocalization("d1995")

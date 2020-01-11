@@ -45,3 +45,5 @@ Legion\DPSTwins.lua
 Legion\DPSXylem.lua
 Legion\Healer.lua
 Legion\Tank.lua
+BfA\NzothVisionStormwind.lua
+BfA\NzothVisionOrgrimmar.lua
