@@ -3,7 +3,6 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
 mod:SetZone()
-mod.noStatistics = true
 
 mod:RegisterCombat("scenario", 2213)--2212, 2213 (org, stormwind)
 
