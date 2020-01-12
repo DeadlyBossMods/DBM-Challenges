@@ -17,7 +17,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 305672 309035",
 	"SPELL_PERIODIC_DAMAGE 312121 296674 308807",
 	"SPELL_PERIODIC_MISSED 312121 296674 308807",
-	"UNIT_DIED"
+	"UNIT_DIED",
+	"ENCOUNTER_START"
 )
 
 --TODO, detect engaging of end bosses for start timers
@@ -60,8 +61,8 @@ local yellCorruptedBlight		= mod:NewYell(308265)
 local specWarnEntropicMissiles	= mod:NewSpecialWarningInterrupt(309035, "HasInterrupt", nil, nil, 1, 2)
 
 --Alleria Windrunner
-local timerDarkenedSkyCD		= mod:NewAITimer(21, 308278, nil, nil, nil, 3)
-local timerVoidEruptionCD		= mod:NewAITimer(21, 309819, nil, nil, nil, 2)
+local timerDarkenedSkyCD		= mod:NewCDTimer(13.3, 308278, nil, nil, nil, 3)
+local timerVoidEruptionCD		= mod:NewCDTimer(21, 309819, nil, nil, nil, 2)
 --Extra Abilities (used by Alleria and the area LTs)
 local timerTaintedPolymorphCD	= mod:NewAITimer(21, 309648, nil, nil, nil, 3, nil, DBM_CORE_MAGIC_ICON)
 local timerExplosiveOrdnanceCD	= mod:NewAITimer(21, 305672, nil, nil, nil, 3)
@@ -95,7 +96,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 309819 then
 		specWarnVoidEruption:Show(DBM_CORE_BREAK_LOS)
 		specWarnVoidEruption:Play("findshelter")
-		timerVoidEruptionCD:Start()
+		--timerVoidEruptionCD:Start()
 	elseif spellId == 309648 then
 		warnTaintedPolymorph:Show()
 		timerTaintedPolymorphCD:Start()
@@ -184,7 +185,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 155928 then--Alleria Windrunner
+	if cid == 152718 then--Alleria Windrunner
 		timerDarkenedSkyCD:Stop()
 		timerVoidEruptionCD:Stop()
 		timerTaintedPolymorphCD:Stop()
@@ -214,5 +215,13 @@ function mod:ZONE_CHANGED_NEW_AREA()
 	elseif not uiMap and uiMap == 1470 then
 		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
 		started = true
+	end
+end
+
+function mod:ENCOUNTER_START(encounterID)
+	--Re-engaged, kill scans and long wipe time
+	if encounterID == 2338 and self:IsInCombat() then
+		timerDarkenedSkyCD:Start(4.9)
+		timerVoidEruptionCD:Start(20.5)
 	end
 end

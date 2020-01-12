@@ -17,7 +17,8 @@ mod:RegisterEventsInCombat(
 --	"SPELL_CAST_SUCCESS",
 	"SPELL_PERIODIC_DAMAGE 303594",
 	"SPELL_PERIODIC_MISSED 303594",
-	"UNIT_DIED"
+	"UNIT_DIED",
+	"ENCOUNTER_START"
 )
 
 --TODO, detect engaging of end bosses for start timers
@@ -233,5 +234,13 @@ function mod:ZONE_CHANGED_NEW_AREA()
 	elseif not uiMap and uiMap == 1469 then
 		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
 		started = true
+	end
+end
+
+function mod:ENCOUNTER_START(encounterID)
+	--Re-engaged, kill scans and long wipe time
+	if encounterID == 2332 and self:IsInCombat() then
+		timerSurgingDarknessCD:Start(1)
+		timerSeismicSlamCD:Start(1)--TODO, replace with other timer if "hard mode" enabled
 	end
 end
