@@ -254,7 +254,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 end
 
 function mod:OnSync(msg)
-	if self:IsInCombat() then return end
+	if not self:IsInCombat() then return end
 	if msg == "ExplosiveOrd" then
 		warnExplosiveOrdnance:Show()
 		timerExplosiveOrdnanceCD:Start()
