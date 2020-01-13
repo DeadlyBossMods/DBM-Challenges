@@ -77,8 +77,12 @@ mod:AddInfoFrameOption(307831, true)
 
 local started = false
 local playerName = UnitName("player")
+mod.vb.GnshalCleared = false
+mod.vb.VezokkCleared = false
 
 function mod:OnCombatStart(delay)
+	self.vb.GnshalCleared = false
+	self.vb.VezokkCleared = false
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
@@ -217,6 +221,10 @@ function mod:UNIT_DIED(args)
 		started = false
 	elseif cid == 156161 then--Inquisitor Gnshal
 		timerCriesoftheVoidCD:Stop()
+		self.vb.GnshalCleared = true
+	elseif cid == 152874 then--Vez'okk the Lightless
+		timerDefiledGroundCD:Stop()
+		self.vb.VezokkCleared = true
 	--elseif cid == 153244 then--Oblivion Elemental
 
 	--elseif cid == 155098 then--Rexxar
@@ -238,9 +246,15 @@ function mod:ZONE_CHANGED_NEW_AREA()
 end
 
 function mod:ENCOUNTER_START(encounterID)
-	--Re-engaged, kill scans and long wipe time
 	if encounterID == 2332 and self:IsInCombat() then
 		timerSurgingDarknessCD:Start(1)
-		timerSeismicSlamCD:Start(1)--TODO, replace with other timer if "hard mode" enabled
+		if self.vb.VezokkCleared then
+			timerDefiledGroundCD:Start(1)
+		else
+			timerSeismicSlamCD:Start(1)
+		end
+		if self.vb.GnshalCleared then
+			timerCriesoftheVoidCD:Start(1)
+		end
 	end
 end

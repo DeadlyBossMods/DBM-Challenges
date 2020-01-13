@@ -14,11 +14,12 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911",
 	"SPELL_AURA_APPLIED 311390 306955 315385 316481 311641 308380 308366 308265",
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 305672 309035",
+	"SPELL_CAST_SUCCESS 309035",
 	"SPELL_PERIODIC_DAMAGE 312121 296674 308807",
 	"SPELL_PERIODIC_MISSED 312121 296674 308807",
 	"UNIT_DIED",
-	"ENCOUNTER_START"
+	"ENCOUNTER_START",
+	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
 --TODO, detect engaging of end bosses for start timers
@@ -62,10 +63,10 @@ local specWarnEntropicMissiles	= mod:NewSpecialWarningInterrupt(309035, "HasInte
 
 --Alleria Windrunner
 local timerDarkenedSkyCD		= mod:NewCDTimer(13.3, 308278, nil, nil, nil, 3)
-local timerVoidEruptionCD		= mod:NewCDTimer(21, 309819, nil, nil, nil, 2)
+local timerVoidEruptionCD		= mod:NewCDTimer(27.9, 309819, nil, nil, nil, 2)
 --Extra Abilities (used by Alleria and the area LTs)
 local timerTaintedPolymorphCD	= mod:NewAITimer(21, 309648, nil, nil, nil, 3, nil, DBM_CORE_MAGIC_ICON)
-local timerExplosiveOrdnanceCD	= mod:NewAITimer(21, 305672, nil, nil, nil, 3)
+local timerExplosiveOrdnanceCD	= mod:NewCDTimer(20.7, 305672, nil, nil, nil, 3)--20-25 (on alleria anyways, forgot to log other guy)
 local timerChainsofServitudeCD	= mod:NewAITimer(21, 298691, nil, nil, nil, 2)
 local timerDarkGazeCD			= mod:NewAITimer(21, 308669, nil, nil, nil, 3)
 
@@ -73,8 +74,16 @@ mod:AddInfoFrameOption(307831, true)
 
 local started = false
 local playerName = UnitName("player")
+mod.vb.TherumCleared = false
+mod.vb.UlrokCleared = false
+mod.vb.ShawCleared = false
+mod.vb.UmbricCleared = false
 
 function mod:OnCombatStart(delay)
+	self.vb.TherumCleared = false
+	self.vb.UlrokCleared = false
+	self.vb.ShawCleared = false
+	self.vb.UmbricCleared = false
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
@@ -96,7 +105,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 309819 then
 		specWarnVoidEruption:Show(DBM_CORE_BREAK_LOS)
 		specWarnVoidEruption:Play("findshelter")
-		--timerVoidEruptionCD:Start()
+		timerVoidEruptionCD:Start()
 	elseif spellId == 309648 then
 		warnTaintedPolymorph:Show()
 		timerTaintedPolymorphCD:Start()
@@ -123,10 +132,7 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 305672 then
-		warnExplosiveOrdnance:Show()
-		timerExplosiveOrdnanceCD:Start()
-	elseif spellId == 309035 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+	if spellId == 309035 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnEntropicMissiles:Show(args.sourceName)
 		specWarnEntropicMissiles:Play("kickcast")
 	--elseif spellId == 310173 then
@@ -198,12 +204,16 @@ function mod:UNIT_DIED(args)
 		timerDarkGazeCD:Stop()--Stopped when she dies or eye?
 	elseif cid == 156577 then--Therum Deepforge
 		timerExplosiveOrdnanceCD:Stop()
+		self.vb.TherumCleared = true
 	elseif cid == 153541 then--slavemaster-ulrok
 		timerChainsofServitudeCD:Stop()
+		self.vb.UlrokCleared = true
 	elseif cid == 158157 then--Overlord Mathias Shaw
 		timerDarkGazeCD:Stop()--Stopped when he dies or eye?
+		self.vb.ShawCleared = true
 	elseif cid == 158035 then--Magister Umbric
 		timerTaintedPolymorphCD:Stop()
+		self.vb.UmbricCleared = true
 	end
 end
 
@@ -219,9 +229,34 @@ function mod:ZONE_CHANGED_NEW_AREA()
 end
 
 function mod:ENCOUNTER_START(encounterID)
-	--Re-engaged, kill scans and long wipe time
 	if encounterID == 2338 and self:IsInCombat() then
 		timerDarkenedSkyCD:Start(4.9)
 		timerVoidEruptionCD:Start(20.5)
+		if self.vb.TherumCleared then
+			timerExplosiveOrdnanceCD:Start(9.7)
+		end
+		if self.vb.UlrokCleared then
+			timerChainsofServitudeCD:Start(1)
+		end
+		if self.vb.ShawCleared then
+			timerDarkGazeCD:Start(1)
+		end
+		if self.vb.UmbricCleared then
+			timerTaintedPolymorphCD:Start(1)
+		end
+	end
+end
+
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
+	if spellId == 312260 and self:AntiSpam(3, 1) then--Explosive Ordnance (not in combat log)
+		self:SendSync("ExplosiveOrd")
+	end
+end
+
+function mod:OnSync(msg)
+	if self:IsInCombat() then return end
+	if msg == "ExplosiveOrd" then
+		warnExplosiveOrdnance:Show()
+		timerExplosiveOrdnanceCD:Start()
 	end
 end
