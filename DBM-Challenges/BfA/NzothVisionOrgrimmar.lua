@@ -11,10 +11,10 @@ mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299055 299110 307863 300351 300412 304101 304282 306001 306199 303589 305875 306828 306617",
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299055 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537",
 	"SPELL_AURA_APPLIED 311390 306955 315385 316481 311641",
 	"SPELL_AURA_APPLIED_DOSE 311390",
---	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_SUCCESS 297237",
 	"SPELL_PERIODIC_DAMAGE 303594",
 	"SPELL_PERIODIC_MISSED 303594",
 	"UNIT_DIED",
@@ -34,9 +34,9 @@ local warnVoidQuills				= mod:NewCastAnnounce(304251, 3)
 --Other notable abilities by mini bosses/trash
 local warnDarkForce					= mod:NewSpellAnnounce(299055, 3)
 local warnVoidTorrent				= mod:NewCastAnnounce(307863, 3)
-local warnSurgingFist				= mod:NewCastAnnounce(300351, 3)
 local warnExplosiveLeap				= mod:NewCastAnnounce(306001, 3)
 local warnVisceralFluid				= mod:NewCastAnnounce(305875, 3)
+local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
 
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
@@ -55,6 +55,7 @@ local specWarnHopelessness			= mod:NewSpecialWarningMoveTo(297574, nil, nil, nil
 local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil, 2, 2)--Can this be dodged?
 --Other notable abilities by mini bosses/trash
 local specWarnOrbofAnnihilation		= mod:NewSpecialWarningDodge(299110, nil, nil, nil, 2, 2)
+local specWarnSurgingFist			= mod:NewSpecialWarningDodge(300351, nil, nil, nil, 2, 2)
 local specWarnDecimator				= mod:NewSpecialWarningDodge(300412, nil, nil, nil, 2, 2)
 local specWarnDesperateRetching		= mod:NewSpecialWarningYou(304165, nil, nil, nil, 1, 2)
 local yellDesperateRetching			= mod:NewYell(304165)
@@ -65,9 +66,10 @@ local specWarnHowlinginPain			= mod:NewSpecialWarningCast(306199, "SpellCaster",
 local specWarnSanguineResidue		= mod:NewSpecialWarningDodge(303589, nil, nil, nil, 2, 2)
 local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306828, nil, nil, nil, 2, 2)
 local specWarnRingofChaos			= mod:NewSpecialWarningDodge(306617, nil, nil, nil, 2, 2)
+local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInterrupt", nil, nil, 1, 2)
 
 --Thrall
-local timerSurgingDarknessCD	= mod:NewCDTimer(23.2, 297822, nil, nil, nil, 3)
+local timerSurgingDarknessCD	= mod:NewCDTimer(23.1, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
 local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
@@ -125,8 +127,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 307863 then
 		warnVoidTorrent:Show()
 	elseif spellId == 300351 then
-		warnSurgingFist:Show()
-	elseif spellId == 300412 then
+		specWarnSurgingFist:Show()
+		specWarnSurgingFist:Show("chargemove")
+	elseif spellId == 300388 then
 		specWarnDecimator:Show()
 		specWarnDecimator:Play("watchorb")
 	elseif spellId == 304101 then
@@ -151,18 +154,18 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 306617 then
 		specWarnRingofChaos:Show()
 		specWarnRingofChaos:Play("watchorb")
+	elseif spellId == 296537 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnMentalAssault:Show(args.sourceName)
+		specWarnMentalAssault:Play("kickcast")
 	end
 end
 
---[[
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 310173 then
-		specWarnHauntingShadows:Show()
-		specWarnHauntingShadows:Play("watchstep")
+		warnEndlessHungerTotem:Show()
 	end
 end
---]]
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
@@ -247,11 +250,11 @@ end
 
 function mod:ENCOUNTER_START(encounterID)
 	if encounterID == 2332 and self:IsInCombat() then
-		timerSurgingDarknessCD:Start(11.2)
+		timerSurgingDarknessCD:Start(11.1)
 		if self.vb.VezokkCleared then
 			timerDefiledGroundCD:Start(1)
 		else
-			timerSeismicSlamCD:Start(5.1)
+			timerSeismicSlamCD:Start(4.6)
 		end
 		if self.vb.GnshalCleared then
 			timerCriesoftheVoidCD:Start(1)
