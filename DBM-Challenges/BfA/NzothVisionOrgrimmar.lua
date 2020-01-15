@@ -67,8 +67,8 @@ local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306828, nil, nil, nil
 local specWarnRingofChaos			= mod:NewSpecialWarningDodge(306617, nil, nil, nil, 2, 2)
 
 --Thrall
-local timerSurgingDarknessCD	= mod:NewAITimer(21, 297822, nil, nil, nil, 3)
-local timerSeismicSlamCD		= mod:NewAITimer(21, 297746, nil, nil, nil, 3)
+local timerSurgingDarknessCD	= mod:NewCDTimer(23.2, 297822, nil, nil, nil, 3)
+local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
 local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
 local timerDefiledGroundCD		= mod:NewAITimer(21, 306726, nil, nil, nil, 3)
@@ -212,7 +212,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 152698 then--Thrall
+	if cid == 152089 then--Thrall
 		timerSurgingDarknessCD:Stop()
 		timerSeismicSlamCD:Stop()
 		timerCriesoftheVoidCD:Stop()
@@ -247,11 +247,11 @@ end
 
 function mod:ENCOUNTER_START(encounterID)
 	if encounterID == 2332 and self:IsInCombat() then
-		timerSurgingDarknessCD:Start(1)
+		timerSurgingDarknessCD:Start(11.2)
 		if self.vb.VezokkCleared then
 			timerDefiledGroundCD:Start(1)
 		else
-			timerSeismicSlamCD:Start(1)
+			timerSeismicSlamCD:Start(5.1)
 		end
 		if self.vb.GnshalCleared then
 			timerCriesoftheVoidCD:Start(1)
