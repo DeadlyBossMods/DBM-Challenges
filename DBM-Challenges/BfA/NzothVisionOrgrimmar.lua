@@ -162,7 +162,7 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 310173 then
+	if spellId == 297237 then
 		warnEndlessHungerTotem:Show()
 	end
 end
