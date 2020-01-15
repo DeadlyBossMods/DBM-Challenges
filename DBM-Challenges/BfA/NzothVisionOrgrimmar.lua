@@ -12,7 +12,7 @@ mod:RegisterEvents(
 )
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299055 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537",
-	"SPELL_AURA_APPLIED 311390 306955 315385 316481 311641",
+	"SPELL_AURA_APPLIED 311390 315385 316481 311641",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237",
 	"SPELL_PERIODIC_DAMAGE 303594",
@@ -41,7 +41,7 @@ local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
-local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
+--local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, nil, nil, nil, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
 local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
@@ -175,9 +175,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnEntomophobia:Show()
 			specWarnEntomophobia:Play("keepjump")
 		end
-	elseif spellId == 306955 and args:IsPlayer() then
-		specWarnDarkDelusions:Show()
-		specWarnDarkDelusions:Play("justrun")
+--	elseif spellId == 306955 and args:IsPlayer() then
+--		specWarnDarkDelusions:Show()
+--		specWarnDarkDelusions:Play("justrun")
 	elseif spellId == 315385 and args:IsPlayer() then
 		specWarnScorchedFeet:Show()
 		specWarnScorchedFeet:Play("targetyou")
