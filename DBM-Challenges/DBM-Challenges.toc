@@ -17,6 +17,7 @@
 ## X-DBM-Mod-Category: BFA
 ## X-DBM-Mod-SubCategories: Proving Grounds,Legion Artifacts, BfA Visions
 ## X-DBM-Mod-SubCategories-deDE: Feuerprobe,Legion Artefakte, BfA Visions
+## X-DBM-Mod-SubCategories-koKR: 수련의 장,군단 유물, 격아 환영
 ## X-DBM-Mod-Name: Challenges
 ## X-DBM-Mod-Name-deDE: Herausforderungen
 ## X-DBM-Mod-Name-esES: Terreno de Pruebas
