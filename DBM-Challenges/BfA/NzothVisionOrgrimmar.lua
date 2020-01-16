@@ -128,7 +128,7 @@ function mod:SPELL_CAST_START(args)
 		warnVoidTorrent:Show()
 	elseif spellId == 300351 then
 		specWarnSurgingFist:Show()
-		specWarnSurgingFist:Show("chargemove")
+		specWarnSurgingFist:Play("chargemove")
 	elseif spellId == 300388 then
 		specWarnDecimator:Show()
 		specWarnDecimator:Play("watchorb")
