@@ -121,8 +121,8 @@ function mod:SPELL_CAST_START(args)
 		specWarnSeismicSlam:Show()
 		specWarnSeismicSlam:Play("shockwave")
 		timerSeismicSlamCD:Start()
-		if IsInGroup() then
-			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.1, 8)
+		if GetNumGroupMembers() > 1 then
+			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.1, 7)
 		end
 	elseif spellId == 304976 then
 		warnCriesoftheVoid:Show()
@@ -146,8 +146,8 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 300351 then
 		specWarnSurgingFist:Show()
 		specWarnSurgingFist:Play("chargemove")
-		if IsInGroup() then
-			self:BossTargetScanner(args.sourceGUID, "SurgingFistTarget", 0.1, 8)
+		if GetNumGroupMembers() > 1 then
+			self:BossTargetScanner(args.sourceGUID, "SurgingFistTarget", 0.1, 7)
 		end
 	elseif spellId == 300388 then
 		specWarnDecimator:Show()

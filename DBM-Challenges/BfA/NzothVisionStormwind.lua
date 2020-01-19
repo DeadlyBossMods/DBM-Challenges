@@ -155,7 +155,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 315385 and args:IsPlayer() then
 		specWarnScorchedFeet:Show()
 		specWarnScorchedFeet:Play("targetyou")
-		if IsInGroup() then--Warn allies if in scenario with others
+		if GetNumGroupMembers() > 1 then--Warn allies if in scenario with others
 			yellScorchedFeet:Yell()
 		end
 	elseif spellId == 316481 and args:IsPlayer() then
@@ -170,7 +170,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnAgonizingTormentD:Show(args.destName)
 		specWarnAgonizingTormentD:Play("helpdispel")
 	elseif spellId == 308265 then
-		if args:IsPlayer() and IsInGroup() then
+		if args:IsPlayer() and GetNumGroupMembers() > 1 then
 			yellCorruptedBlight:Yell()
 		end
 		if self:CheckDispelFilter() then
