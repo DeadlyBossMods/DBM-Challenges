@@ -54,6 +54,7 @@ local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil
 --Other notable abilities by mini bosses/trash
 local specWarnOrbofAnnihilation		= mod:NewSpecialWarningDodge(299110, nil, nil, nil, 2, 2)
 local specWarnSurgingFist			= mod:NewSpecialWarningDodge(300351, nil, nil, nil, 2, 2)
+local yellSurgingFist				= mod:NewYell(300351)
 local specWarnDecimator				= mod:NewSpecialWarningDodge(300412, nil, nil, nil, 2, 2)
 local specWarnDesperateRetching		= mod:NewSpecialWarningYou(304165, nil, nil, nil, 1, 2)
 local yellDesperateRetching			= mod:NewYell(304165)
@@ -88,6 +89,13 @@ function mod:SeismicSlamTarget(targetname, uId)
 	end
 end
 
+function mod:SurgingFistTarget(targetname, uId)
+	if not targetname then return end
+	if targetname == UnitName("player") then
+		yellSurgingFist:Yell()
+	end
+end
+
 function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
@@ -114,7 +122,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnSeismicSlam:Play("shockwave")
 		timerSeismicSlamCD:Start()
 		if IsInGroup() then
-			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.2, 8)
+			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.1, 8)
 		end
 	elseif spellId == 304976 then
 		warnCriesoftheVoid:Show()
@@ -138,6 +146,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 300351 then
 		specWarnSurgingFist:Show()
 		specWarnSurgingFist:Play("chargemove")
+		if IsInGroup() then
+			self:BossTargetScanner(args.sourceGUID, "SurgingFistTarget", 0.1, 8)
+		end
 	elseif spellId == 300388 then
 		specWarnDecimator:Show()
 		specWarnDecimator:Play("watchorb")
