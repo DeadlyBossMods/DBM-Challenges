@@ -73,7 +73,7 @@ local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInte
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
 
 --Thrall
-local timerSurgingDarknessCD	= mod:NewCDTimer(23.1, 297822, nil, nil, nil, 3)
+local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
 --local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
