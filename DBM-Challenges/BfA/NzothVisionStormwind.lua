@@ -11,7 +11,7 @@ mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033",
+	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 309035",
@@ -39,8 +39,8 @@ local warnExplosiveOrdnance		= mod:NewSpellAnnounce(305672, 3)
 --Other notable abilities by mini bosses/trash
 local warnEntropicLeap			= mod:NewCastAnnounce(308406, 3)
 local warnConvert				= mod:NewTargetNoFilterAnnounce(308380, 3)
-local warnChaosBreath			= mod:NewCastAnnounce(296911, 3)
-local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
+local warnTouchoftheAbyss		= mod:NewCastAnnounce(298033, 4)
+local warnBrutalSmash			= mod:NewCastAnnounce(309882, 3)
 
 --General (GTFOs and Affixes)
 local specWarnGTFO				= mod:NewSpecialWarningGTFO(312121, nil, nil, nil, 1, 8)
@@ -57,14 +57,17 @@ local specWarnVoidEruption		= mod:NewSpecialWarningMoveTo(309819, nil, nil, nil,
 --Extra Abilities (used by Alleria and the area LTs)
 local specWarnChainsofServitude	= mod:NewSpecialWarningRun(298691, nil, nil, nil, 4, 2)
 local specWarnDarkGaze			= mod:NewSpecialWarningLookAway(308669, false, nil, 2, 2, 2)
+local specWarnForgeBreath		= mod:NewSpecialWarningDodge(309671, nil, nil, nil, 2, 2)
 --Other notable abilities by mini bosses/trash
 local specWarnAgonizingTorment	= mod:NewSpecialWarningInterrupt(308366, "HasInterrupt", nil, nil, 1, 2)
 local specWarnEntropicMissiles	= mod:NewSpecialWarningInterrupt(309035, "HasInterrupt", nil, nil, 1, 2)
 local specWarnMentalAssault		= mod:NewSpecialWarningInterrupt(296537, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShadowShift		= mod:NewSpecialWarningInterrupt(308575, "HasInterrupt", nil, nil, 1, 2)
 local specWarnTouchoftheAbyss	= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
-local specWarnAgonizingTormentD	= mod:NewSpecialWarningDispel(308366, "RemoveCurse", nil, nil, 1, 2)
+local specWarnPsychicScream		= mod:NewSpecialWarningInterrupt(308375, "HasInterrupt", nil, nil, 1, 2)
 local specWarnRoaringBlast		= mod:NewSpecialWarningDodge(311456, nil, nil, nil, 2, 2)
+local specWarnChaosBreath		= mod:NewSpecialWarningDodge(296911, nil, nil, nil, 2, 2)
+local specWarnAgonizingTormentD	= mod:NewSpecialWarningDispel(308366, "RemoveCurse", nil, nil, 1, 2)
 local specWarnCorruptedBlight	= mod:NewSpecialWarningDispel(308265, nil, nil, nil, 1, 2)
 local yellCorruptedBlight		= mod:NewYell(308265)
 local specWarnRiftStrike		= mod:NewSpecialWarningDodge(308481, nil, nil, nil, 2, 2)
@@ -133,6 +136,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 308575 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnShadowShift:Show(args.sourceName)
 		specWarnShadowShift:Play("kickcast")
+	elseif spellId == 308375 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnPsychicScream:Show(args.sourceName)
+		specWarnPsychicScream:Play("kickcast")
 	elseif spellId == 298033 then
 		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
 			specWarnTouchoftheAbyss:Show(args.sourceName)
@@ -146,10 +152,16 @@ function mod:SPELL_CAST_START(args)
 		specWarnRoaringBlast:Show()
 		specWarnRoaringBlast:Play("shockwave")
 	elseif spellId == 296911 then
-		warnChaosBreath:Show()
+		specWarnChaosBreath:Show()
+		specWarnChaosBreath:Play("shockwave")
+	elseif spellId == 309671 then
+		specWarnForgeBreath:Show()
+		specWarnForgeBreath:Play("shockwave")
 	elseif spellId == 308481 and self:AntiSpam(5, 3) then
 		specWarnRiftStrike:Show()
 		specWarnRiftStrike:Play("watchstep")
+	elseif spellId == 309882 and self:AntiSpam(5, 3) then
+		warnBrutalSmash:Show()
 	end
 end
 

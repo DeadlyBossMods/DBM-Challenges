@@ -11,7 +11,7 @@ mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA"
 )
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033",
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237",
@@ -70,6 +70,7 @@ local specWarnRingofChaos			= mod:NewSpecialWarningDodge(306617, nil, nil, nil, 
 local specWarnHorrifyingShout		= mod:NewSpecialWarningInterrupt(305378, "HasInterrupt", nil, nil, 1, 2)
 local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInterrupt", nil, nil, 1, 2)
 local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
+local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
 
 --Thrall
@@ -181,6 +182,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 305378 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnHorrifyingShout:Show(args.sourceName)
 		specWarnHorrifyingShout:Play("kickcast")
+	elseif spellId == 305236 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnVenomBolt:Show(args.sourceName)
+		specWarnVenomBolt:Play("kickcast")
 	elseif spellId == 298033 then
 		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
 			specWarnTouchoftheAbyss:Show(args.sourceName)
