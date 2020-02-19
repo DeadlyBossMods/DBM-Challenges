@@ -7,9 +7,9 @@ mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
-mod:RegisterEvents(
-	"ZONE_CHANGED_NEW_AREA"
-)
+--mod:RegisterEvents(
+--	"ZONE_CHANGED_NEW_AREA"
+--)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
@@ -18,13 +18,15 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_DAMAGE 303594",
 	"SPELL_PERIODIC_MISSED 303594",
 	"UNIT_DIED",
-	"ENCOUNTER_START"
+	"ENCOUNTER_START",
+	"UNIT_AURA player"
 )
 
 --TODO, notable trash or affix warnings
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
+local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
 local warnScorchedFeet				= mod:NewSpellAnnounce(315385, 4)
 --Extra Abilities (used by main boss and the area LTs)
 local warnCriesoftheVoid			= mod:NewCastAnnounce(304976, 4)
@@ -73,6 +75,8 @@ local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInte
 local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
 
+--General
+local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
 --Thrall
 local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
@@ -279,16 +283,18 @@ function mod:UNIT_DIED(args)
 	end
 end
 
+--[[
 function mod:ZONE_CHANGED_NEW_AREA()
 	local uiMap = C_Map.GetBestMapForUnit("player")
 	if started and uiMap ~= 1469 then
 		DBM:EndCombat(self, true)
 		started = false
-	elseif not uiMap and uiMap == 1469 then
+	elseif not started and uiMap == 1469 then
 		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
 		started = true
 	end
 end
+--]]
 
 function mod:ENCOUNTER_START(encounterID)
 	if encounterID == 2332 and self:IsInCombat() then
@@ -301,5 +307,20 @@ function mod:ENCOUNTER_START(encounterID)
 		--if self.vb.GnshalCleared then
 		--	timerCriesoftheVoidCD:Start(1)
 		--end
+	end
+end
+
+do
+	--In blizzards infinite wisdom, Gift of the Titans isn't in combat log
+	local titanWarned = false
+	function mod:UNIT_AURA(uId)
+		local hasTitan = DBM:UnitBuff("player", 313698)
+		if hasTitan and not titanWarned then
+			warnGiftoftheTitans:Show()
+			timerGiftoftheTitan:Start()
+			titanWarned = true
+		elseif not hasTitan and titanWarned then
+			titanWarned = false
+		end
 	end
 end
