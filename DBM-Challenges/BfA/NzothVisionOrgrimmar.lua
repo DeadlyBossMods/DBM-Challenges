@@ -227,7 +227,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			warnScorchedFeet:Show()
 		end
-		if IsInGroup() then--Warn allies if in scenario with others
+		if GetNumGroupMembers() > 1 then--Warn allies if in scenario with others
 			yellScorchedFeet:Yell()
 		end
 	elseif spellId == 316481 and args:IsPlayer() then
@@ -240,7 +240,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnDesperateRetching:Show()
 			specWarnDesperateRetching:Play("keepmove")
-			if IsInGroup() then
+			if GetNumGroupMembers() > 1 then
 				yellDesperateRetching:Yell()
 			end
 		elseif self:CheckDispelFilter() then

@@ -227,9 +227,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnAgonizingTormentD:Show(args.destName)
 		specWarnAgonizingTormentD:Play("helpdispel")
 	elseif spellId == 308265 then
-		if args:IsPlayer() and GetNumGroupMembers() > 1 then
-			yellCorruptedBlight:Yell()
-		end
 		if self:CheckDispelFilter() then
 			specWarnCorruptedBlight:Show(args.destName)
 			specWarnCorruptedBlight:Play("helpdispel")
