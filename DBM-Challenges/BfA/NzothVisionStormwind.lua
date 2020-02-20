@@ -7,9 +7,6 @@ mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2213)--2212, 2213 (org, stormwind)
 
---mod:RegisterEvents(
---	"ZONE_CHANGED_NEW_AREA"
---)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265",
@@ -88,7 +85,6 @@ mod:AddInfoFrameOption(307831, true)
 
 --Antispam 1: Boss throttles, 2: GTFOs, 3: Dodge stuff on ground. 4: Face Away/special action. 5: Dodge Shockwaves
 
-local started = false
 local playerName = UnitName("player")
 mod.vb.TherumCleared = false
 mod.vb.UlrokCleared = false
@@ -252,7 +248,6 @@ function mod:UNIT_DIED(args)
 		--timerExplosiveOrdnanceCD:Stop()
 		--timerChainsofServitudeCD:Stop()
 		DBM:EndCombat(self)
-		started = false
 	elseif cid == 156577 then--Therum Deepforge
 		--timerExplosiveOrdnanceCD:Stop()
 		self.vb.TherumCleared = true
@@ -266,19 +261,6 @@ function mod:UNIT_DIED(args)
 		self.vb.UmbricCleared = true
 	end
 end
-
---[[
-function mod:ZONE_CHANGED_NEW_AREA()
-	local uiMap = C_Map.GetBestMapForUnit("player")
-	if started and uiMap ~= 1470 then
-		DBM:EndCombat(self, true)
-		started = false
-	elseif not started and uiMap == 1470 then
-		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
-		started = true
-	end
-end
---]]
 
 function mod:ENCOUNTER_START(encounterID)
 	if encounterID == 2338 and self:IsInCombat() then

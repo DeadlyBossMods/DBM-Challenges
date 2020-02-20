@@ -103,7 +103,11 @@ globals = {
 	"LOCALE_zhTW",
 
 	-- FrameXML misc
+	"ALTERNATE_POWER_INDEX",
 	"BNET_CLIENT_WOW",
+	"CHALLENGE_MODE_MEDAL1",
+	"CHALLENGE_MODE_MEDAL2",
+	"CHALLENGE_MODE_MEDAL3",
 	"C_BattleNet",
 	"C_Calendar",
 	"C_ChatInfo",

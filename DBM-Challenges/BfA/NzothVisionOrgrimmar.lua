@@ -7,9 +7,6 @@ mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
---mod:RegisterEvents(
---	"ZONE_CHANGED_NEW_AREA"
---)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
@@ -67,7 +64,6 @@ local specWarnMaddeningRoar			= mod:NewSpecialWarningRun(304101, nil, nil, nil, 
 local specWarnStampedingCorruption	= mod:NewSpecialWarningDodge(304282, nil, nil, nil, 2, 2)
 local specWarnHowlinginPain			= mod:NewSpecialWarningCast(306199, "SpellCaster", nil, nil, 1, 2)
 local specWarnSanguineResidue		= mod:NewSpecialWarningDodge(303589, nil, nil, nil, 2, 2)
-local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306828, nil, nil, nil, 2, 2)
 local specWarnRingofChaos			= mod:NewSpecialWarningDodge(306617, nil, nil, nil, 2, 2)
 local specWarnHorrifyingShout		= mod:NewSpecialWarningInterrupt(305378, "HasInterrupt", nil, nil, 1, 2)
 local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInterrupt", nil, nil, 1, 2)
@@ -87,7 +83,6 @@ local timerDefiledGroundCD		= mod:NewAITimer(21, 306726, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 
-local started = false
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
@@ -267,7 +262,6 @@ function mod:UNIT_DIED(args)
 		--timerCriesoftheVoidCD:Stop()
 		timerDefiledGroundCD:Stop()
 		DBM:EndCombat(self)
-		started = false
 	elseif cid == 156161 then--Inquisitor Gnshal
 		--timerCriesoftheVoidCD:Stop()
 		self.vb.GnshalCleared = true
@@ -282,19 +276,6 @@ function mod:UNIT_DIED(args)
 
 	end
 end
-
---[[
-function mod:ZONE_CHANGED_NEW_AREA()
-	local uiMap = C_Map.GetBestMapForUnit("player")
-	if started and uiMap ~= 1469 then
-		DBM:EndCombat(self, true)
-		started = false
-	elseif not started and uiMap == 1469 then
-		self:StartCombat(self, 0, "LOADING_SCREEN_DISABLED")
-		started = true
-	end
-end
---]]
 
 function mod:ENCOUNTER_START(encounterID)
 	if encounterID == 2332 and self:IsInCombat() then
