@@ -103,8 +103,8 @@ function mod:OnCombatStart(delay)
 		CVAR1, CVAR2 = GetCVar("nameplateShowFriends ") or 0, GetCVar("nameplateShowFriendlyNPCs") or 0
 		--Check if they were disabled, if disabled, force enable them
 		if (CVAR1 == 0) or (CVAR2 == 0) then
-			SetCvar("nameplateShowFriends", 1)
-			SetCvar("nameplateShowFriendlyNPCs", 1)
+			SetCVar("nameplateShowFriends", 1)
+			SetCVar("nameplateShowFriendlyNPCs", 1)
 		end
 	end
 	if self.Options.InfoFrame then
@@ -118,8 +118,8 @@ function mod:OnCombatEnd()
 		DBM.InfoFrame:Hide()
 	end
 	if (CVAR1 or CVAR2) and not InCombatLockdown() then
-		SetCvar("nameplateShowFriends", CVAR1)
-		SetCvar("nameplateShowFriendlyNPCs", CVAR2)
+		SetCVar("nameplateShowFriends", CVAR1)
+		SetCVar("nameplateShowFriendlyNPCs", CVAR2)
 		CVAR1, CVAR2 = nil, nil
 	end
 end
