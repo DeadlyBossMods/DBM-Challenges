@@ -12,13 +12,12 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237",
-	"SPELL_PERIODIC_DAMAGE 303594",
-	"SPELL_PERIODIC_MISSED 303594",
+	"SPELL_PERIODIC_DAMAGE 303594 313303",
+	"SPELL_PERIODIC_MISSED 303594 313303",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
 	"UNIT_AURA player",
-	"NAME_PLATE_UNIT_ADDED",
-	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
+	"NAME_PLATE_UNIT_ADDED"
 )
 
 --TODO, notable trash or affix warnings
@@ -40,7 +39,7 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
-local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, nil, nil, nil, 1, 2)
+local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, false, nil, 2, 1, 2)--Off by default because it requires messing with users nameplates to work
 --local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
@@ -89,6 +88,7 @@ mod:AddInfoFrameOption(307831, true)
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
+local CVAR1, CVAR2 = nil, nil
 
 function mod:SeismicSlamTarget(targetname, uId)
 	if not targetname then return end
@@ -100,6 +100,15 @@ end
 function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
+	if self.Options.SpecWarn306545dodge then
+		--This warning requires friendly nameplates, because it's only way to detect it.
+		CVAR1, CVAR2 = GetCVar("nameplateShowFriends ") or 0, GetCVar("nameplateShowFriendlyNPCs") or 0
+		--Check if they were disabled, if disabled, force enable them
+		if (CVAR1 == 0) or (CVAR2 == 0) then
+			SetCvar("nameplateShowFriends", 1)
+			SetCvar("nameplateShowFriendlyNPCs", 1)
+		end
+	end
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
@@ -109,6 +118,12 @@ end
 function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
+	end
+	--Check if we changed users nameplate options and restore them
+	if (CVAR1 or CVAR2) and not InCombatLockdown() then
+		SetCvar("nameplateShowFriends", CVAR1)
+		SetCvar("nameplateShowFriendlyNPCs", CVAR2)
+		CVAR1, CVAR2 = nil, nil
 	end
 end
 
@@ -247,7 +262,7 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
-	if spellId == 303594 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
+	if (spellId == 303594 or spellId == 313303) and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
 		specWarnGTFO:Show(spellName)
 		specWarnGTFO:Play("watchfeet")
 	end
@@ -279,9 +294,6 @@ function mod:ENCOUNTER_START(encounterID)
 		else
 			timerSeismicSlamCD:Start(4.6)
 		end
-		--if self.vb.GnshalCleared then
-		--	timerCriesoftheVoidCD:Start(1)
-		--end
 	end
 end
 
@@ -301,15 +313,7 @@ do
 end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and UnitName(unit) == playerName then
-		DBM:Debug("NAME_PLATE_UNIT_ADDED fired with player named Unit")
-		specWarnHauntingShadows:Show()
-		specWarnHauntingShadows:Play("runaway")
-	end
-end
-function mod:FORBIDDEN_NAME_PLATE_UNIT_ADDED(unit)
-	if unit and UnitName(unit) == playerName then
-		DBM:Debug("FORBIDDEN_NAME_PLATE_UNIT_ADDED fired with player named Unit")
+	if unit and UnitName(unit) == playerName and self:AntiSpam(2, 2) then--Throttled because sometimes two spawn at once
 		specWarnHauntingShadows:Show()
 		specWarnHauntingShadows:Play("runaway")
 	end
