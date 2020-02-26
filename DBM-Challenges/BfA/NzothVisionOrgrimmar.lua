@@ -16,7 +16,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_MISSED 303594",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
-	"UNIT_AURA player"
+	"UNIT_AURA player",
+	"NAME_PLATE_UNIT_ADDED",
+	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
 
 --TODO, notable trash or affix warnings
@@ -38,6 +40,7 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
+local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, nil, nil, nil, 1, 2)
 --local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
@@ -78,7 +81,7 @@ local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
 --local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
-local timerDefiledGroundCD		= mod:NewAITimer(21, 306726, nil, nil, nil, 3)
+local timerDefiledGroundCD		= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
 --Both surging fist and Decimator are 9.7 second cds, worth adding?
 
 mod:AddInfoFrameOption(307831, true)
@@ -130,7 +133,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnHopelessness:Play("orbrun")--Technically not quite accurate but closest match to "find orb"
 	elseif spellId == 304251 and self:AntiSpam(4, 1) then--Two boars, 3 second throttle
 		warnVoidQuills:Show()
-	elseif spellId == 306726 then
+	elseif spellId == 306726 or spellId == 306828 then
 		specWarnDefiledGround:Show()
 		specWarnDefiledGround:Play("shockwave")
 		timerDefiledGroundCD:Start()
@@ -169,9 +172,6 @@ function mod:SPELL_CAST_START(args)
 		specWarnSanguineResidue:Play("watchstep")
 	elseif spellId == 305875 then
 		warnVisceralFluid:Show()
-	elseif spellId == 306828 then
-		specWarnDefiledGround:Show()
-		specWarnDefiledGround:Play("shockwave")
 	elseif spellId == 306617 then
 		specWarnRingofChaos:Show()
 		specWarnRingofChaos:Play("watchorb")
@@ -268,12 +268,6 @@ function mod:UNIT_DIED(args)
 	elseif cid == 152874 then--Vez'okk the Lightless
 		timerDefiledGroundCD:Stop()
 		self.vb.VezokkCleared = true
-	--elseif cid == 153244 then--Oblivion Elemental
-
-	--elseif cid == 155098 then--Rexxar
-
-	--elseif cid == 157349 then--Wild Boar
-
 	end
 end
 
@@ -302,6 +296,24 @@ do
 			titanWarned = true
 		elseif not hasTitan and titanWarned then
 			titanWarned = false
+		end
+	end
+end
+
+do
+	local playerName = UnitName("player")
+	function mod:NAME_PLATE_UNIT_ADDED(unit)
+		if unit and UnitName(unit) == playerName then
+			DBM:Debug("NAME_PLATE_UNIT_ADDED fired with player named Unit")
+			specWarnHauntingShadows:Show()
+			specWarnHauntingShadowsPlay("runaway")
+		end
+	end
+	function mod:FORBIDDEN_NAME_PLATE_UNIT_ADDED(unit)
+		if unit and UnitName(unit) == playerName then
+			DBM:Debug("FORBIDDEN_NAME_PLATE_UNIT_ADDED fired with player named Unit")
+			specWarnHauntingShadows:Show()
+			specWarnHauntingShadowsPlay("runaway")
 		end
 	end
 end

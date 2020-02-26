@@ -126,7 +126,6 @@ globals = {
 	"FCFTab_UpdateAlpha",
 	"GameFontHighlight",
 	"GameFontHighlightSmall",
-	"GameFontNormal",
 	"GameFontNormalSmall",
 	"GameTooltip_Hide",
 	"GameTooltip_OnLoad",
