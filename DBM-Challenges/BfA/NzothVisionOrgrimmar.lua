@@ -300,20 +300,17 @@ do
 	end
 end
 
-do
-	local playerName = UnitName("player")
-	function mod:NAME_PLATE_UNIT_ADDED(unit)
-		if unit and UnitName(unit) == playerName then
-			DBM:Debug("NAME_PLATE_UNIT_ADDED fired with player named Unit")
-			specWarnHauntingShadows:Show()
-			specWarnHauntingShadowsPlay("runaway")
-		end
+function mod:NAME_PLATE_UNIT_ADDED(unit)
+	if unit and UnitName(unit) == playerName then
+		DBM:Debug("NAME_PLATE_UNIT_ADDED fired with player named Unit")
+		specWarnHauntingShadows:Show()
+		specWarnHauntingShadows:Play("runaway")
 	end
-	function mod:FORBIDDEN_NAME_PLATE_UNIT_ADDED(unit)
-		if unit and UnitName(unit) == playerName then
-			DBM:Debug("FORBIDDEN_NAME_PLATE_UNIT_ADDED fired with player named Unit")
-			specWarnHauntingShadows:Show()
-			specWarnHauntingShadowsPlay("runaway")
-		end
+end
+function mod:FORBIDDEN_NAME_PLATE_UNIT_ADDED(unit)
+	if unit and UnitName(unit) == playerName then
+		DBM:Debug("FORBIDDEN_NAME_PLATE_UNIT_ADDED fired with player named Unit")
+		specWarnHauntingShadows:Show()
+		specWarnHauntingShadows:Play("runaway")
 	end
 end
