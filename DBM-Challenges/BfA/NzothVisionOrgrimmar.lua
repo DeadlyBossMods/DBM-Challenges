@@ -17,7 +17,8 @@ mod:RegisterEventsInCombat(
 	"UNIT_DIED",
 	"ENCOUNTER_START",
 	"UNIT_AURA player",
-	"NAME_PLATE_UNIT_ADDED"
+	"NAME_PLATE_UNIT_ADDED",
+	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
 
 --TODO, notable trash or affix warnings
@@ -318,3 +319,4 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 		specWarnHauntingShadows:Play("runaway")
 	end
 end
+mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED--Just in case blizzard fixes map restrictions
