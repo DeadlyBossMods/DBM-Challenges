@@ -46,7 +46,6 @@ local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1
 local yellScorchedFeet				= mod:NewYell(315385)
 local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
 local specWarnWaveringWill			= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
---local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)--Not detectable apparently
 --Thrall
 local specWarnSurgingDarkness		= mod:NewSpecialWarningDodge(297822, nil, nil, nil, 2, 2)
 local specWarnSeismicSlam			= mod:NewSpecialWarningDodge(297746, nil, nil, nil, 2, 2)
@@ -57,7 +56,8 @@ local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil
 --Other notable abilities by mini bosses/trash
 local specWarnOrbofAnnihilation		= mod:NewSpecialWarningDodge(299110, nil, nil, nil, 2, 2)
 local specWarnDarkForce				= mod:NewSpecialWarningYou(299055, nil, nil, nil, 1, 2)
-local specWarnVoidTorrent			= mod:NewSpecialWarningSpell(307863, nil, nil, nil, 2, 2)--Can really only be avoided by really fast running away, most can't avoid it
+local specWarnVoidTorrent			= mod:NewSpecialWarningYou(307863, nil, nil, nil, 4, 2)
+local yellVoidTorrent				= mod:NewYell(307863)
 local specWarnSurgingFist			= mod:NewSpecialWarningDodge(300351, nil, nil, nil, 2, 2)
 local specWarnDecimator				= mod:NewSpecialWarningDodge(300412, nil, nil, nil, 2, 2)
 local specWarnDesperateRetching		= mod:NewSpecialWarningYou(304165, nil, nil, nil, 1, 2)
@@ -80,9 +80,10 @@ local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
 local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
---local timerCriesoftheVoidCD		= mod:NewAITimer(21, 304976, nil, nil, nil, 3, nil, DBM_CORE_DAMAGE_ICON)
 local timerDefiledGroundCD		= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
---Both surging fist and Decimator are 9.7 second cds, worth adding?
+--Other notable elite timers
+local timerSurgingFistCD		= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
+local timerDecimatorCD			= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 
@@ -95,6 +96,15 @@ function mod:SeismicSlamTarget(targetname, uId)
 	if not targetname then return end
 	if targetname == UnitName("player") then
 		yellSeismicSlam:Yell()
+	end
+end
+
+function mod:VoidTorrentTarget(targetname, uId)
+	if not targetname then return end
+	if targetname == UnitName("player") then
+		specWarnVoidTorrent:Show()
+		specWarnVoidTorrent:Play("justrun")
+		yellVoidTorrent:Yell()
 	end
 end
 
@@ -164,14 +174,20 @@ function mod:SPELL_CAST_START(args)
 		specWarnOrbofAnnihilation:Show()
 		specWarnOrbofAnnihilation:Play("watchorb")
 	elseif spellId == 307863 then
-		specWarnVoidTorrent:Show()
-		specWarnVoidTorrent:Play("specialsoon")
+		if GetNumGroupMembers() > 1 then
+			self:BossTargetScanner(args.sourceGUID, "VoidTorrentTarget", 0.1, 7)
+		else
+			specWarnVoidTorrent:Show()
+			specWarnVoidTorrent:Play("justrun")
+		end
 	elseif spellId == 300351 then
 		specWarnSurgingFist:Show()
 		specWarnSurgingFist:Play("chargemove")
+		timerSurgingFistCD:Start()
 	elseif spellId == 300388 then
 		specWarnDecimator:Show()
 		specWarnDecimator:Play("watchorb")
+		timerDecimatorCD:Start()
 	elseif spellId == 304101 then
 		specWarnMaddeningRoar:Show()
 		specWarnMaddeningRoar:Play("justrun")
@@ -284,17 +300,23 @@ function mod:UNIT_DIED(args)
 	elseif cid == 152874 then--Vez'okk the Lightless
 		timerDefiledGroundCD:Stop()
 		self.vb.VezokkCleared = true
+	elseif cid == 153943 then
+		timerSurgingFistCD:Stop()
+		timerDecimatorCD:Stop()
 	end
 end
 
 function mod:ENCOUNTER_START(encounterID)
-	if encounterID == 2332 and self:IsInCombat() then
+	if not self:IsInCombat() then return end
+	if encounterID == 2332 then--Thrall
 		timerSurgingDarknessCD:Start(11.1)
 		if self.vb.VezokkCleared then
 			timerDefiledGroundCD:Start(1)
 		else
 			timerSeismicSlamCD:Start(4.6)
 		end
+	elseif encounterID == 2373 then--Vezokk
+		timerDefiledGroundCD:Start(3.4)
 	end
 end
 
