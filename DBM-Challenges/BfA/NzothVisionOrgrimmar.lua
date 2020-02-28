@@ -40,7 +40,7 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
-local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, false, nil, 2, 1, 2)--Off by default because it requires messing with users nameplates to work
+local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, nil, nil, 3, 1, 2)
 --local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
