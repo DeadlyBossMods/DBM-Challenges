@@ -14,6 +14,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 297237",
 	"SPELL_PERIODIC_DAMAGE 303594 313303",
 	"SPELL_PERIODIC_MISSED 303594 313303",
+	"SPELL_INTERRUPT",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
 	"UNIT_AURA player",
@@ -86,6 +87,8 @@ local timerSurgingFistCD		= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
 local timerDecimatorCD			= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
+mod:AddNamePlateOption("NPAuraOnHaunting", 306545)
+mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
 
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
@@ -111,7 +114,7 @@ end
 function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
-	if self.Options.SpecWarn306545dodge then
+	if self.Options.SpecWarn306545dodge3 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
 		CVAR1, CVAR2 = GetCVar("nameplateShowFriends ") or 0, GetCVar("nameplateShowFriendlyNPCs") or 0
 		--Check if they were disabled, if disabled, force enable them
@@ -119,6 +122,13 @@ function mod:OnCombatStart(delay)
 			SetCVar("nameplateShowFriends", 1)
 			SetCVar("nameplateShowFriendlyNPCs", 1)
 		end
+		--Making this option rely on another option is kind of required because this won't work without nameplateShowFriendlyNPCs
+		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting then
+			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
+		end
+	end
+	if self.Options.NPAuraOnAbyss then
+		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
@@ -135,6 +145,9 @@ function mod:OnCombatEnd()
 		SetCVar("nameplateShowFriends", CVAR1)
 		SetCVar("nameplateShowFriendlyNPCs", CVAR2)
 		CVAR1, CVAR2 = nil, nil
+	end
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting then
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss, not DBM:HasMapRestrictions())--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 end
 
@@ -223,6 +236,9 @@ function mod:SPELL_CAST_START(args)
 		else
 			warnTouchoftheAbyss:Show()
 		end
+		if self.Options.NPAuraOnAbyss then
+			DBM.Nameplate:Show(true, args.sourceGUID, 298033, nil, 7)
+		end
 	elseif spellId == 298630 and self:AntiSpam(3, 3) then
 		specWarnShockwave:Show()
 		specWarnShockwave:Play("shockwave")
@@ -286,6 +302,14 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spell
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
+function mod:SPELL_INTERRUPT(args)
+	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
+		if self.Options.NPAuraOnAbyss then
+			DBM.Nameplate:Hide(true, args.destGUID, 298033)
+		end
+	end
+end
+
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 152089 then--Thrall
@@ -303,6 +327,10 @@ function mod:UNIT_DIED(args)
 	elseif cid == 153943 then
 		timerSurgingFistCD:Stop()
 		timerDecimatorCD:Stop()
+	elseif cid == 153401 then--K'thir Dominator
+		if self.Options.NPAuraOnAbyss then
+			DBM.Nameplate:Hide(true, args.destGUID, 298033)
+		end
 	end
 end
 
@@ -336,9 +364,16 @@ do
 end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and UnitName(unit) == playerName and self:AntiSpam(2, 2) then--Throttled because sometimes two spawn at once
-		specWarnHauntingShadows:Show()
-		specWarnHauntingShadows:Play("runaway")
+	if unit and UnitName(unit) == playerName then--Throttled because sometimes two spawn at once
+		if self:AntiSpam(2, 2) then
+			specWarnHauntingShadows:Show()
+			specWarnHauntingShadows:Play("runaway")
+		end
+		local guid = UnitGUID(unit)
+		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting and guid then
+			DBM.Nameplate:Show(true, guid, 306545, nil, 5)
+		end
 	end
 end
 mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED--Just in case blizzard fixes map restrictions
+
