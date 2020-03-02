@@ -359,7 +359,7 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 		end
 		local guid = UnitGUID(unit)
 		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting and guid then
-			DBM.Nameplate:Show(true, guid, 306545, nil, 5)
+			DBM.Nameplate:Show(true, guid, 306545, 1029718, 5)
 		end
 	end
 end
