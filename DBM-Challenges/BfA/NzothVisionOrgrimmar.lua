@@ -25,7 +25,6 @@ mod:RegisterEventsInCombat(
 --TODO, notable trash or affix warnings
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
---TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
 local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
 local warnScorchedFeet				= mod:NewSpellAnnounce(315385, 4)
 --Extra Abilities (used by main boss and the area LTs)
@@ -34,7 +33,6 @@ local warnVoidQuills				= mod:NewCastAnnounce(304251, 3)
 --Other notable abilities by mini bosses/trash
 local warnDarkForce					= mod:NewTargetNoFilterAnnounce(299055, 3)
 local warnExplosiveLeap				= mod:NewCastAnnounce(306001, 3)
-local warnVisceralFluid				= mod:NewCastAnnounce(305875, 3)
 local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
 local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 
@@ -74,6 +72,7 @@ local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInter
 local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
 local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
+local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil, 2, 2)
 
 --General
 local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
@@ -208,7 +207,8 @@ function mod:SPELL_CAST_START(args)
 		specWarnStampedingCorruption:Show()
 		specWarnStampedingCorruption:Play("watchstep")
 	elseif spellId == 306001 then
-		warnExplosiveLeap:Show()
+		specWarnVisceralFluid:Show()
+		specWarnVisceralFluid:Play("watchstep")
 	elseif spellId == 306199 then
 		specWarnHowlinginPain:Show()
 		specWarnHowlinginPain:Play("stopcast")
