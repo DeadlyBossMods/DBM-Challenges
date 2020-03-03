@@ -49,7 +49,6 @@ local specWarnScorchedFeet		= mod:NewSpecialWarningYou(315385, false, nil, 2, 1,
 local yellScorchedFeet			= mod:NewYell(315385)
 local specWarnSplitPersonality	= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
 local specWarnWaveringWill		= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
---local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(310173, nil, nil, nil, 2, 2)--Not detectable apparently
 --Alleria Windrunner
 local specWarnDarkenedSky		= mod:NewSpecialWarningDodge(308278, nil, nil, nil, 2, 2)
 local specWarnVoidEruption		= mod:NewSpecialWarningMoveTo(309819, nil, nil, nil, 3, 2)
@@ -217,9 +216,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 309035 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnEntropicMissiles:Show(args.sourceName)
 		specWarnEntropicMissiles:Play("kickcast")
-	--elseif spellId == 310173 then
-	--	specWarnHauntingShadows:Show()
-	--	specWarnHauntingShadows:Play("watchstep")
 	end
 end
 
@@ -354,7 +350,7 @@ do
 end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and UnitName(unit) == playerName then--Throttled because sometimes two spawn at once
+	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then--Throttled because sometimes two spawn at once
 		if self:AntiSpam(2, 2) then
 			specWarnHauntingShadows:Show()
 			specWarnHauntingShadows:Play("runaway")

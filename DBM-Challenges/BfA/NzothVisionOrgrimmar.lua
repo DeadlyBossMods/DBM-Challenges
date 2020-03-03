@@ -367,7 +367,7 @@ do
 end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and UnitName(unit) == playerName then--Throttled because sometimes two spawn at once
+	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then--Throttled because sometimes two spawn at once
 		if self:AntiSpam(2, 2) then
 			specWarnHauntingShadows:Show()
 			specWarnHauntingShadows:Play("runaway")
