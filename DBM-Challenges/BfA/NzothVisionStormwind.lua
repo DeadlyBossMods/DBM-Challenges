@@ -104,7 +104,7 @@ function mod:OnCombatStart(delay)
 	self.vb.UmbricCleared = false
 	if self.Options.SpecWarn306545dodge3 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
-		CVAR1, CVAR2 = GetCVar("nameplateShowFriends") or 0, GetCVar("nameplateShowFriendlyNPCs") or 0
+		CVAR1, CVAR2 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0)
 		--Check if they were disabled, if disabled, force enable them
 		if (CVAR1 == 0) or (CVAR2 == 0) then
 			SetCVar("nameplateShowFriends", 1)
