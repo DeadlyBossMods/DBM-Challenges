@@ -101,6 +101,21 @@ mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
 local CVAR1, CVAR2 = nil, nil
 
+--If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
+local function DelayedNameplateFix(self)
+	--Check if we changed users nameplate options and restore them
+	if (CVAR1 or CVAR2) then
+		if InCombatLockdown() then
+			--In combat, delay nameplate fix
+			self:Schedule(2, DelayedNameplateFix, self)
+		else
+			SetCVar("nameplateShowFriends", CVAR1)
+			SetCVar("nameplateShowFriendlyNPCs", CVAR2)
+			CVAR1, CVAR2 = nil, nil
+		end
+	end
+end
+
 function mod:SeismicSlamTarget(targetname, uId)
 	if not targetname then return end
 	if targetname == UnitName("player") then
@@ -150,10 +165,15 @@ function mod:OnCombatEnd()
 		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 	--Check if we changed users nameplate options and restore them
-	if (CVAR1 or CVAR2) and not InCombatLockdown() then
-		SetCVar("nameplateShowFriends", CVAR1)
-		SetCVar("nameplateShowFriendlyNPCs", CVAR2)
-		CVAR1, CVAR2 = nil, nil
+	if (CVAR1 or CVAR2) then
+		if InCombatLockdown() then
+			--In combat, delay nameplate fix
+			self:Schedule(6, DelayedNameplateFix, self)
+		else
+			SetCVar("nameplateShowFriends", CVAR1)
+			SetCVar("nameplateShowFriendlyNPCs", CVAR2)
+			CVAR1, CVAR2 = nil, nil
+		end
 	end
 end
 
