@@ -270,6 +270,9 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
+		if not args.destGUID then
+			DBM:Debug("args.destGUID is broken", 2)
+		end
 		DBM:Debug("SPELL_INTERRUPT for Abyss for unit: " .. args.destGUID, 2)
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
