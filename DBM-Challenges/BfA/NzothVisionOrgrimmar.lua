@@ -8,7 +8,7 @@ mod.onlyNormal = true
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236",
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237",
@@ -17,6 +17,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_INTERRUPT",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
+	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
@@ -41,7 +42,6 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
 local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, nil, nil, 3, 1, 2)
---local specWarnDarkDelusions			= mod:NewSpecialWarningRun(306955, nil, nil, nil, 4, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
 local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
@@ -72,8 +72,11 @@ local specWarnHorrifyingShout		= mod:NewSpecialWarningInterrupt(305378, "HasInte
 local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInterrupt", nil, nil, 1, 2)
 local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
 local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrupt", nil, nil, 1, 2)
+local specWarnVoidBuffet			= mod:NewSpecialWarningInterrupt(297315, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
 local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil, 2, 2)
+local specWarnToxicBreath			= mod:NewSpecialWarningDodge(298502, nil, nil, nil, 2, 2)
+local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 2, 2)
 
 --General
 local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
@@ -85,11 +88,14 @@ local timerDefiledGroundCD		= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
 --Other notable elite timers
 local timerSurgingFistCD		= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
 local timerDecimatorCD			= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
+local timerToxicBreathCD		= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
+local timerToxicVolleyCD		= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting", 306545)
 mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
 
+--AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
@@ -140,26 +146,30 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting then
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
+	end
 	--Check if we changed users nameplate options and restore them
 	if (CVAR1 or CVAR2) and not InCombatLockdown() then
 		SetCVar("nameplateShowFriends", CVAR1)
 		SetCVar("nameplateShowFriendlyNPCs", CVAR2)
 		CVAR1, CVAR2 = nil, nil
 	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting then
-		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss, not DBM:HasMapRestrictions())--isGUID, unit, spellId, texture, force, isHostile, isFriendly
-	end
 end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 297822 then
-		specWarnSurgingDarkness:Show()
-		specWarnSurgingDarkness:Play("watchstep")
+		if self:AntiSpam(2, 2) then
+			specWarnSurgingDarkness:Show()
+			specWarnSurgingDarkness:Play("watchstep")
+		end
 		timerSurgingDarknessCD:Start()
 	elseif spellId == 297746 then
-		specWarnSeismicSlam:Show()
-		specWarnSeismicSlam:Play("shockwave")
+		if self:AntiSpam(3, 3) then
+			specWarnSeismicSlam:Show()
+			specWarnSeismicSlam:Play("shockwave")
+		end
 		timerSeismicSlamCD:Start()
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.1, 7)
@@ -170,11 +180,13 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 297574 then
 		specWarnHopelessness:Show(DBM_CORE_ORB)
 		specWarnHopelessness:Play("orbrun")--Technically not quite accurate but closest match to "find orb"
-	elseif spellId == 304251 and self:AntiSpam(4, 1) then--Two boars, 3 second throttle
+	elseif spellId == 304251 and self:AntiSpam(3.5, 1) then--1-4 boars, 3.5 second throttle
 		warnVoidQuills:Show()
 	elseif spellId == 306726 or spellId == 306828 then
-		specWarnDefiledGround:Show()
-		specWarnDefiledGround:Play("shockwave")
+		if self:AntiSpam(3, 3) then
+			specWarnDefiledGround:Show()
+			specWarnDefiledGround:Play("shockwave")
+		end
 		timerDefiledGroundCD:Start()
 	elseif spellId == 299055 then
 		if args:IsPlayer() then
@@ -183,9 +195,9 @@ function mod:SPELL_CAST_START(args)
 		else
 			warnDarkForce:Show(args.destName)
 		end
-	elseif spellId == 299110 then
+	elseif spellId == 299110 and self:AntiSpam(2, 2) then
 		specWarnOrbofAnnihilation:Show()
-		specWarnOrbofAnnihilation:Play("watchorb")
+		specWarnOrbofAnnihilation:Play("watchstep")
 	elseif spellId == 307863 then
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "VoidTorrentTarget", 0.1, 7)
@@ -204,7 +216,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 304101 then
 		specWarnMaddeningRoar:Show()
 		specWarnMaddeningRoar:Play("justrun")
-	elseif spellId == 304282 then
+	elseif spellId == 304282 and self:AntiSpam(2, 2) then
 		specWarnStampedingCorruption:Show()
 		specWarnStampedingCorruption:Play("watchstep")
 	elseif spellId == 306001 then
@@ -215,7 +227,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 303589 and self:AntiSpam(2, 2) then
 		specWarnSanguineResidue:Show()
 		specWarnSanguineResidue:Play("watchstep")
-	elseif spellId == 305875 then
+	elseif spellId == 305875 and self:AntiSpam(2, 2) then
 		specWarnVisceralFluid:Show()
 		specWarnVisceralFluid:Play("watchstep")
 	elseif spellId == 306617 then
@@ -243,6 +255,21 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 298630 and self:AntiSpam(3, 3) then
 		specWarnShockwave:Show()
 		specWarnShockwave:Play("shockwave")
+	elseif spellId == 304169 then
+		if self:AntiSpam(2, 2) then
+			specWarnToxicVolley:Show()
+			specWarnToxicVolley:Play("watchstep")
+		end
+		timerToxicVolleyCD:Start()
+	elseif spellId == 298502 then
+		if self:AntiSpam(3, 3) then
+			specWarnToxicBreath:Show()
+			specWarnToxicBreath:Play("shockwave")
+		end
+		timerToxicBreathCD:Start()
+	elseif spellId == 297315 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnVoidBuffet:Show(args.sourceName)
+		specWarnVoidBuffet:Play("kickcast")
 	end
 end
 
@@ -261,9 +288,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnEntomophobia:Show()
 			specWarnEntomophobia:Play("keepjump")
 		end
---	elseif spellId == 306955 and args:IsPlayer() then
---		specWarnDarkDelusions:Show()
---		specWarnDarkDelusions:Play("justrun")
 	elseif spellId == 315385 and args:IsPlayer() then
 		if self.Options.SpecWarn315385you then
 			specWarnScorchedFeet:Show()
@@ -296,7 +320,7 @@ end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
-	if (spellId == 303594 or spellId == 313303) and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
+	if (spellId == 303594 or spellId == 313303) and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnGTFO:Show(spellName)
 		specWarnGTFO:Play("watchfeet")
 	end
@@ -305,13 +329,8 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
-		if not args.destGUID then
-			DBM:Debug("args.destGUID is broken", 2)
-		end
-		DBM:Debug("SPELL_INTERRUPT for Abyss for unit: " .. args.destGUID, 2)
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
-			DBM:Debug("NPAuraOnAbyss Hide Call Sent to Nameplate:Hide", 2)
 		end
 	end
 end
@@ -337,6 +356,9 @@ function mod:UNIT_DIED(args)
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
 		end
+	elseif cid == 153532 then--Big Bug Guy
+		timerToxicVolleyCD:Stop()
+		timerToxicBreathCD:Stop()
 	end
 end
 
@@ -351,6 +373,15 @@ function mod:ENCOUNTER_START(encounterID)
 		end
 	elseif encounterID == 2373 then--Vezokk
 		timerDefiledGroundCD:Start(3.4)
+	end
+end
+
+function mod:UNIT_SPELLCAST_INTERRUPTED_UNFILTERED(uId, _, spellId)
+	if spellId == 298033 then
+		if self.Options.NPAuraOnAbyss then
+			local guid = UnitGUID(uId)
+			DBM.Nameplate:Hide(true, guid, 298033)
+		end
 	end
 end
 
@@ -371,7 +402,7 @@ end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then--Throttled because sometimes two spawn at once
-		if self:AntiSpam(2, 2) then
+		if self:AntiSpam(2, 4) then
 			specWarnHauntingShadows:Show()
 			specWarnHauntingShadows:Play("runaway")
 		end

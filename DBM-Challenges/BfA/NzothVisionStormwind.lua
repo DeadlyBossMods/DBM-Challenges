@@ -8,16 +8,18 @@ mod.onlyNormal = true
 mod:RegisterCombat("scenario", 2213)--2212, 2213 (org, stormwind)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399",
-	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265",
+	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998",
+	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265 308998",
 	"SPELL_AURA_APPLIED_DOSE 311390",
+	"SPELL_AURA_REMOVED 308998",
 	"SPELL_CAST_SUCCESS 309035",
 	"SPELL_PERIODIC_DAMAGE 312121 296674 308807 313303",
 	"SPELL_PERIODIC_MISSED 312121 296674 308807 313303",
 	"SPELL_INTERRUPT",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
-	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
+	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
@@ -38,6 +40,7 @@ local warnSummonEyeofChaos		= mod:NewSpellAnnounce(308681, 2)
 --Other notable abilities by mini bosses/trash
 local warnEntropicLeap			= mod:NewCastAnnounce(308406, 3)
 local warnConvert				= mod:NewTargetNoFilterAnnounce(308380, 3)
+local warnImprovedMorale			= mod:NewTargetNoFilterAnnounce(308998, 3)
 local warnTouchoftheAbyss		= mod:NewCastAnnounce(298033, 4)
 local warnBrutalSmash			= mod:NewCastAnnounce(309882, 3)
 
@@ -64,6 +67,8 @@ local specWarnMentalAssault		= mod:NewSpecialWarningInterrupt(296537, "HasInterr
 local specWarnShadowShift		= mod:NewSpecialWarningInterrupt(308575, "HasInterrupt", nil, nil, 1, 2)
 local specWarnTouchoftheAbyss	= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
 local specWarnPsychicScream		= mod:NewSpecialWarningInterrupt(308375, "HasInterrupt", nil, nil, 1, 2)
+local specWarnImproveMorale		= mod:NewSpecialWarningInterrupt(308998, "HasInterrupt", nil, nil, 1, 2)
+local specWarnVoidBuffet		= mod:NewSpecialWarningInterrupt(297315, "HasInterrupt", nil, nil, 1, 2)
 local specWarnBladeFlourish		= mod:NewSpecialWarningRun(311399, nil, nil, nil, 4, 2)
 local specWarnRoaringBlast		= mod:NewSpecialWarningDodge(311456, nil, nil, nil, 2, 2)
 local specWarnChaosBreath		= mod:NewSpecialWarningDodge(296911, nil, nil, nil, 2, 2)
@@ -81,11 +86,11 @@ local timerVoidEruptionCD		= mod:NewCDTimer(27.9, 309819, nil, nil, nil, 2)
 --Extra Abilities (used by Alleria and the area LTs)
 --local timerTaintedPolymorphCD	= mod:NewAITimer(21, 309648, nil, nil, nil, 3, nil, DBM_CORE_MAGIC_ICON)
 --local timerExplosiveOrdnanceCD	= mod:NewCDTimer(20.7, 305672, nil, nil, nil, 3)--20-25 (on alleria anyways, forgot to log other guy)
---local timerChainsofServitudeCD	= mod:NewCDTimer(32.9, 298691, nil, nil, nil, 2)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting", 306545)
 mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
+mod:AddNamePlateOption("NPAuraOnMorale", 308998)
 
 --Antispam 1: Boss throttles, 2: GTFOs, 3: Dodge stuff on ground. 4: Face Away/special action. 5: Dodge Shockwaves
 
@@ -114,7 +119,7 @@ function mod:OnCombatStart(delay)
 			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
 		end
 	end
-	if self.Options.NPAuraOnAbyss then
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale then
 		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
 	if self.Options.InfoFrame then
@@ -127,13 +132,14 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting or self.Options.NPAuraOnMorale then
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
+	end
+	--Check if we changed users nameplate options and restore them
 	if (CVAR1 or CVAR2) and not InCombatLockdown() then
 		SetCVar("nameplateShowFriends", CVAR1)
 		SetCVar("nameplateShowFriendlyNPCs", CVAR2)
 		CVAR1, CVAR2 = nil, nil
-	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting then
-		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss, not DBM:HasMapRestrictions())--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 end
 
@@ -158,8 +164,6 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 298691 then
 		specWarnChainsofServitude:Show()
 		specWarnChainsofServitude:Play("justrun")
-		--local cid = args:GetSrcCreatureID()
-		--timerChainsofServitudeCD:Start(cid == 152718 and 32.9 or 20.8)
 	elseif spellId == 308669 and self:AntiSpam(5, 4) then
 		specWarnDarkGaze:Show(args.sourceName)
 		specWarnDarkGaze:Play("turnaway")
@@ -175,6 +179,12 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 308375 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnPsychicScream:Show(args.sourceName)
 		specWarnPsychicScream:Play("kickcast")
+	elseif spellId == 297315 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnVoidBuffet:Show(args.sourceName)
+		specWarnVoidBuffet:Play("kickcast")
+	elseif spellId == 308998 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnImproveMorale:Show(args.sourceName)
+		specWarnImproveMorale:Play("kickcast")
 	elseif spellId == 298033 then
 		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
 			specWarnTouchoftheAbyss:Show(args.sourceName)
@@ -227,9 +237,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnEntomophobia:Show()
 			specWarnEntomophobia:Play("keepjump")
 		end
---	elseif spellId == 306955 and args:IsPlayer() then
---		specWarnDarkDelusions:Show()
---		specWarnDarkDelusions:Play("justrun")
 	elseif spellId == 315385 and args:IsPlayer() then
 		if self.Options.SpecWarn315385you then
 			specWarnScorchedFeet:Show()
@@ -256,9 +263,23 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnCorruptedBlight:Show(args.destName)
 			specWarnCorruptedBlight:Play("helpdispel")
 		end
+	elseif spellId == 308998 then
+		warnImprovedMorale:CombinedShow(0.5, args.destName)
+		if self.Options.NPAuraOnMorale then
+			DBM.Nameplate:Show(true, args.destGUID, spellId, nil, 12)
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+
+function mod:SPELL_AURA_REMOVED(args)
+	local spellId = args.spellId
+	if spellId == 308998 then
+		if self.Options.NPAuraOnMorale then
+			DBM.Nameplate:Hide(true, args.destGUID, spellId)
+		end
+	end
+end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
 	if (spellId == 296674 or spellId == 312121 or spellId == 308807 or spellId == 313303) and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
@@ -270,13 +291,8 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
-		if not args.destGUID then
-			DBM:Debug("args.destGUID is broken", 2)
-		end
-		DBM:Debug("SPELL_INTERRUPT for Abyss for unit: " .. args.destGUID, 2)
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
-			DBM:Debug("NPAuraOnAbyss Hide Call Sent to Nameplate:Hide", 2)
 		end
 	end
 end
@@ -288,13 +304,11 @@ function mod:UNIT_DIED(args)
 		timerVoidEruptionCD:Stop()
 		--timerTaintedPolymorphCD:Stop()
 		--timerExplosiveOrdnanceCD:Stop()
-		--timerChainsofServitudeCD:Stop()
 		DBM:EndCombat(self)
 	elseif cid == 156577 then--Therum Deepforge
 		--timerExplosiveOrdnanceCD:Stop()
 		self.vb.TherumCleared = true
 	elseif cid == 153541 then--slavemaster-ulrok
-		--timerChainsofServitudeCD:Stop()
 		self.vb.UlrokCleared = true
 	elseif cid == 158157 then--Overlord Mathias Shaw
 		self.vb.ShawCleared = true
@@ -316,7 +330,7 @@ function mod:ENCOUNTER_START(encounterID)
 			--timerExplosiveOrdnanceCD:Start(9.7)
 		--end
 		--if self.vb.UlrokCleared then
-		--	timerChainsofServitudeCD:Start(11)
+
 		--end
 		--if self.vb.UmbricCleared then
 		--	timerTaintedPolymorphCD:Start(27.9)
@@ -325,7 +339,7 @@ function mod:ENCOUNTER_START(encounterID)
 end
 
 --None of these boss abilities are in combat log
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 	if (spellId == 305708 or spellId == 312260) and self:AntiSpam(2, 1) then
 		self:SendSync("ExplosiveOrd")
 	elseif spellId == 309035 and self:AntiSpam(2, 1) then
@@ -334,6 +348,15 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		self:SendSync("SeekandDestroy")
 	elseif spellId == 308681 and self:AntiSpam(2, 1) then
 		self:SendSync("SummonEye")
+	end
+end
+
+function mod:UNIT_SPELLCAST_INTERRUPTED_UNFILTERED(uId, _, spellId)
+	if spellId == 298033 then
+		if self.Options.NPAuraOnAbyss then
+			local guid = UnitGUID(uId)
+			DBM.Nameplate:Hide(true, guid, 298033)
+		end
 	end
 end
 
