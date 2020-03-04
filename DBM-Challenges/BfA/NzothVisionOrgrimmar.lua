@@ -41,7 +41,7 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
-local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, nil, nil, 3, 1, 2)
+local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, false, nil, 4, 1, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
 local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
@@ -92,7 +92,7 @@ local timerToxicBreathCD		= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
 local timerToxicVolleyCD		= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
-mod:AddNamePlateOption("NPAuraOnHaunting", 306545)
+mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
 mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
 
 --AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs
@@ -136,7 +136,8 @@ end
 function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
-	if self.Options.SpecWarn306545dodge3 then
+	CVAR1, CVAR2, CVAR3 = nil, nil, nil
+	if self.Options.SpecWarn306545dodge4 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
 		CVAR1, CVAR2, CVAR3 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0), tonumber(GetCVar("nameplateShowOnlyNames") or 0)
 		--Check if they were disabled, if disabled, force enable them
@@ -146,7 +147,7 @@ function mod:OnCombatStart(delay)
 			SetCVar("nameplateShowOnlyNames", 1)
 		end
 		--Making this option rely on another option is kind of required because this won't work without nameplateShowFriendlyNPCs
-		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting then
+		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 then
 			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
 		end
 	end
@@ -163,7 +164,7 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting then
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting2 then
 		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 	--Check if we changed users nameplate options and restore them
@@ -430,7 +431,7 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 			specWarnHauntingShadows:Play("runaway")
 		end
 		local guid = UnitGUID(unit)
-		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting and guid then
+		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 and guid then
 			DBM.Nameplate:Show(true, guid, 306545, 1029718, 5)
 		end
 	end
