@@ -107,7 +107,7 @@ local function DelayedNameplateFix()
 	if (CVAR1 or CVAR2) then
 		if InCombatLockdown() then
 			--In combat, delay nameplate fix
-			DBM:Schedule(2, DelayedNameplateFix, self)
+			DBM:Schedule(2, DelayedNameplateFix)
 		else
 			SetCVar("nameplateShowFriends", CVAR1)
 			SetCVar("nameplateShowFriendlyNPCs", CVAR2)
