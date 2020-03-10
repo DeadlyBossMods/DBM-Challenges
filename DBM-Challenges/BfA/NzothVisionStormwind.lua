@@ -406,10 +406,12 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then--Throttled because sometimes two spawn at once
 		local guid = UnitGUID(unit)
 		if not guid then return end
-		if not warnedGUIDs[guid] and self:AntiSpam(2, 4) then
+		if not warnedGUIDs[guid] then
 			warnedGUIDs[guid] = true
-			specWarnHauntingShadows:Show()
-			specWarnHauntingShadows:Play("runaway")
+			if self:AntiSpam(2, 4) then
+				specWarnHauntingShadows:Show()
+				specWarnHauntingShadows:Play("runaway")
+			end
 		end
 		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 then
 			DBM.Nameplate:Show(true, guid, 306545, 1029718, 5)
