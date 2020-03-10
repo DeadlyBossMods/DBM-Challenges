@@ -11,7 +11,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 297237",
+	"SPELL_AURA_REMOVED 298033",
+	"SPELL_CAST_SUCCESS 297237 305378",
 	"SPELL_PERIODIC_DAMAGE 303594 313303",
 	"SPELL_PERIODIC_MISSED 303594 313303",
 	"SPELL_INTERRUPT",
@@ -23,7 +24,6 @@ mod:RegisterEventsInCombat(
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
 
---TODO, notable trash or affix warnings
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
@@ -36,7 +36,9 @@ local warnVoidQuills				= mod:NewCastAnnounce(304251, 3)
 local warnDarkForce					= mod:NewTargetNoFilterAnnounce(299055, 3)
 local warnExplosiveLeap				= mod:NewCastAnnounce(306001, 3)
 local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
+local warnHorrifyingShout			= mod:NewCastAnnounce(305378, 4)
 local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
+local warnToxicBreath				= mod:NewSpellAnnounce(298502, 2)
 
 --General (GTFOs and Affixes)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
@@ -50,6 +52,7 @@ local specWarnWaveringWill			= mod:NewSpecialWarningReflect(311641, "false", nil
 local specWarnSurgingDarkness		= mod:NewSpecialWarningDodge(297822, nil, nil, nil, 2, 2)
 local specWarnSeismicSlam			= mod:NewSpecialWarningDodge(297746, nil, nil, nil, 2, 2)
 local yellSeismicSlam				= mod:NewYell(297746)
+local yellDefiledGround				= mod:NewYell(306726)
 --Extra Abilities (used by Thrall and the area LTs)
 local specWarnHopelessness			= mod:NewSpecialWarningMoveTo(297574, nil, nil, nil, 1, 2)
 local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil, 2, 2)--Can this be dodged?
@@ -75,7 +78,6 @@ local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrup
 local specWarnVoidBuffet			= mod:NewSpecialWarningInterrupt(297315, "HasInterrupt", nil, nil, 1, 2)
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
 local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil, 2, 2)
-local specWarnToxicBreath			= mod:NewSpecialWarningDodge(298502, nil, nil, nil, 2, 2)
 local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 2, 2)
 
 --General
@@ -94,6 +96,7 @@ local timerToxicVolleyCD		= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
 mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
+mod:AddNamePlateOption("NPAuraOnHorrifyingShout", 305378)
 
 --AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs
 local playerName = UnitName("player")
@@ -115,6 +118,13 @@ local function DelayedNameplateFix()
 			SetCVar("nameplateShowOnlyNames", CVAR3)
 			CVAR1, CVAR2, CVAR3 = nil, nil, nil
 		end
+	end
+end
+
+function mod:DefiledGroundTarget(targetname, uId)
+	if not targetname then return end
+	if targetname == UnitName("player") then
+		yellDefiledGround:Yell()
 	end
 end
 
@@ -215,6 +225,9 @@ function mod:SPELL_CAST_START(args)
 			specWarnDefiledGround:Play("shockwave")
 		end
 		timerDefiledGroundCD:Start()
+		if GetNumGroupMembers() > 1 then
+			self:BossTargetScanner(args.sourceGUID, "DefiledGroundTarget", 0.1, 7)
+		end
 	elseif spellId == 299055 then
 		if args:IsPlayer() then
 			specWarnDarkForce:Show()
@@ -263,9 +276,16 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 296537 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnMentalAssault:Show(args.sourceName)
 		specWarnMentalAssault:Play("kickcast")
-	elseif spellId == 305378 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
-		specWarnHorrifyingShout:Show(args.sourceName)
-		specWarnHorrifyingShout:Play("kickcast")
+	elseif spellId == 305378 then
+		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
+			specWarnHorrifyingShout:Show(args.sourceName)
+			specWarnHorrifyingShout:Play("kickcast")
+		else
+			warnHorrifyingShout:Show()
+		end
+		if self.Options.NPAuraOnHorrifyingShout then
+			DBM.Nameplate:Show(true, args.sourceGUID, 305378, nil, 2.5)
+		end
 	elseif spellId == 305236 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnVenomBolt:Show(args.sourceName)
 		specWarnVenomBolt:Play("kickcast")
@@ -290,10 +310,12 @@ function mod:SPELL_CAST_START(args)
 		timerToxicVolleyCD:Start()
 	elseif spellId == 298502 then
 		if self:AntiSpam(3, 3) then
-			specWarnToxicBreath:Show()
-			specWarnToxicBreath:Play("shockwave")
+			warnToxicBreath:Show()
 		end
-		timerToxicBreathCD:Start()
+		local cid = self:GetCIDFromGUID(args.sourceGUID)
+		if cid == 153532 then
+			timerToxicBreathCD:Start()
+		end
 	elseif spellId == 297315 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnVoidBuffet:Show(args.sourceName)
 		specWarnVoidBuffet:Play("kickcast")
@@ -304,6 +326,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 297237 then
 		warnEndlessHungerTotem:Show()
+	elseif spellId == 305378 then
+		if self.Options.NPAuraOnHorrifyingShout then
+			DBM.Nameplate:Hide(true, args.sourceGUID, 305378)
+		end
 	end
 end
 
@@ -346,6 +372,15 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
+function mod:SPELL_AURA_REMOVED(args)
+	local spellId = args.spellId
+	if spellId == 298033 then
+		if self.Options.NPAuraOnAbyss then
+			DBM.Nameplate:Hide(true, args.sourceGUID, 298033)
+		end
+	end
+end
+
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
 	if (spellId == 303594 or spellId == 313303) and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnGTFO:Show(spellName)
@@ -358,6 +393,10 @@ function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
+		end
+	elseif type(args.extraSpellId) == "number" and args.extraSpellId == 305378 then
+		if self.Options.NPAuraOnHorrifyingShout then
+			DBM.Nameplate:Hide(true, args.destGUID, 305378)
 		end
 	end
 end
@@ -408,6 +447,11 @@ function mod:UNIT_SPELLCAST_INTERRUPTED_UNFILTERED(uId, _, spellId)
 		if self.Options.NPAuraOnAbyss then
 			local guid = UnitGUID(uId)
 			DBM.Nameplate:Hide(true, guid, 298033)
+		end
+	elseif spellId == 305378 then
+		if self.Options.NPAuraOnHorrifyingShout then
+			local guid = UnitGUID(uId)
+			DBM.Nameplate:Hide(true, guid, 305378)
 		end
 	end
 end

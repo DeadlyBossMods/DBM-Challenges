@@ -11,7 +11,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998",
 	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265 308998",
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_AURA_REMOVED 308998",
+	"SPELL_AURA_REMOVED 308998 298033",
 	"SPELL_CAST_SUCCESS 309035",
 	"SPELL_PERIODIC_DAMAGE 312121 296674 308807 313303",
 	"SPELL_PERIODIC_MISSED 312121 296674 308807 313303",
@@ -25,7 +25,6 @@ mod:RegisterEventsInCombat(
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
 
---TODO, notable trash or affix warnings
 --TODO, maybe add https://ptr.wowhead.com/spell=292021/madness-leaden-foot#see-also-other affix? just depends on warning to stop moving can be counter to a stacked affix
 --TODO, see if target scanning will work on Entropic Leap
 --General
@@ -304,6 +303,10 @@ function mod:SPELL_AURA_REMOVED(args)
 	if spellId == 308998 then
 		if self.Options.NPAuraOnMorale then
 			DBM.Nameplate:Hide(true, args.destGUID, spellId)
+		end
+	elseif spellId == 298033 then
+		if self.Options.NPAuraOnAbyss then
+			DBM.Nameplate:Hide(true, args.sourceGUID, 298033)
 		end
 	end
 end
