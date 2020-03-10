@@ -100,6 +100,7 @@ local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
 local CVAR1, CVAR2, CVAR3 = nil, nil, nil
+local warnedGUIDs = {}
 
 --If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
 local function DelayedNameplateFix()
@@ -137,6 +138,7 @@ function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
 	CVAR1, CVAR2, CVAR3 = nil, nil, nil
+	table.wipe(warnedGUIDs)
 	if self.Options.SpecWarn306545dodge4 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
 		CVAR1, CVAR2, CVAR3 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0), tonumber(GetCVar("nameplateShowOnlyNames") or 0)
@@ -161,6 +163,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:OnCombatEnd()
+	table.wipe(warnedGUIDs)
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
@@ -426,12 +429,14 @@ end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then--Throttled because sometimes two spawn at once
-		if self:AntiSpam(2, 4) then
+		local guid = UnitGUID(unit)
+		if not guid then return end
+		if not warnedGUIDs[guid] and self:AntiSpam(2, 4) then
+			warnedGUIDs[guid] = true
 			specWarnHauntingShadows:Show()
 			specWarnHauntingShadows:Play("runaway")
 		end
-		local guid = UnitGUID(unit)
-		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 and guid then
+		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 then
 			DBM.Nameplate:Show(true, guid, 306545, 1029718, 5)
 		end
 	end
