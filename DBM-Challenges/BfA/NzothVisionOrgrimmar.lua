@@ -163,7 +163,7 @@ function mod:OnCombatStart(delay)
 			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
 		end
 	end
-	if self.Options.NPAuraOnAbyss then
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHorrifyingShout then
 		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
 	if self.Options.InfoFrame then
@@ -177,8 +177,8 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting2 then
-		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
+	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting2 or self.Options.NPAuraOnHorrifyingShout then
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHorrifyingShout, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 	--Check if we changed users nameplate options and restore them
 	if CVAR1 or CVAR2 or CVAR3 then
