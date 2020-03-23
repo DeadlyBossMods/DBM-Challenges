@@ -388,7 +388,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 		self:SendSync("SummonEye")
 	elseif spellId == 18950 and self:AntiSpam(2, 6) then
 		local cid = self:GetUnitCreatureId(uId)
-		if cid = 164189 or cid = 164188 then
+		if cid == 164189 or cid == 164188 then
 			self:SendSync("DarkImagination")
 		end
 	end
