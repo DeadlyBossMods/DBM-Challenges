@@ -18,6 +18,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_INTERRUPT",
 	"UNIT_DIED",
 	"ENCOUNTER_START",
+	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
 	"NAME_PLATE_UNIT_ADDED",
@@ -82,6 +83,8 @@ local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 
 
 --General
 local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
+--Affixes/Masks
+local timerDarkImaginationCD	= mod:NewCDTimer(60, 315976, nil, nil, nil, 1, 296733)
 --Thrall
 local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
@@ -442,6 +445,12 @@ function mod:ENCOUNTER_START(encounterID)
 	end
 end
 
+function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
+	if spellId == 18950 and self:AntiSpam(2, 6) then
+		self:SendSync("DarkImagination")
+	end
+end
+
 function mod:UNIT_SPELLCAST_INTERRUPTED_UNFILTERED(uId, _, spellId)
 	if spellId == 298033 then
 		if self.Options.NPAuraOnAbyss then
@@ -489,3 +498,9 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 end
 mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED--Just in case blizzard fixes map restrictions
 
+function mod:OnSync(msg)
+	if not self:IsInCombat() then return end
+	if msg == "DarkImagination" then
+		timerDarkImaginationCD:Start()
+	end
+end
