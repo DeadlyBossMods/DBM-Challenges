@@ -56,7 +56,7 @@ local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 
 --Antispam IDs for this mod: 1 run away, 2 dodge, 3 dispel, 4 incoming damage, 5 you/role, 6 GTFO, 7 misc
 --local playerName = UnitName("player")
---local warnedGUIDs = {}
+local warnedGUIDs = {}
 
 --[[
 function mod:DefiledGroundTarget(targetname, uId)
@@ -67,8 +67,8 @@ function mod:DefiledGroundTarget(targetname, uId)
 end
 --]]
 
---function mod:OnCombatStart(delay)
---	table.wipe(warnedGUIDs)
+function mod:OnCombatStart(delay)
+	table.wipe(warnedGUIDs)
 --	if self.Options.NPAuraOnAbyss then
 --		DBM:FireEvent("BossMod_EnableHostileNameplates")
 --	end
@@ -76,17 +76,17 @@ end
 --		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
 --		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
 --	end
---end
+end
 
---function mod:OnCombatEnd()
---	table.wipe(warnedGUIDs)
+function mod:OnCombatEnd()
+	table.wipe(warnedGUIDs)
 --	if self.Options.InfoFrame then
 --		DBM.InfoFrame:Hide()
 --	end
 --	if self.Options.NPAuraOnAbyss then
 --		DBM.Nameplate:Hide(true, nil, nil, nil, true, true)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 --	end
---end
+end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
