@@ -200,10 +200,11 @@ end
 --]]
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and (UnitName(unit) == "The Tarragrue") then
+	if unit then
 		local guid = UnitGUID(unit)
 		if not guid then return end
-		if not warnedGUIDs[guid] then
+		local cid = self:GetCIDFromGUID(guid)
+		if cid == 152253 and not warnedGUIDs[guid] then
 			warnedGUIDs[guid] = true
 			PlaySoundFile("Interface\\AddOns\\DBM-CHallenges\\Shadowlands\\Stars.mp3", "Master")
 		end
