@@ -1,4 +1,4 @@
-﻿local mod	= DBM:NewMod("ArtifactXylem", "DBM-Challenges", 2)
+﻿local mod	= DBM:NewMod("ArtifactXylem", "DBM-Challenges", 3)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
