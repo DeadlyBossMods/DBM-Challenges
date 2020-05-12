@@ -267,7 +267,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 311390 and args:IsPlayer() then
 		local amount = args.amount or 1
-		if amount >= 3 then
+		if amount >= 4 then
 			specWarnEntomophobia:Show()
 			specWarnEntomophobia:Play("keepjump")
 		end
