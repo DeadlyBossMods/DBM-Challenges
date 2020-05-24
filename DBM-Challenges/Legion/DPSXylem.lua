@@ -39,10 +39,10 @@ local specWarnSeeds					= mod:NewSpecialWarningRun(233248, nil, nil, nil, 4, 2)
 --Frost Phase
 local timerRazorIceCD				= mod:NewCDTimer(25.5, 232661, nil, nil, nil, 3)--25.5-38.9 (other casts can delay it a lot)
 --Transition
-local timerArcaneAnnihilationCD		= mod:NewNextTimer(5, 234728, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+local timerArcaneAnnihilationCD		= mod:NewNextTimer(5, 234728, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
 local timerShadowBarrageCD			= mod:NewCDTimer(40.0, 231443, nil, nil, nil, 3)--Actually used both phases
 --Arcane Phase
-local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
+local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
 
 local activeBossGUIDS = {}
 
