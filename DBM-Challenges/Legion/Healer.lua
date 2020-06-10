@@ -38,7 +38,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 	elseif spellId == 235984 and args:IsPlayer() then
-		specWarnManaSling:Show(DBM_ALLY)
+		specWarnManaSling:Show(DBM_CORE_L.ALLY)
 		specWarnManaSling:Play("findshelter")
 	elseif spellId == 237188 then
 		specWarnIgniteSoul:Show()
