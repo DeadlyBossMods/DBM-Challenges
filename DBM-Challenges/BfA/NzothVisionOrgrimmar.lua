@@ -183,6 +183,9 @@ function mod:OnCombatStart(delay)
 		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
 	end
+	if UnitName("player") == "Asmongold" and GetRealmName() == "Kel'Thuzad" then
+		DBM:AddMsg("Hey, Asmongold, even DBM has a Mail Muncher")
+	end
 end
 
 function mod:OnCombatEnd()
