@@ -87,11 +87,11 @@ function mod:SPELL_CAST_START(args)
 			specWarnPowerfulSlam:Play("shockwave")
 		end
 		timerPowerfulSlamCD:Start(args.sourceGUID)
-	elseif spellId == 142189 and self:AntiSpam(1.5, 5) then
+	elseif spellId == 142189 then
 		if self.Options.SpecWarn142189spell then
 			specWarnAmberGlob:Show()
 			specWarnAmberGlob:Play("watchstep")
-		else
+		elseif self:AntiSpam(1.5, 5) then
 			warnAmberGlobule:Show()
 		end
 		timerAmberGlobCD:Start(args.sourceGUID)
