@@ -193,9 +193,9 @@ end
 
 function mod:SCENARIO_UPDATE(newStep)
 	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-	if not started and diffID > 0 then
-		started = true
-		if DBM.Options.AutoRespond then--Use global whisper option
+	if diffID > 0 then
+		if not started then
+			started = true
 			self:RegisterShortTermEvents(
 				"SPELL_CAST_START 147601 144374 144106 144401 142189 142238 145200",
 				"SPELL_AURA_APPLIED 144383 144404 145206",
@@ -219,14 +219,16 @@ do
 		[4] = L.Endless,
 	}
 	function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
-		if status ~= "GM" then--Filter GMs
-			name = Ambiguate(name, "none")
-			local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-			local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
-			if msg == "status" then
-				SendChatMessage(message, "WHISPER", nil, name)
-			elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
-				SendChatMessage(message, "WHISPER", nil, name)
+		if DBM.Options.AutoRespond and started then
+			if status ~= "GM" then--Filter GMs
+				name = Ambiguate(name, "none")
+				local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+				local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
+				if msg == "status" then
+					SendChatMessage(message, "WHISPER", nil, name)
+				elseif self:AntiSpam(20, name) then--If not "status" then auto respond only once per 20 seconds per person.
+					SendChatMessage(message, "WHISPER", nil, name)
+				end
 			end
 		end
 	end
