@@ -193,7 +193,7 @@ end
 
 function mod:SCENARIO_UPDATE(newStep)
 	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-	if diffID > 0 then
+	if not started and diffID > 0 then
 		started = true
 		if DBM.Options.AutoRespond then--Use global whisper option
 			self:RegisterShortTermEvents(
