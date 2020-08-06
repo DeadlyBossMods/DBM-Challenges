@@ -3,7 +3,6 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(117933, 117198)--Variss, Kruul
-mod:SetZone()
 mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
 mod.onlyNormal = true

@@ -8,7 +8,6 @@ end)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
-mod:SetZone()
 mod.noStatistics = true
 
 --mod:RegisterCombat("scenario", 1148)
