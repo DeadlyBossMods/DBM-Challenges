@@ -4,7 +4,6 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
 mod:SetZone()
-mod.onlyNormal = true
 
 mod:RegisterCombat("scenario", 2162)
 
