@@ -15,6 +15,7 @@
 ## X-DBM-Mod: 1
 ## X-DBM-Mod-Type: SCENARIO
 ## X-DBM-Mod-Category: BFA
+## X-DBM-StatTypes: normal
 ## X-DBM-Mod-SubCategories: Shadowlands,Battle for Azeroth,Legion,Proving Grounds
 ## X-DBM-Mod-SubCategories-deDE: Shadowlands,BfA Visions,Legion Artefakte,Feuerprobe
 ## X-DBM-Mod-SubCategories-koKR: Shadowlands,격아 환영,군단 유물,수련의 장

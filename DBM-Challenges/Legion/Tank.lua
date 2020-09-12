@@ -5,7 +5,6 @@ mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(117933, 117198)--Variss, Kruul
 mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
-mod.onlyNormal = true
 
 mod:RegisterCombat("combat")
 
