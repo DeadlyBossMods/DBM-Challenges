@@ -2,7 +2,6 @@
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
-mod:SetZone()
 
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
