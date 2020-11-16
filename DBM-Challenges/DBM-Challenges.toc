@@ -14,7 +14,7 @@
 ## SavedVariablesPerCharacter: DBMChallenges_SavedStats
 ## X-DBM-Mod: 1
 ## X-DBM-Mod-Type: SCENARIO
-## X-DBM-Mod-Category: BFA
+## X-DBM-Mod-Category: SHADOWLANDS
 ## X-DBM-StatTypes: normal
 ## X-DBM-Mod-SubCategories: Shadowlands,Battle for Azeroth,Legion,Proving Grounds
 ## X-DBM-Mod-SubCategories-deDE: Shadowlands,BfA Visions,Legion Artefakte,Feuerprobe
@@ -26,7 +26,7 @@
 ## X-DBM-Mod-Name-zhTW: 挑戰
 ## X-DBM-Mod-Name-zhCN: 白虎试练场
 ## X-DBM-Mod-Name-ruRU: Арена испытаний
-## X-DBM-Mod-Sort: 416
+## X-DBM-Mod-Sort: 316
 ## X-DBM-Mod-MapID: 1148, 1698, 1710, 1703, 1702, 1684, 1673, 1616, 2212, 2213, 2215, 2162
 ## X-DBM-Mod-MinCoreRevision: 20200524142133
 ## X-DBM-Mod-MinExpansion: 4
