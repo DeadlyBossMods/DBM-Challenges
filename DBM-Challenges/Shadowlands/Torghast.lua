@@ -1,5 +1,4 @@
-﻿if DBM:GetTOC() < 90001 then return end
-local mod	= DBM:NewMod("d1963", "DBM-Challenges", 1)
+﻿local mod	= DBM:NewMod("d1963", "DBM-Challenges", 1)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
