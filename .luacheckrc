@@ -66,6 +66,7 @@ globals = {
 	"C_DateAndTime",
 	"C_EncounterJournal",
 	"C_FriendList",
+	"C_QuestLog",
 	"C_Timer",
 	"ChatEdit_GetActiveWindow",
 	"ChatFrame_AddMessageEventFilter",

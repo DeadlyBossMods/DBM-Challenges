@@ -66,6 +66,10 @@ end
 
 function mod:OnCombatStart(delay)
 	table.wipe(warnedGUIDs)
+	mod.noStatistics = false
+	if C_QuestLog.IsOnQuest(60136) or C_QuestLog.IsOnQuest(61099) then
+		mod.noStatistics = true
+	end
 --	if self.Options.NPAuraOnAbyss then
 --		DBM:FireEvent("BossMod_EnableHostileNameplates")
 --	end
