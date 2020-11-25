@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018",
 	"SPELL_AURA_APPLIED 304093",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 --	"SPELL_AURA_REMOVED",
@@ -132,7 +132,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 294526 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnCurseofFrailty:Show(args.sourceName)
 		specWarnCurseofFrailty:Play("kickcast")
-	elseif spellId == 298844 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+	elseif (spellId == 297018 or spellId == 298844) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnFearsomeHowl:Show(args.sourceName)
 		specWarnFearsomeHowl:Play("kickcast")
 	end
