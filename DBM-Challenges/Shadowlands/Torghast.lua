@@ -4,6 +4,7 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision("@file-date-integer@")
 
 mod:RegisterCombat("scenario", 2162)
+mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844",
