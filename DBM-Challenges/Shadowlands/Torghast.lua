@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165",
 	"SPELL_AURA_APPLIED 304093",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 --	"SPELL_AURA_REMOVED",
@@ -28,6 +28,7 @@ local warnMightySlam				= mod:NewCastAnnounce(296748, 3)--Cast time to short to 
 local specWarnHowlingSouls			= mod:NewSpecialWarningSpell(215710, nil, nil, nil, 2, 2)
 local specWarnMassiveStrike			= mod:NewSpecialWarningDodge(292903, nil, nil, nil, 2, 2)
 local specWarnMeteor				= mod:NewSpecialWarningDodge(270264, nil, nil, nil, 2, 2)
+local specWarnRatTrap				= mod:NewSpecialWarningDodge(295942, nil, nil, nil, 2, 2)
 local specWarnGroundCrush			= mod:NewSpecialWarningRun(295985, nil, nil, nil, 4, 2)
 --local specWarnMightySlam			= mod:NewSpecialWarningRun(296748, nil, nil, nil, 4, 2)
 local specWarnWhirlwind				= mod:NewSpecialWarningRun(295001, nil, nil, nil, 4, 2)
@@ -45,6 +46,7 @@ local specWarnFireballVolley		= mod:NewSpecialWarningInterrupt(270348, "HasInter
 local specWarnTerrifyingRoar		= mod:NewSpecialWarningInterrupt(263085, "HasInterrupt", nil, nil, 3, 2)
 local specWarnCurseofFrailty		= mod:NewSpecialWarningInterrupt(294526, "HasInterrupt", nil, nil, 1, 2)
 local specWarnFearsomeHowl			= mod:NewSpecialWarningInterrupt(298844, "HasInterrupt", nil, nil, 1, 2)
+local specWarnAccursedStrength		= mod:NewSpecialWarningInterrupt(294165, "HasInterrupt", nil, nil, 1, 2)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 
 --local timerToxicVolleyCD			= mod:NewAITimer(7.3, 304169, nil, nil, nil, 3)
@@ -97,6 +99,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 270264 and self:AntiSpam(3, 2) then
 		specWarnMeteor:Show()
 		specWarnMeteor:Play("watchstep")
+	elseif spellId == 295942 and self:AntiSpam(3, 2) then
+		specWarnRatTrap:Show()
+		specWarnRatTrap:Play("watchstep")
 	elseif spellId == 295985 and self:AntiSpam(4, 1) then
 		specWarnGroundCrush:Show()
 		specWarnGroundCrush:Play("justrun")
@@ -132,6 +137,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 294526 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnCurseofFrailty:Show(args.sourceName)
 		specWarnCurseofFrailty:Play("kickcast")
+	elseif spellId == 294165 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnAccursedStrength:Show(args.sourceName)
+		specWarnAccursedStrength:Play("kickcast")
 	elseif (spellId == 297018 or spellId == 298844) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnFearsomeHowl:Show(args.sourceName)
 		specWarnFearsomeHowl:Play("kickcast")
