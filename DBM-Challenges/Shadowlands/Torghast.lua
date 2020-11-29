@@ -99,6 +99,7 @@ end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
+	if not self:IsValidWarning(args.sourceGUID) then return end--Filter all casts done by mobs in combat with npcs/other mobs.
 	if spellId == 292903 and self:AntiSpam(3, 2) then
 		specWarnMassiveStrike:Show()
 		specWarnMassiveStrike:Play("shockwave")
@@ -192,10 +193,10 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnBoneShrapnel:Show(amount)
 			specWarnBoneShrapnel:Play("stackhigh")
 		end
-	elseif spellId == 304093 and args:IsDestTypePlayer() and self:CheckDispelFilter() then
+	elseif spellId == 304093 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter() then
 		specWarnMassCripple:CombinedShow(0.5, args.destName)
 		specWarnMassCripple:ScheduleVoice(0.5, "helpdispel")
-	elseif spellId == 294526 and args:IsDestTypePlayer() and self:CheckDispelFilter() then
+	elseif spellId == 294526 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter() then
 		specWarnCurseofFrailtyDispel:CombinedShow(0.5, args.destName)
 		specWarnCurseofFrailtyDispel:ScheduleVoice(0.5, "helpdispel")
 	end
