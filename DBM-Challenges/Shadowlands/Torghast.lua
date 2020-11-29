@@ -99,7 +99,7 @@ end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if not self:IsValidWarning(args.sourceGUID) then return end--Filter all casts done by mobs in combat with npcs/other mobs.
+	if not self:IsValidWarning(args.sourceGUID, nil, true) then return end--Filter all casts done by mobs in combat with npcs/other mobs.
 	if spellId == 292903 and self:AntiSpam(3, 2) then
 		specWarnMassiveStrike:Show()
 		specWarnMassiveStrike:Play("shockwave")
