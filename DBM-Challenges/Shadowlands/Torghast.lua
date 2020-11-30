@@ -59,7 +59,7 @@ local specWarnSoulofMistDispel		= mod:NewSpecialWarningDispel(277040, "MagicDisp
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 
 local timerInfernoCD				= mod:NewCDTimer(21.9, 335528, nil, nil, nil, 3)--21.9-23.1
-local timerWitheringRoarCD			= mod:NewCDTimer(21.5, 330118, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--15.8-19.5
+--local timerWitheringRoarCD			= mod:NewCDTimer(21.5, 330118, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--15.8-19.5
 local timerGroundCrushCD			= mod:NewNextTimer(23.1, 295985, nil, nil, nil, 3)--Seems precise, at least when used by The Grand Malleare
 
 --mod:AddInfoFrameOption(307831, true)
@@ -171,7 +171,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnWitheringRoar:Show(args.sourceName)
 			specWarnWitheringRoar:Play("kickcast")
 		end
-		timerWitheringRoarCD:Start(nil, args.sourceGUID)
+--		timerWitheringRoarCD:Start(nil, args.sourceGUID)
 	elseif spellId == 258935 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnInnerFlames:Show(args.sourceName)
 		specWarnInnerFlames:Play("kickcast")
@@ -247,7 +247,7 @@ function mod:UNIT_DIED(args)
 --	local cid = self:GetCIDFromGUID(args.destGUID)
 	--not very efficient to stop all timers when ANYTHING in entire zone dies, but too many mobs have cross overs of these abilities
 	timerInfernoCD:Stop(args.destGUID)
-	timerWitheringRoarCD:Stop(args.destGUID)
+--	timerWitheringRoarCD:Stop(args.destGUID)
 	timerGroundCrushCD:Stop(args.destGUID)
 end
 
