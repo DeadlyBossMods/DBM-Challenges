@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330477",
 	"SPELL_AURA_APPLIED 304093 277040",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 	"SPELL_AURA_REMOVED 277040",
@@ -34,6 +34,7 @@ local specWarnMassiveStrike			= mod:NewSpecialWarningDodge(292903, nil, nil, nil
 local specWarnMeteor				= mod:NewSpecialWarningDodge(270264, nil, nil, nil, 2, 2)
 local specWarnRatTrap				= mod:NewSpecialWarningDodge(295942, nil, nil, nil, 2, 2)
 local specWarnFanningtheFlames		= mod:NewSpecialWarningDodge(308026, nil, nil, nil, 2, 2)
+local specWarnProphecyOfDeath		= mod:NewSpecialWarningDodge(330477, nil, nil, nil, 2, 2)
 local specWarnGroundCrush			= mod:NewSpecialWarningRun(295985, nil, nil, nil, 4, 2)
 --local specWarnMightySlam			= mod:NewSpecialWarningRun(296748, nil, nil, nil, 4, 2)
 local specWarnWhirlwind				= mod:NewSpecialWarningRun(295001, nil, nil, nil, 4, 2)
@@ -117,6 +118,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 295942 and self:AntiSpam(3, 2) then
 		specWarnRatTrap:Show()
 		specWarnRatTrap:Play("watchstep")
+	elseif spellId == 330477 and self:AntiSpam(3, 2) then
+		specWarnProphecyOfDeath:Show()
+		specWarnProphecyOfDeath:Play("watchstep")
 	elseif spellId == 295985 then
 		if self:AntiSpam(4, 1) then
 			specWarnGroundCrush:Show()
@@ -175,7 +179,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 258935 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnInnerFlames:Show(args.sourceName)
 		specWarnInnerFlames:Play("kickcast")
-	elseif (spellId == 297018 or spellId == 298844) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+	elseif (spellId == 297018 or spellId == 298844 or spellId == 330438) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnFearsomeHowl:Show(args.sourceName)
 		specWarnFearsomeHowl:Play("kickcast")
 	end
