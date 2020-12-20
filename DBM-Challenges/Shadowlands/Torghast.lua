@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
 
-mod:RegisterCombat("scenario", 2162)
+mod:RegisterCombat("scenario", 2162)--1911-1912 are outdoor areas
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
