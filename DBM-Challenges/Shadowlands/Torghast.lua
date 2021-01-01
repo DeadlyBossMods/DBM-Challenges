@@ -13,6 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED 277040",
 	"SPELL_PERIODIC_DAMAGE 294607",
 	"SPELL_PERIODIC_MISSED 294607",
+	"UNIT_DIED",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
@@ -63,6 +64,8 @@ local specWarnTerror				= mod:NewSpecialWarningInterrupt(242391, "HasInterrupt",
 local specWarnBountyOfTheForest		= mod:NewSpecialWarningInterrupt(330573, "HasInterrupt", nil, nil, 1, 2)
 local specWarnSoulofMistDispel		= mod:NewSpecialWarningDispel(277040, "MagicDispeller", nil, nil, 1, 2)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
+
+local timerGroundCrushCD			= mod:NewNextTimer(23.1, 295985, nil, nil, nil, 3)
 
 mod:AddNamePlateOption("NPAuraOnSoulofMist", 277040)
 
@@ -122,9 +125,12 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 335528 and self:AntiSpam(3, 7) then
 		specWarnInferno:Show()
 		specWarnInferno:Play("watchstep")
-	elseif spellId == 295985 and self:AntiSpam(4, 1) then
-		specWarnGroundCrush:Show()
-		specWarnGroundCrush:Play("justrun")
+	elseif spellId == 295985 then
+		if self:AntiSpam(4, 1) then
+			specWarnGroundCrush:Show()
+			specWarnGroundCrush:Play("justrun")
+		end
+		timerGroundCrushCD:Start(nil, args.sourceGUID)
 	elseif spellId == 296748 and self:AntiSpam(4, 7) then
 		warnMightySlam:Show()
 	elseif spellId == 295001 and self:AntiSpam(4, 1) then
@@ -232,6 +238,13 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spell
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
+	
+function mod:UNIT_DIED(args)
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 151331 or cid == 159755 or cid == 175234 then
+		timerGroundCrushCD:Stop(args.destGUID)
+	end
+end
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit then
