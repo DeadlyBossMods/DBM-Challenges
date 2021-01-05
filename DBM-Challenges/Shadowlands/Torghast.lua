@@ -1,4 +1,4 @@
-﻿local mod	= DBM:NewMod("d1963", "DBM-Challenges", 1)
+local mod	= DBM:NewMod("d1963", "DBM-Challenges", 1)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)--1911-1912 are outdoor areas
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573 332165",
 	"SPELL_AURA_APPLIED 304093 277040",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 	"SPELL_AURA_REMOVED 277040",
@@ -23,7 +23,6 @@ mod:RegisterEventsInCombat(
 --TODO https://shadowlands.wowhead.com/spell=299150/unnatural-power? boss buff stacks, basic DPS check
 --TODO, alert when a deadsoul scavenger is nearby?
 local warnMightySlam				= mod:NewCastAnnounce(296748, 3)--Cast time to short to really dodge, this is just alert to at least mentally prepare for damage spike
-local warnInferno					= mod:NewSpellAnnounce(335528, 3)
 
 --The Maw (WIP, current combat handling doesn't permit this yet)
 --local specWarnMagmaWave				= mod:NewSpecialWarningDodge(345454, nil, nil, nil, 2, 2)--SPELL_CAST_START
@@ -36,6 +35,7 @@ local specWarnFanningtheFlames		= mod:NewSpecialWarningDodge(308026, nil, nil, n
 local specWarnProphecyOfDeath		= mod:NewSpecialWarningDodge(330471, nil, nil, nil, 2, 2)
 local specWarnDiscordantBarrage		= mod:NewSpecialWarningDodge(294401, nil, nil, nil, 2, 2)
 local specWarnBindSouls				= mod:NewSpecialWarningDodge(297020, nil, nil, nil, 2, 2)
+local specWarnInferno				= mod:NewSpecialWarningDodge(335528, nil, nil, nil, 2, 2)
 local specWarnGroundCrush			= mod:NewSpecialWarningRun(295985, nil, nil, nil, 4, 2)
 --local specWarnMightySlam			= mod:NewSpecialWarningRun(296748, nil, nil, nil, 4, 2)
 local specWarnWhirlwind				= mod:NewSpecialWarningRun(295001, nil, nil, nil, 4, 2)
@@ -52,7 +52,12 @@ local specWarnConflagrate			= mod:NewSpecialWarningInterrupt(270248, "HasInterru
 local specWarnFireballVolley		= mod:NewSpecialWarningInterrupt(270348, "HasInterrupt", nil, nil, 1, 2)
 local specWarnTerrifyingRoar		= mod:NewSpecialWarningInterrupt(263085, "HasInterrupt", nil, nil, 1, 2)
 local specWarnCurseofFrailty		= mod:NewSpecialWarningInterrupt(294526, "HasInterrupt", nil, nil, 1, 2)
+<<<<<<< HEAD
 local specWarnFearsomeHowl			= mod:NewSpecialWarningInterrupt(298844, "HasInterrupt", nil, 2, 1, 2)
+=======
+local specWarnFearsomeShriek		= mod:NewSpecialWarningInterrupt(332165, "HasInterrupt", nil, nil, 1, 2)
+local specWarnFearsomeHowl			= mod:NewSpecialWarningInterrupt(298844, "HasInterrupt", nil, nil, 1, 2)
+>>>>>>> 624e76f11952e3716c981774d69d051492ee8551
 local specWarnPhasingRoar			= mod:NewSpecialWarningInterrupt(294517, "HasInterrupt", nil, nil, 1, 2)
 local specWarnDeathBlast			= mod:NewSpecialWarningInterrupt(296839, "HasInterrupt", nil, nil, 1, 2)
 local specWarnAccursedStrength		= mod:NewSpecialWarningInterrupt(294165, "HasInterrupt", nil, nil, 1, 2)
@@ -64,9 +69,7 @@ local specWarnBountyOfTheForest		= mod:NewSpecialWarningInterrupt(330573, "HasIn
 local specWarnSoulofMistDispel		= mod:NewSpecialWarningDispel(277040, "MagicDispeller", nil, nil, 1, 2)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 
-local timerInfernoCD				= mod:NewCDTimer(21.9, 335528, nil, nil, nil, 3)--21.9-23.1
---local timerWitheringRoarCD			= mod:NewCDTimer(21.5, 330118, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--15.8-19.5
-local timerGroundCrushCD			= mod:NewNextTimer(23.1, 295985, nil, nil, nil, 3)--Seems precise, at least when used by The Grand Malleare
+local timerGroundCrushCD			= mod:NewNextTimer(23.1, 295985, nil, nil, nil, 3)
 
 mod:AddNamePlateOption("NPAuraOnSoulofMist", 277040)
 
@@ -123,6 +126,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 297020 and self:AntiSpam(3, 2) then
 		specWarnBindSouls:Show()
 		specWarnBindSouls:Play("watchstep")
+	elseif spellId == 335528 and self:AntiSpam(3, 7) then
+		specWarnInferno:Show()
+		specWarnInferno:Play("watchstep")
 	elseif spellId == 295985 then
 		if self:AntiSpam(4, 1) then
 			specWarnGroundCrush:Show()
@@ -131,11 +137,6 @@ function mod:SPELL_CAST_START(args)
 		timerGroundCrushCD:Start(nil, args.sourceGUID)
 	elseif spellId == 296748 and self:AntiSpam(4, 7) then
 		warnMightySlam:Show()
-	elseif spellId == 335528 then
-		if self:AntiSpam(4, 7) then
-			warnInferno:Show()
-		end
-		timerInfernoCD:Start(nil, args.sourceGUID)
 	elseif spellId == 295001 and self:AntiSpam(4, 1) then
 		specWarnWhirlwind:Show()
 		specWarnWhirlwind:Play("justrun")
@@ -160,7 +161,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 270348 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnFireballVolley:Show(args.sourceName)
 		specWarnFireballVolley:Play("kickcast")
-	elseif (spellId == 329608 or spellId == 263085) and self:CheckInterruptFilter(args.sourceGUID, false, true) then--329608 might not be interruptable, if it's not I may treat it differently. For now, it's good filter testing
+	elseif (spellId == 329608 or spellId == 263085) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnTerrifyingRoar:Show(args.sourceName)
 		specWarnTerrifyingRoar:Play("kickcast")
 	elseif spellId == 294526 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
@@ -172,12 +173,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 277040 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnSoulofMist:Show(args.sourceName)
 		specWarnSoulofMist:Play("kickcast")
-	elseif spellId == 330118 then
-		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
-			specWarnWitheringRoar:Show(args.sourceName)
-			specWarnWitheringRoar:Play("kickcast")
-		end
---		timerWitheringRoarCD:Start(nil, args.sourceGUID)
+	elseif spellId == 330118 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnWitheringRoar:Show(args.sourceName)
+		specWarnWitheringRoar:Play("kickcast")
 	elseif spellId == 258935 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnInnerFlames:Show(args.sourceName)
 		specWarnInnerFlames:Play("kickcast")
@@ -193,6 +191,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 242391 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnTerror:Show(args.sourceName)
 		specWarnTerror:Play("kickcast")
+	elseif spellId == 332165 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnFearsomeShriek:Show(args.sourceName)
+		specWarnFearsomeShriek:Play("kickcast")
 	elseif spellId == 330573 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnBountyOfTheForest:Show(args.sourceName)
 		specWarnBountyOfTheForest:Play("kickcast")
@@ -243,13 +244,11 @@ end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_DIED(args)
---	local cid = self:GetCIDFromGUID(args.destGUID)
-	--not very efficient to stop all timers when ANYTHING in entire zone dies, but too many mobs have cross overs of these abilities
-	timerInfernoCD:Stop(args.destGUID)
---	timerWitheringRoarCD:Stop(args.destGUID)
-	timerGroundCrushCD:Stop(args.destGUID)
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 151331 or cid == 159755 or cid == 175234 then
+		timerGroundCrushCD:Stop(args.destGUID)
+	end
 end
-
 
 function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit then
