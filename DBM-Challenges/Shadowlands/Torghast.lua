@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)--1911-1912 are outdoor areas
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573 332165",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573 332165 258938 329422 329423",
 	"SPELL_AURA_APPLIED 304093 277040",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 	"SPELL_AURA_REMOVED 277040",
@@ -172,7 +172,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 330118 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnWitheringRoar:Show(args.sourceName)
 		specWarnWitheringRoar:Play("kickcast")
-	elseif spellId == 258935 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+	elseif (spellId == 258935 or spellId == 258938 or spellId == 329422 or spellId == 329423) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnInnerFlames:Show(args.sourceName)
 		specWarnInnerFlames:Play("kickcast")
 	elseif (spellId == 297018 or spellId == 298844 or spellId == 330438) and self:CheckInterruptFilter(args.sourceGUID, false, true) then
