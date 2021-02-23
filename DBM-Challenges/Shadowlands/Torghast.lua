@@ -148,7 +148,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 329909 and self:AntiSpam(4, 1) then
 		specWarnCrushingStomp:Show()
 		specWarnCrushingStomp:Play("justrun")
-	elseif spellId == 296523 and self:AntiSpam(4, 5) then
+	elseif (spellId == 296523 or spellId == 318995) and self:AntiSpam(4, 5) then
 		specWarnDeafeningHowl:Show()
 		specWarnDeafeningHowl:Play("stopcast")
 	elseif spellId == 288210 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
