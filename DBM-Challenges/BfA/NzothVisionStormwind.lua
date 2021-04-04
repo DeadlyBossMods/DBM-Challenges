@@ -1,4 +1,4 @@
-﻿local mod	= DBM:NewMod("d1993", "DBM-Challenges", 2)--1993 Stormwind 1995 Org
+local mod	= DBM:NewMod("d1993", "DBM-Challenges", 2)--1993 Stormwind 1995 Org
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
