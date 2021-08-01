@@ -134,8 +134,8 @@ function mod:SPELL_CAST_START(args)
 		specWarnInferno:Show()
 		specWarnInferno:Play("watchstep")
 	elseif spellId == 81008 and self:AntiSpam(3, 7) then
-		specWarnQuake:Schedule(0.9)--delay message since jumping at start of cast is too early
-		specWarnQuake:ScheduleVoice(0.9, "jumpnow")
+		specWarnQuake:Schedule(0.75)
+		specWarnQuake:ScheduleVoice(0.75, "jumpnow")
 	elseif spellId == 295985 then
 		if self:AntiSpam(4, 1) then
 			specWarnGroundCrush:Show()
