@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2162)--1911-1912 are outdoor areas
 mod.noStatistics = true
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573 332165 258938 329422 329423 329930 329908 329909",
+	"SPELL_CAST_START 288210 292903 295985 296748 295001 294362 304075 296523 270248 270264 270348 263085 215710 294526 294533 298844 297018 295942 294165 330118 258935 308026 335528 277040 329608 330438 330471 294401 294517 296839 297020 242391 330573 332165 258938 329422 329423 329930 329908 329909 81008",
 	"SPELL_AURA_APPLIED 304093 277040",
 	"SPELL_AURA_APPLIED_DOSE 303678",
 	"SPELL_AURA_REMOVED 277040",
@@ -37,6 +37,8 @@ local specWarnProphecyOfDeath		= mod:NewSpecialWarningDodge(330471, nil, nil, ni
 local specWarnDiscordantBarrage		= mod:NewSpecialWarningDodge(294401, nil, nil, nil, 2, 2)
 local specWarnBindSouls				= mod:NewSpecialWarningDodge(297020, nil, nil, nil, 2, 2)
 local specWarnInferno				= mod:NewSpecialWarningDodge(335528, nil, nil, nil, 2, 2)
+local specWarnQuake					= mod:NewSpecialWarningJump(81008, nil, nil, nil, 2, 2)
+
 local specWarnGroundCrush			= mod:NewSpecialWarningRun(295985, nil, nil, nil, 4, 2)
 --local specWarnMightySlam			= mod:NewSpecialWarningRun(296748, nil, nil, nil, 4, 2)
 local specWarnWhirlwind				= mod:NewSpecialWarningRun(295001, nil, nil, nil, 4, 2)
@@ -131,6 +133,9 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 335528 and self:AntiSpam(3, 7) then
 		specWarnInferno:Show()
 		specWarnInferno:Play("watchstep")
+	elseif spellId == 81008 and self:AntiSpam(3, 7) then
+		specWarnQuake:Schedule(0.9)--delay message since jumping at start of cast is too early
+		specWarnQuake:ScheduleVoice(0.9, "jumpnow")
 	elseif spellId == 295985 then
 		if self:AntiSpam(4, 1) then
 			specWarnGroundCrush:Show()
