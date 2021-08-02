@@ -13,9 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED 277040",
 	"SPELL_PERIODIC_DAMAGE 294607",
 	"SPELL_PERIODIC_MISSED 294607",
-	"UNIT_DIED",
-	"NAME_PLATE_UNIT_ADDED",
-	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
+	"UNIT_DIED"
 )
 
 --TODO, verifying howling souls spellId, user submitted and unverified from logs. SpellId given is used in eye of azshara. Can use torghast reusuing it though.
@@ -266,16 +264,3 @@ function mod:UNIT_DIED(args)
 		timerGroundCrushCD:Stop(args.destGUID)
 	end
 end
-
-function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit then
-		local guid = UnitGUID(unit)
-		if not guid then return end
-		local cid = self:GetCIDFromGUID(guid)
-		if cid == 152253 and not warnedGUIDs[guid] then
-			warnedGUIDs[guid] = true
-			PlaySoundFile("Interface\\AddOns\\DBM-CHallenges\\Shadowlands\\Stars.mp3", "Master")
-		end
-	end
-end
-mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED
