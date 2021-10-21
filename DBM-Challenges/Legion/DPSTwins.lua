@@ -22,8 +22,8 @@ local warnRisingDragon			= mod:NewSpellAnnounce(235426, 3)
 
 --Karam
 local specWarnFixate			= mod:NewSpecialWarningRun(202081, nil, nil, nil, 4, 2)
-local specWarnGrasp				= mod:NewSpecialWarningInterrupt(235578, nil, nil, nil, 1, 2)
 --Raest
+local specWarnGrasp				= mod:NewSpecialWarningInterrupt(235578, nil, nil, nil, 1, 2)
 local specWarnRift				= mod:NewSpecialWarningSwitch(235446, nil, nil, nil, 1, 2)
 local specWarnRune				= mod:NewSpecialWarningMoveTo(236460, nil, nil, nil, 1, 2)
 
