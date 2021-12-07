@@ -92,7 +92,7 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 238471 then
-		local amount = args.amount or 1
+		local amount = args.amount or 0
 		warnScale:Show(args.destName, amount)
 	end
 end
