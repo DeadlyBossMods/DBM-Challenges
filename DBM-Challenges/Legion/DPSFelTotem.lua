@@ -70,6 +70,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 242733 then--Fel Burst (DPS)
 		felburstCount = felburstCount + 1
 		specWarnFelBurst:Show()
+		specWarnFelBurst:Play("crowdcontrol")--CC based interrupts
 		local timer = felBurstTimers[felburstCount+1]
 		if timer then
 			timerFelBurstCD:Start(timer, felburstCount+1)
@@ -120,6 +121,6 @@ end
 function mod:CHAT_MSG_MONSTER_EMOTE(msg)
 	if msg:find("Interface\\Icons\\spell_shaman_earthquake") then
 		specWarnCharge:Show()
-		specWarnCharge:Play("charge")
+		specWarnCharge:Play("chargemove")
 	end
 end
