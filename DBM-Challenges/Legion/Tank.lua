@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("Kruul", "DBM-Challenges", 3)
 local L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,timewalker"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(117933, 117198)--Variss, Kruul
 mod:SetBossHPInfoToHighest()

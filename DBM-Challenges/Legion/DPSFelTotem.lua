@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("ArtifactFelTotem", "DBM-Challenges", 3)
 local L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,timewalker"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(117230, 117484)--Tugar, Jormog
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)

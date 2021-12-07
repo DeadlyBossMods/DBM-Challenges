@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("ArtifactImpossibleFoe", "DBM-Challenges", 3)
 local L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,timewalker"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(115638)
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
