@@ -216,7 +216,7 @@ function mod:SPELL_CAST_START(args)
 		warnCriesoftheVoid:Show()
 		--timerCriesoftheVoidCD:Start()
 	elseif spellId == 297574 then
-		specWarnHopelessness:Show(DBM_CORE_L.ORB)
+		specWarnHopelessness:Show(DBM_COMMON_L.ORB)
 		specWarnHopelessness:Play("orbrun")--Technically not quite accurate but closest match to "find orb"
 	elseif spellId == 304251 and self:AntiSpam(3.5, 1) then--1-4 boars, 3.5 second throttle
 		warnVoidQuills:Show()

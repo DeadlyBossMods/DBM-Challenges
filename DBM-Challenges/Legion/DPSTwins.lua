@@ -32,8 +32,8 @@ local specWarnRune				= mod:NewSpecialWarningMoveTo(236460, nil, nil, nil, 1, 2)
 --Karam
 local timerRisingDragonCD		= mod:NewCDTimer(35, 235426, nil, nil, nil, 2)
 --Raest
-local timerHandCD				= mod:NewNextTimer(28, 235580, nil, nil, nil, 1, 235578, DBM_CORE_L.DAMAGE_ICON, nil, 1, 4)
-local timerGraspCD				= mod:NewCDTimer(15, 235578, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerHandCD				= mod:NewNextTimer(28, 235580, nil, nil, nil, 1, 235578, DBM_COMMON_L.DAMAGE_ICON, nil, 1, 4)
+local timerGraspCD				= mod:NewCDTimer(15, 235578, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerRuneCD				= mod:NewCDTimer(35, 236460, nil, nil, nil, 5, nil, nil, nil, 2, 4)
 
 mod.vb.phase = 1

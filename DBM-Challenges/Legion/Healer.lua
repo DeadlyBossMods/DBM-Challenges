@@ -25,7 +25,7 @@ local specWarnArcaneBlitz	= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil,
 local specWarnIgniteSoul	= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
 
 --local timerEarthquakeCD	= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
-local timerIgniteSoulCD		= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_CORE_L.DEADLY_ICON, nil, 3, 4)
+local timerIgniteSoulCD		= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, nil, 3, 4)
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
@@ -40,7 +40,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 	elseif spellId == 235984 and args:IsPlayer() then
-		specWarnManaSling:Show(DBM_CORE_L.ALLY)
+		specWarnManaSling:Show(DBM_COMMON_L.ALLY)
 		specWarnManaSling:Play("findshelter")
 	elseif spellId == 237188 then
 		specWarnIgniteSoul:Show()
