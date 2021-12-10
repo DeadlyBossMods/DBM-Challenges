@@ -4,7 +4,8 @@ local L		= mod:GetLocalizedStrings()
 mod.statTypes = "normal,timewalker"
 
 mod:SetRevision("@file-date-integer@")
-mod:SetCreatureID(115244)
+mod:SetCreatureID(115244, 116839)
+mod:SetBossHPInfoToHighest()
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod.soloChallenge = true
 
@@ -22,6 +23,8 @@ mod:RegisterEventsInCombat(
 --Notes:
 --TODO, more timer work/data.
 --TODO, phase 2
+		--self:SetStage(2)
+		--self.vb.bossLeft = 1
 --Frost Phase
 local warnFrostPhase				= mod:NewSpellAnnounce(242394, 2)
 --Arcane Phase
@@ -48,7 +51,10 @@ local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, 
 local activeBossGUIDS = {}
 
 function mod:OnCombatStart(delay)
+	self:SetStage(1)
 	timerRazorIceCD:Start(12-delay)
+--	self.vb.bossLeft = 2
+--	self.numBoss = 2
 end
 
 function mod:SPELL_CAST_START(args)
@@ -87,6 +93,10 @@ end
 function mod:UNIT_DIED(args)
 	if args.destGUID == UnitGUID("player") then--Solo scenario, a player death is a wipe
 		DBM:EndCombat(self, true)
+	end
+	local cid = self:GetCIDFromGUID(args.destGUID)
+	if cid == 116839 then--Corrupting Shadows
+		DBM:EndCombat(self)--Win
 	end
 end
 

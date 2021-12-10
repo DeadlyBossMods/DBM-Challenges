@@ -49,12 +49,11 @@ local timerInfernalCD			= mod:NewCDTimer(65, 235112, nil, nil, nil, 1, nil, DBM_
 local timerShadowSweepCD		= mod:NewCDTimer(20, 234441, nil, nil, nil, 3)--20-27
 local timerAnnihilateCD			= mod:NewCDCountTimer(27, 236572, nil, nil, nil, 3, nil, DBM_COMMON_L.TANK_ICON, nil, 2, 4)
 
-mod.vb.phase = 1
 mod.vb.annihilateCast = 0
 local activeBossGUIDS = {}
 
 function mod:OnCombatStart(delay)
-	self.vb.phase = 1
+	self:SetStage(1)
 	self.vb.annihilateCast = 0
 	timerTormentingEyeCD:Start(3.8)--3.8-5
 	timerDrainLifeCD:Start(5)--5-9?
@@ -117,7 +116,7 @@ function mod:UNIT_DIED(args)
 	end
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 117933 then--Variss
-		self.vb.phase = 2
+		self:SetStage(2)
 		timerDrainLifeCD:Stop()
 		timerTormentingEyeCD:Stop()
 		timerNetherAbberationCD:Stop()
