@@ -12,7 +12,7 @@ mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 238694 237870 237947 237945 237857",
+	"SPELL_CAST_START 238694 237870 237947 237945 237857 237952",
 	"SPELL_CAST_SUCCESS 237849 238432",
 	"SPELL_AURA_APPLIED 237947",
 	"SPELL_AURA_REMOVED 237947",
@@ -134,7 +134,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnKnowledge:Play("targetchange")
 		local timer = ancestralKnowledgeTimers[knowledgeCast+1] or 25
 		if timer then
-			timerBladeStormCD:Start(timer, knowledgeCast+1)
+			timerKnowledgeCD:Start(timer, knowledgeCast+1)
 		end
 	end
 end
