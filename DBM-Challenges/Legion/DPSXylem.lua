@@ -18,7 +18,8 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_REMOVED",
 	"SPELL_CAST_SUCCESS 232661 231522",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"UNIT_SPELLCAST_SUCCEEDED boss1",
+	"UNIT_SPELLCAST_CHANNEL_START boss1"
 )
 --Notes:
 --TODO, more timer work/data.
@@ -39,6 +40,8 @@ local specWarnShadowBarrage			= mod:NewSpecialWarningDodge(231443, nil, nil, nil
 local specWarnDrawPower				= mod:NewSpecialWarningInterrupt(231522, nil, nil, nil, 1, 2)
 --Phase 2
 local specWarnSeeds					= mod:NewSpecialWarningRun(233248, nil, nil, nil, 4, 2)
+
+local timerDarknessWithin	 		= mod:NewAddsTimer(8, 158830)
 
 --Frost Phase
 local timerRazorIceCD				= mod:NewCDTimer(25.5, 232661, nil, nil, nil, 3)--25.5-38.9 (other casts can delay it a lot)
@@ -114,5 +117,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		timerDrawPowerCD:Start(27)--27-42
 --	elseif spellId == 164393 then--Cancel Channeling (Successfully interrupted Arcane Annihilation)
 
+	end
+end
+
+function mod:UNIT_SPELLCAST_CHANNEL_START(uId, _, spellId)
+	if spellId == 233164 then
+		timerDarknessWithin:Start()
 	end
 end
