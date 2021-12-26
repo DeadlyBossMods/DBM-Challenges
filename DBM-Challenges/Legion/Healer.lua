@@ -5,7 +5,6 @@ mod.statTypes = "normal,timewalker"
 
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(118488)--Lord Erdris Thorn
-mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod.soloChallenge = true
 
 mod:RegisterCombat("combat")

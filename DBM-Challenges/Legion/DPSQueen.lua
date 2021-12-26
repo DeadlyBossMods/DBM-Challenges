@@ -6,7 +6,6 @@ mod.statTypes = "normal,timewalker"
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(116484, 116499, 116496)--Sigryn, Jarl Velbrand, Runeseer Faljar
 mod:SetEncounterID(2059)
-mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
 
