@@ -21,7 +21,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_MISSED 232672",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED boss1",
-	"UNIT_SPELLCAST_CHANNEL_START boss1",
 	"UNIT_SPELLCAST_STOP boss1",
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
 )
@@ -43,8 +42,6 @@ local specWarnDrawPower				= mod:NewSpecialWarningInterrupt(231522, nil, nil, ni
 local specWarnSeeds					= mod:NewSpecialWarningRun(233248, nil, nil, nil, 4, 2)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(232672, nil, nil, nil, 1, 8)
 
-local timerDarknessWithin	 		= mod:NewAddsTimer(8, 158830)
-
 --Frost Phase
 local timerRazorIceCD				= mod:NewCDTimer(25.5, 232661, nil, nil, nil, 3)--25.5-38.9 (other casts can delay it a lot)
 --Transition
@@ -55,6 +52,7 @@ local timerShadowBarrageCD			= mod:NewCDTimer(40.0, 231443, nil, nil, nil, 3)--A
 local timerDrawPowerCD				= mod:NewCDTimer(18.2, 231522, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 --Phase 2
 local timerSeedsCD					= mod:NewCDTimer(65.6, 233248, nil, nil, nil, 3)
+local timerDarknessWithin	 		= mod:NewAddsTimer(8, 158830)
 
 local activeBossGUIDS = {}
 
@@ -96,6 +94,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 233248 and args:IsPlayer() then
 		specWarnSeeds:Show()
 		specWarnSeeds:Play("runout")
+		timerDarknessWithin:Start()
 		timerSeedsCD:Start()
 	end
 end
@@ -133,12 +132,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		timerDrawPowerCD:Start(27)--27-42 (also not very consistent)
 --	elseif spellId == 164393 then--Cancel Channeling (Successfully interrupted Arcane Annihilation)
 
-	end
-end
-
-function mod:UNIT_SPELLCAST_CHANNEL_START(uId, _, spellId)
-	if spellId == 233164 then
-		timerDarknessWithin:Start()
 	end
 end
 
