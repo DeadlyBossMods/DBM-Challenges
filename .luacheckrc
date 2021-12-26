@@ -43,4 +43,5 @@ globals = {
 	"UnitPlayerOrPetInParty",
 	"UnitPlayerOrPetInRaid",
 	"UnitName",
+	"UnitExists",
 }
