@@ -81,7 +81,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 202081 then--Fixate (Karam Magespear returning in phase 3 and 5)
 		specWarnFixate:Show()
 		specWarnFixate:Play("justrun")
-		specWarnFixate:ScheduleVoice("keepmove")
+		specWarnFixate:ScheduleVoice(1.5, "keepmove")
 		if self.vb.phase >= 2 then--Should filter fixate done on pull
 			self.vb.phase = self.vb.phase + 1
 			timerHandCD:Start(9)
