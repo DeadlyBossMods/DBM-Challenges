@@ -34,7 +34,7 @@ local specWarnDarkWings			= mod:NewSpecialWarningDodge(237772, nil, nil, nil, 2,
 local specWarnBerserkersRage	= mod:NewSpecialWarningRun(237947, nil, nil, nil, 4, 2)
 local specWarnBladeStorm		= mod:NewSpecialWarningRun(237857, nil, nil, nil, 4, 2)
 --
-local specWarnRunicDetonation	= mod:NewSpecialWarningMoveTo(237914, nil, nil, nil, 1, 2)
+local specWarnRunicDetonation	= mod:NewSpecialWarningMoveTo(237914, nil, nil, nil, 1, 12)
 local specWarnKnowledge			= mod:NewSpecialWarningSwitch(237952, nil, nil, nil, 1, 2)
 
 --Sigryn
@@ -178,7 +178,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 237914 then--Runic Detonation
 		runicDetonationCount = runicDetonationCount + 1
 		specWarnRunicDetonation:Show(RUNES)
-		specWarnRunicDetonation:Play("157060")
+		specWarnRunicDetonation:Play("getinyellowrunes")
 		timerRunicDetonationCD:Start()
 	elseif spellId == 237772 then--Dark Wings
 		specWarnDarkWings:Show()

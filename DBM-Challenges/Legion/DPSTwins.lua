@@ -26,7 +26,7 @@ local specWarnFixate			= mod:NewSpecialWarningRun(202081, nil, nil, nil, 4, 2)
 --Raest
 local specWarnGrasp				= mod:NewSpecialWarningInterrupt(235578, nil, nil, nil, 1, 2)
 local specWarnRift				= mod:NewSpecialWarningSwitch(235446, nil, nil, nil, 1, 2)
-local specWarnRune				= mod:NewSpecialWarningMoveTo(236460, nil, nil, nil, 1, 2)
+local specWarnRune				= mod:NewSpecialWarningMoveTo(236460, nil, nil, nil, 1, 12)
 
 --Karam
 local timerRisingDragonCD		= mod:NewCDTimer(35, 235426, nil, nil, nil, 2)
@@ -97,7 +97,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		timerHandCD:Start()
 	elseif spellId == 236468 then--Rune of Summoning
 		specWarnRune:Show(RUNES)
-		specWarnRune:Play("157060")
+		specWarnRune:Play("getinyellowrunes")
 		timerRuneCD:Start()
 	elseif spellId == 235525 then--Tear Rift (about 3 seconds after Dismiss)
 		specWarnRift:Show()
