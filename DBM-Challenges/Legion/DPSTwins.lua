@@ -110,7 +110,7 @@ end
 function mod:CHAT_MSG_MONSTER_EMOTE(msg)
 	if msg:find("Interface\\Icons\\spell_shaman_earthquake") then
 		specWarnCharge:Show()
-		specWarnCharge:Play("charge")
+		specWarnCharge:Play("chargemove")
 	end
 end
 --]]
