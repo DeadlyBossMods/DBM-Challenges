@@ -10,6 +10,8 @@ mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
+mod:SetReCombatTime(1, 1)--Basically killing of recombat restriction. mage tower lets you spam retry, we want the mod to let you
+
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 238694 237870 237947 237945 237857 237952",
 	"SPELL_CAST_SUCCESS 237849 238432",

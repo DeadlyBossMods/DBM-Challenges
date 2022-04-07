@@ -8,6 +8,8 @@ mod:SetCreatureID(115638)
 mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
+mod:SetReCombatTime(1, 1)--Basically killing of recombat restriction. mage tower lets you spam retry, we want the mod to let you
+
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 243113",
 	"SPELL_AURA_REMOVED 243113",
