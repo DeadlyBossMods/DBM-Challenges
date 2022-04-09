@@ -10,6 +10,7 @@ mod.soloChallenge = true
 mod:RegisterCombat("combat")
 mod:SetWipeTime(600)--This mod lets you leave combat for as long as you want, so basically have to hard disable auto wipe detection
 mod:SetReCombatTime(20, 5)--Basically killing of recombat restriction. mage tower lets you spam retry, we want the mod to let you
+mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA",
@@ -97,7 +98,6 @@ end
 
 do
 	local function delayedZoneCheck(self)
-		DBM:Debug("Healer delayedZoneCheck fired")
 		if DBM:GetCurrentArea() == 1710 then
 			DBM:StartCombat(self, 0, "Hack")
 		elseif DBM:GetCurrentArea() ~= 1710 then
@@ -105,7 +105,6 @@ do
 		end
 	end
 	function mod:LOADING_SCREEN_DISABLED()
-		DBM:Debug("Healer LOADING_SCREEN_DISABLED fired")
 		self:Unschedule(delayedZoneCheck)
 		self:Schedule(1, delayedZoneCheck, self)
 		self:Schedule(3, delayedZoneCheck, self)
