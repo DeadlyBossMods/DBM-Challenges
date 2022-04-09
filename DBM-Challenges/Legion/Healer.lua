@@ -10,7 +10,7 @@ mod.soloChallenge = true
 mod:RegisterCombat("combat")
 mod:SetWipeTime(600)--This mod lets you leave combat for as long as you want, so basically have to hard disable auto wipe detection
 mod:SetReCombatTime(20, 5)--Basically killing of recombat restriction. mage tower lets you spam retry, we want the mod to let you
-mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
+mod:SetZone(1220, 1710)--doesn't need fully disabled zone detection, can only be queuedd from broken shore
 
 mod:RegisterEvents(
 	"ZONE_CHANGED_NEW_AREA",
