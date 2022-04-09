@@ -19,6 +19,7 @@ globals = {
 	"DBM",
 	"DBM_CORE_L",
 	"DBM_COMMON_L",
+	"DBM_DISABLE_ZONE_DETECTION",
 
 	-- Lua
 	"table.wipe",
