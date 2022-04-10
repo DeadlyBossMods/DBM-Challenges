@@ -94,3 +94,30 @@ L:SetGeneralLocalization({
 -- Torghast --
 ------------------------
 --L= DBM:GetModLocalization("d1963")
+
+------------------------
+-- Path of Ascension (Shadowlands)
+------------------------
+L = DBM:GetModLocalization("Echthra")
+
+L:SetGeneralLocalization{
+	name = "PoA: Эктра"
+}
+
+L = DBM:GetModLocalization("AlderynandMynir")
+
+L:SetGeneralLocalization{
+	name = "PoA: Альдерин и Мин'ир"
+}
+
+L = DBM:GetModLocalization("Nuuminuuru")
+
+L:SetGeneralLocalization{
+	name = "PoA: Нууминууру"
+}
+
+L = DBM:GetModLocalization("CravenCorinth")
+
+L:SetGeneralLocalization{
+	name = "PoA: Малодушный Коринф"
+}
