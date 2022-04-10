@@ -42,9 +42,15 @@ localization.cn.lua
 localization.ru.lua
 Shadowlands\Torghast.lua
 Shadowlands\PoA_Echthra.lua
-Shadowlands\PoA_AlderynandMynir.lua
 Shadowlands\PoA_Nuuminuuru.lua
+Shadowlands\PoA_Splinterbark.lua
 Shadowlands\PoA_CravenCorinth.lua
+Shadowlands\PoA_Kalisthene.lua
+Shadowlands\PoA_AlderynandMynir.lua
+Shadowlands\PoA_MadMortimer.lua
+Shadowlands\PoA_Thrantiok.lua
+Shadowlands\PoA_Athanos.lua
+Shadowlands\PoA_Azaruuxlua
 BfA\NzothVisionStormwind.lua
 BfA\NzothVisionOrgrimmar.lua
 Legion\DPSFelTotem.lua

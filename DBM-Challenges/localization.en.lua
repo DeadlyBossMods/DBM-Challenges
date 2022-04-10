@@ -101,16 +101,16 @@ L:SetGeneralLocalization{
 	name = "PoA: Echthra"
 }
 
-L = DBM:GetModLocalization("AlderynandMynir")
-
-L:SetGeneralLocalization{
-	name = "PoA: Alderyn and Myn'ir"
-}
-
 L = DBM:GetModLocalization("Nuuminuuru")
 
 L:SetGeneralLocalization{
 	name = "PoA: Nuuminuuru"
+}
+
+L = DBM:GetModLocalization("Splinterbark")
+
+L:SetGeneralLocalization{
+	name = "PoA: Splinterbark Nightmare"
 }
 
 L = DBM:GetModLocalization("CravenCorinth")
@@ -119,3 +119,38 @@ L:SetGeneralLocalization{
 	name = "PoA: Craven Corinth"
 }
 
+L = DBM:GetModLocalization("Kalisthene")
+
+L:SetGeneralLocalization{
+	name = "PoA: Kalisthene"
+}
+
+L = DBM:GetModLocalization("AlderynandMynir")
+
+L:SetGeneralLocalization{
+	name = "PoA: Alderyn and Myn'ir"
+}
+
+L = DBM:GetModLocalization("MadMortimer")
+
+L:SetGeneralLocalization{
+	name = "PoA: Mad Mortimer"
+}
+
+L = DBM:GetModLocalization("Thrantiok")
+
+L:SetGeneralLocalization{
+	name = "PoA: Thran'tiok"
+}
+
+L = DBM:GetModLocalization("Anthanos")
+
+L:SetGeneralLocalization{
+	name = "PoA: Anthanos"
+}
+
+L = DBM:GetModLocalization("Azaruux")
+
+L:SetGeneralLocalization{
+	name = "PoA: Azaruux"
+}
