@@ -27,7 +27,7 @@
 ## X-DBM-Mod-Name-zhCN: 白虎试练场
 ## X-DBM-Mod-Name-ruRU: Арена испытаний
 ## X-DBM-Mod-Sort: 316
-## X-DBM-Mod-MapID: 1148, 1698, 1710, 1703, 1702, 1684, 1673, 1616, 2212, 2213, 2215, 2162, 1911
+## X-DBM-Mod-MapID: 1148, 1698, 1710, 1703, 1702, 1684, 1673, 1616, 2212, 2213, 2215, 2162, 1911, 2375
 ## X-DBM-Mod-MinCoreRevision: 20211207000000
 ## X-DBM-Mod-MinExpansion: 4
 ## X-Curse-Project-ID: 61621
@@ -41,6 +41,7 @@ localization.tw.lua
 localization.cn.lua
 localization.ru.lua
 Shadowlands\Torghast.lua
+Shadowlands\PathofAscension.lua
 BfA\NzothVisionStormwind.lua
 BfA\NzothVisionOrgrimmar.lua
 Legion\DPSFelTotem.lua
