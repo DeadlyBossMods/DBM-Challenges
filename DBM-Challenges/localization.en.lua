@@ -143,10 +143,10 @@ L:SetGeneralLocalization{
 	name = "PoA: Thran'tiok"
 }
 
-L = DBM:GetModLocalization("Anthanos")
+L = DBM:GetModLocalization("Athanos")
 
 L:SetGeneralLocalization{
-	name = "PoA: Anthanos"
+	name = "PoA: Athanos"
 }
 
 L = DBM:GetModLocalization("Azaruux")

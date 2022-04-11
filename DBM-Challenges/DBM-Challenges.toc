@@ -51,7 +51,7 @@ Shadowlands\PoA_AlderynandMynir.lua
 Shadowlands\PoA_MadMortimer.lua
 Shadowlands\PoA_Thrantiok.lua
 Shadowlands\PoA_Athanos.lua
-Shadowlands\PoA_Azaruuxlua
+Shadowlands\PoA_Azaruux.lua
 BfA\NzothVisionStormwind.lua
 BfA\NzothVisionOrgrimmar.lua
 Legion\DPSFelTotem.lua
