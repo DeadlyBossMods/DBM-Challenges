@@ -101,59 +101,59 @@ L:SetGeneralLocalization({
 L = DBM:GetModLocalization("Echthra")
 
 L:SetGeneralLocalization{
-	name = "PoA: Эктра"
+	name = "Арена Кирий: Эктра"
 }
 
 L = DBM:GetModLocalization("Nuuminuuru")
 
 L:SetGeneralLocalization{
-	name = "PoA: Нууминууру"
+	name = "Арена Кирий: Нууминууру"
 }
 
 L = DBM:GetModLocalization("Splinterbark")
 
 L:SetGeneralLocalization{
-	name = "PoA: Изломанный кошмар"
+	name = "Арена Кирий: Изломанный кошмар"
 }
 
 L = DBM:GetModLocalization("CravenCorinth")
 
 L:SetGeneralLocalization{
-	name = "PoA: Малодушный Коринф"
+	name = "Арена Кирий: Малодушный Коринф"
 }
 
 L = DBM:GetModLocalization("Kalisthene")
 
 L:SetGeneralLocalization{
-	name = "PoA: Калисфена"
+	name = "Арена Кирий: Калисфена"
 }
 
 L = DBM:GetModLocalization("AlderynandMynir")
 
 L:SetGeneralLocalization{
-	name = "PoA: Альдерин и Мин'ир"
+	name = "Арена Кирий: Альдерин и Мин'ир"
 }
 
 L = DBM:GetModLocalization("MadMortimer")
 
 L:SetGeneralLocalization{
-	name = "PoA: Безумный Мортимер"
+	name = "Арена Кирий: Безумный Мортимер"
 }
 
 L = DBM:GetModLocalization("Thrantiok")
 
 L:SetGeneralLocalization{
-	name = "PoA: Тран'тиок"
+	name = "Арена Кирий: Тран'тиок"
 }
 
 L = DBM:GetModLocalization("Athanos")
 
 L:SetGeneralLocalization{
-	name = "PoA: Атанос"
+	name = "Арена Кирий: Атанос"
 }
 
 L = DBM:GetModLocalization("Azaruux")
 
 L:SetGeneralLocalization{
-	name = "PoA: Азаруукс"
+	name = "Арена Кирий: Азаруукс"
 }
