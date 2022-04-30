@@ -1,5 +1,5 @@
 local mod	= DBM:NewMod("d640", "DBM-Challenges", 4, nil, function(t)
-	return select(2, string.match(t, "([^:]+):%s?(.*)"))
+	return string.match(t, "[^:]+:%s?(.*)")
 end)
 local L		= mod:GetLocalizedStrings()
 
