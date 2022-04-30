@@ -19,7 +19,7 @@
 ## X-DBM-Mod-SubCategories: Shadowlands,Battle for Azeroth,Legion,Proving Grounds
 ## X-DBM-Mod-SubCategories-deDE: Shadowlands,BfA Visions,Legion Artefakte,Feuerprobe
 ## X-DBM-Mod-SubCategories-koKR: 어둠땅,격아 환영,군단 유물,수련의 장
-## X-DBM-Mod-SubCategories-ruRU: Тёмные Земли,Битва за Азерот,Легион,Арена испытаний
+## X-DBM-Mod-SubCategories-ruRU: Темные Земли,Битва за Азерот,Легион,Арена испытаний
 ## X-DBM-Mod-Name: Challenges
 ## X-DBM-Mod-Name-deDE: Herausforderungen
 ## X-DBM-Mod-Name-esES: Terreno de Pruebas
