@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("Athanos", "DBM-Challenges", 1)
 --L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,heroic,mythic,challenge"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(171873)--Guessed
 

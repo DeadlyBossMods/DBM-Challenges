@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("Kalisthene", "DBM-Challenges", 1)
 --L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,heroic,mythic,challenge"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(170654)--Guessed
 

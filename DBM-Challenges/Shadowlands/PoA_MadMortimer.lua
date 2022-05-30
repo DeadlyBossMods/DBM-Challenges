@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("MadMortimer", "DBM-Challenges", 1)
 --L		= mod:GetLocalizedStrings()
 
+mod.statTypes = "normal,heroic,mythic,challenge"
+
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(172325)--Guessed
 
