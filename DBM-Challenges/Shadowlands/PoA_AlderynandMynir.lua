@@ -5,6 +5,7 @@ mod.statTypes = "normal,heroic,mythic,challenge"
 
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(172408, 172409)
+mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
 

@@ -7,6 +7,7 @@ mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(172412)
 
 mod:RegisterCombat("combat")
+mod.soloChallenge = true
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 341868 341869 341870",
