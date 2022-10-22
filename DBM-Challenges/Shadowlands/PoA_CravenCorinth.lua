@@ -52,7 +52,7 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 337924 then
+	if spellId == 337924 and self:AntiSpam(3, 1) then
 		specWarnConsume:Show()
 		specWarnConsume:Play("targetchange")
 		timerConsumeCD:Start()
