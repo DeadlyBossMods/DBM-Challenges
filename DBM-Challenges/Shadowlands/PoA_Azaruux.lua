@@ -12,7 +12,7 @@ mod:SetReCombatTime(7, 5)
 mod:SetWipeTime(30)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 335497 335748",
+	"SPELL_CAST_START 336833 336782",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
@@ -21,11 +21,8 @@ mod:RegisterEventsInCombat(
 	"CRITERIA_COMPLETE"
 )
 
-local specWarnPowerSwing			= mod:NewSpecialWarningSpell(335497, nil, nil, nil, 1, 2)
-local specWarnMassiveCharge			= mod:NewSpecialWarningDodge(335748, nil, nil, nil, 1, 2)
-
-local timerPowerSwingCD				= mod:NewCDTimer(13.3, 335497, nil, nil, nil, 3)--13.3-15.7
-local timerMassiveChargeCD			= mod:NewCDTimer(30, 335748, nil, nil, nil, 3)
+local warnDevouringRift			= mod:NewSpellAnnounce(336833, 2)
+local warnInfestation			= mod:NewSpellAnnounce(336782, 2)
 
 --local berserkTimer								= mod:NewBerserkTimer(480)
 
@@ -37,14 +34,10 @@ local timerMassiveChargeCD			= mod:NewCDTimer(30, 335748, nil, nil, nil, 3)
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 335497 then
-		specWarnPowerSwing:Show()
-		specWarnPowerSwing:Play("carefly")
-		timerPowerSwingCD:Start()
-	elseif spellId == 335748 then
-		specWarnMassiveCharge:Show()
-		specWarnMassiveCharge:Play("chargemove")
-		timerMassiveChargeCD:Start()
+	if spellId == 336833 then
+		warnDevouringRift:Show()
+	elseif spellId == 336782 then
+		warnInfestation:Show()
 	end
 end
 
