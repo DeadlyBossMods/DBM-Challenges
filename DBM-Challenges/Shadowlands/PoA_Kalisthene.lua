@@ -10,7 +10,7 @@ mod.soloChallenge = true
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
---	"SPELL_CAST_START",
+	"SPELL_CAST_START 332985 333244",
 --	"SPELL_AURA_APPLIED",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
@@ -18,12 +18,28 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED",
 	"TALKINGHEAD_REQUESTED"
 )
+local warnTetheringSpear					= mod:NewSpellAnnounce(332985, 4)
 
+local specWarnAscendantBarrage				= mod:NewSpecialWarningDodge(333244, nil, nil, nil, 2, 2)
+
+local timerAscendantBarrageCD				= mod:NewAITimer(23.1, 333244, nil, nil, nil, 3)
 --local berserkTimer								= mod:NewBerserkTimer(480)
 
---function mod:OnCombatStart(delay)
+function mod:OnCombatStart(delay)
+	timerAscendantBarrageCD:Start(1-delay)
 --	berserkTimer:Start(100-delay)
---end
+end
+
+function mod:SPELL_CAST_START(args)
+	local spellId = args.spellId
+	if spellId == 332985 then
+		warnTetheringSpear:Show()
+	elseif spellId == 333244 then
+		specWarnAscendantBarrage:Show()
+		specWarnAscendantBarrage:Play("watchstep")
+		timerAscendantBarrageCD:Start()
+	end
+end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-

@@ -11,7 +11,7 @@ mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 --	"SPELL_CAST_START",
---	"SPELL_AURA_APPLIED",
+	"SPELL_AURA_APPLIED 337419",
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
@@ -19,11 +19,21 @@ mod:RegisterEventsInCombat(
 	"TALKINGHEAD_REQUESTED"
 )
 
+local specWarnRage				= mod:NewSpecialWarningRun(337419, nil, nil, nil, 4, 2)
+
 --local berserkTimer								= mod:NewBerserkTimer(480)
 
 --function mod:OnCombatStart(delay)
 --	berserkTimer:Start(100-delay)
 --end
+
+function mod:SPELL_AURA_APPLIED(args)
+	local spellId = args.spellId
+	if spellId == 332985 then
+		specWarnRage:Show()
+		specWarnRage:Play("justrun")
+	end
+end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-
