@@ -58,7 +58,5 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 end
 
 function mod:UNIT_EXITING_VEHICLE()
-	if spellId == 333198 then
-		DBM:EndCombat(self, true)
-	end
+	DBM:EndCombat(self, true)
 end
