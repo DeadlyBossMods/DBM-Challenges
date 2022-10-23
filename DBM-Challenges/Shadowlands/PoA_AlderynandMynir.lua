@@ -16,7 +16,7 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"CRITERIA_COMPLETE",
+--	"CRITERIA_COMPLETE",
 	"TALKINGHEAD_REQUESTED"
 )
 
@@ -59,10 +59,10 @@ do
 		DBM:EndCombat(self, true)
 	end
 
-	function mod:CRITERIA_COMPLETE()
-		self:Unschedule(checkForWipe)
-		DBM:EndCombat(self)
-	end
+--	function mod:CRITERIA_COMPLETE()
+--		self:Unschedule(checkForWipe)
+--		DBM:EndCombat(self)
+--	end
 
 	function mod:TALKINGHEAD_REQUESTED()
 		self:Unschedule(checkForWipe)

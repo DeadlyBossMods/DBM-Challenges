@@ -13,7 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"CRITERIA_COMPLETE",
+--	"CRITERIA_COMPLETE",
 	"TALKINGHEAD_REQUESTED"
 )
 
@@ -62,10 +62,10 @@ do
 		DBM:EndCombat(self, true)
 	end
 
-	function mod:CRITERIA_COMPLETE()
-		self:Unschedule(checkForWipe)
-		DBM:EndCombat(self)
-	end
+--	function mod:CRITERIA_COMPLETE()
+--		self:Unschedule(checkForWipe)
+--		DBM:EndCombat(self)
+--	end
 
 	function mod:TALKINGHEAD_REQUESTED()
 		self:Unschedule(checkForWipe)
