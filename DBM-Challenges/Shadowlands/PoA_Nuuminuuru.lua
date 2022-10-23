@@ -13,7 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"UNIT_EXITING_VEHICLE"
+	"TALKINGHEAD_REQUESTED"
 )
 
 local specWarnSymbioticShield			= mod:NewSpecialWarningSwitch(345441, nil, nil, nil, 1, 2)
@@ -56,6 +56,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	end
 end
 
-function mod:UNIT_EXITING_VEHICLE()
+function mod:TALKINGHEAD_REQUESTED()
 	DBM:EndCombat(self, true)
 end

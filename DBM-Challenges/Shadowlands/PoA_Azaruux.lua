@@ -16,7 +16,7 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
 	"UNIT_SPELLCAST_SUCCEEDED",
-	"UNIT_EXITING_VEHICLE"
+	"TALKINGHEAD_REQUESTED"
 )
 
 --local berserkTimer								= mod:NewBerserkTimer(480)
@@ -31,6 +31,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	end
 end
 
-function mod:UNIT_EXITING_VEHICLE()
+function mod:TALKINGHEAD_REQUESTED()
 	DBM:EndCombat(self, true)
 end
