@@ -31,7 +31,7 @@ local specWarnRage				= mod:NewSpecialWarningRun(337419, nil, nil, nil, 4, 2)
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 332985 then
+	if spellId == 337419 then
 		specWarnRage:Show()
 		specWarnRage:Play("justrun")
 	end
