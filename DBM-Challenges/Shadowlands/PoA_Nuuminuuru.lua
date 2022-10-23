@@ -13,6 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
 	"UNIT_SPELLCAST_SUCCEEDED",
+	"CRITERIA_COMPLETE",
 	"TALKINGHEAD_REQUESTED"
 )
 
@@ -54,6 +55,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	elseif spellId == 345685 and self:AntiSpam(3, 1) then
 		timerNewFaerieCD:Start()
 	end
+end
+
+function mod:CRITERIA_COMPLETE()
+	DBM:EndCombat(self)
 end
 
 function mod:TALKINGHEAD_REQUESTED()

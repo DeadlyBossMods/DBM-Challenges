@@ -12,6 +12,7 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 336096 336715 336709",
 	"UNIT_SPELLCAST_SUCCEEDED",
+	"CRITERIA_COMPLETE",
 	"TALKINGHEAD_REQUESTED"
 )
 
@@ -55,6 +56,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-
 		DBM:EndCombat(self)
 	end
+end
+
+function mod:CRITERIA_COMPLETE()
+	DBM:EndCombat(self)
 end
 
 function mod:TALKINGHEAD_REQUESTED()

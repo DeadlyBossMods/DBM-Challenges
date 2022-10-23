@@ -16,6 +16,7 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
 	"UNIT_SPELLCAST_SUCCEEDED",
+	"CRITERIA_COMPLETE",
 	"TALKINGHEAD_REQUESTED"
 )
 local warnTetheringSpear					= mod:NewSpellAnnounce(332985, 4)
@@ -45,6 +46,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-
 		DBM:EndCombat(self)
 	end
+end
+
+function mod:CRITERIA_COMPLETE()
+	DBM:EndCombat(self)
 end
 
 function mod:TALKINGHEAD_REQUESTED()
