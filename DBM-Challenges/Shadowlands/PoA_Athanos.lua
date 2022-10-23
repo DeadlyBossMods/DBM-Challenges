@@ -45,7 +45,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 335748 then
 		specWarnMassiveCharge:Show()
 		specWarnMassiveCharge:Play("chargemove")
-		timerMassiveChargeCD:Start()
+--		timerMassiveChargeCD:Start()
 	elseif spellId == 335697 then
 		warnShieldingCharging:Show()
 	elseif spellId == 335599 then
