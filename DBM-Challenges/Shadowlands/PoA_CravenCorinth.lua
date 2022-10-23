@@ -5,9 +5,11 @@ mod.statTypes = "normal,heroic,mythic,challenge"
 
 mod:SetRevision("@file-date-integer@")
 mod:SetCreatureID(172412)
+mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
-mod.soloChallenge = true
+mod:SetReCombatTime(7, 5)
+mod:SetWipeTime(30)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 341868 341869 341870",

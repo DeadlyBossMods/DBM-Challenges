@@ -8,6 +8,8 @@ mod:SetCreatureID(170654)--Guessed
 mod.soloChallenge = true
 
 mod:RegisterCombat("combat")
+mod:SetReCombatTime(7, 5)
+mod:SetWipeTime(30)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 332985 333244",
