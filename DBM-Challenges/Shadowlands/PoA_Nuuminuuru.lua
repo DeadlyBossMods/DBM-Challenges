@@ -57,10 +57,18 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	end
 end
 
-function mod:CRITERIA_COMPLETE()
-	DBM:EndCombat(self)
-end
+do
+	local function checkForWipe(self)
+		DBM:EndCombat(self, true)
+	end
 
-function mod:TALKINGHEAD_REQUESTED()
-	DBM:EndCombat(self, true)
+	function mod:CRITERIA_COMPLETE()
+		self:Unschedule(checkForWipe)
+		DBM:EndCombat(self)
+	end
+
+	function mod:TALKINGHEAD_REQUESTED()
+		self:Unschedule(checkForWipe)
+		self:Schedule(5, checkForWipe, self)
+	end
 end
