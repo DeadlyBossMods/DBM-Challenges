@@ -13,8 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
 	"UNIT_SPELLCAST_SUCCEEDED",
---	"CRITERIA_COMPLETE",
-	"TALKINGHEAD_REQUESTED"
+	"CRITERIA_COMPLETE"
 )
 
 local specWarnSymbioticShield			= mod:NewSpecialWarningSwitch(345441, nil, nil, nil, 1, 2)
@@ -59,16 +58,18 @@ end
 
 do
 	local function checkForWipe(self)
-		DBM:EndCombat(self, true)
+		if UnitInVehicle("player") then--success
+			DBM:EndCombat(self)
+		else--fail
+			DBM:EndCombat(self, true)
+		end
 	end
 
---	function mod:CRITERIA_COMPLETE()
---		self:Unschedule(checkForWipe)
---		DBM:EndCombat(self)
---	end
-
-	function mod:TALKINGHEAD_REQUESTED()
-		self:Unschedule(checkForWipe)
-		self:Schedule(5, checkForWipe, self)
+	function mod:CRITERIA_COMPLETE(criteriaID)
+		if criteriaID == 48408 then
+			self:Unschedule(checkForWipe)
+			self:Schedule(3, checkForWipe, self)
+		end
 	end
 end
+

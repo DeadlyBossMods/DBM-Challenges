@@ -12,8 +12,7 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 336096 336715 336709",
 	"UNIT_SPELLCAST_SUCCEEDED",
---	"CRITERIA_COMPLETE",
-	"TALKINGHEAD_REQUESTED"
+	"CRITERIA_COMPLETE"
 )
 
 --TODO, collect more pulls for "Foul Waste-336715-npc:172177 = pull:169.1, 21.4, 12.2, 16.3, 21.8, 21.5", -- [2]
@@ -60,16 +59,18 @@ end
 
 do
 	local function checkForWipe(self)
-		DBM:EndCombat(self, true)
+		if UnitInVehicle("player") then--success
+			DBM:EndCombat(self)
+		else--fail
+			DBM:EndCombat(self, true)
+		end
 	end
 
---	function mod:CRITERIA_COMPLETE()
---		self:Unschedule(checkForWipe)
---		DBM:EndCombat(self)
---	end
-
-	function mod:TALKINGHEAD_REQUESTED()
-		self:Unschedule(checkForWipe)
-		self:Schedule(5, checkForWipe, self)
+	function mod:CRITERIA_COMPLETE(criteriaID)
+		if criteriaID == 48408 then
+			self:Unschedule(checkForWipe)
+			self:Schedule(3, checkForWipe, self)
+		end
 	end
 end
+

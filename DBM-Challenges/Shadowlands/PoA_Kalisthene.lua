@@ -16,8 +16,7 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
 	"UNIT_SPELLCAST_SUCCEEDED",
---	"CRITERIA_COMPLETE",
-	"TALKINGHEAD_REQUESTED"
+	"CRITERIA_COMPLETE"
 )
 local warnTetheringSpear					= mod:NewSpellAnnounce(332985, 4)
 
@@ -50,16 +49,18 @@ end
 
 do
 	local function checkForWipe(self)
-		DBM:EndCombat(self, true)
+		if UnitInVehicle("player") then--success
+			DBM:EndCombat(self)
+		else--fail
+			DBM:EndCombat(self, true)
+		end
 	end
 
---	function mod:CRITERIA_COMPLETE()
---		self:Unschedule(checkForWipe)
---		DBM:EndCombat(self)
---	end
-
-	function mod:TALKINGHEAD_REQUESTED()
-		self:Unschedule(checkForWipe)
-		self:Schedule(5, checkForWipe, self)
+	function mod:CRITERIA_COMPLETE(criteriaID)
+		if criteriaID == 48408 then
+			self:Unschedule(checkForWipe)
+			self:Schedule(3, checkForWipe, self)
+		end
 	end
 end
+
