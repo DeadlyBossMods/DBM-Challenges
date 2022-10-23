@@ -41,6 +41,7 @@ globals = {
 	"SendChatMessage",
 	"SetCVar",
 	"UnitGUID",
+	"UnitInVehicle",
 	"UnitPlayerOrPetInParty",
 	"UnitPlayerOrPetInRaid",
 	"UnitName",
