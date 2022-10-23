@@ -15,7 +15,8 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_EXITING_VEHICLE"
 )
 
 local warnFansCasts					= mod:NewCountAnnounce(341868, 2)
@@ -63,5 +64,11 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-
 		DBM:EndCombat(self)
+	end
+end
+
+function mod:UNIT_EXITING_VEHICLE()
+	if spellId == 333198 then
+		DBM:EndCombat(self, true)
 	end
 end

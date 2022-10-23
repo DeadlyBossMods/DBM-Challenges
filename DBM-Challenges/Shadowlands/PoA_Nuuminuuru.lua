@@ -12,7 +12,8 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
-	"UNIT_SPELLCAST_SUCCEEDED"
+	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_EXITING_VEHICLE"
 )
 
 local specWarnSymbioticShield			= mod:NewSpecialWarningSwitch(345441, nil, nil, nil, 1, 2)
@@ -52,5 +53,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		DBM:EndCombat(self)
 	elseif spellId == 345685 and self:AntiSpam(3, 1) then
 		timerNewFaerieCD:Start()
+	end
+end
+
+function mod:UNIT_EXITING_VEHICLE()
+	if spellId == 333198 then
+		DBM:EndCombat(self, true)
 	end
 end
