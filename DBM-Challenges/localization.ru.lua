@@ -9,7 +9,10 @@ local L
 L = DBM:GetModLocalization("d640")
 
 L:SetMiscLocalization({
-	Endless			= "Бесконечный",--Could not find a global for this one.
+	Bronze			= "Бронза",--Blizzard удалила глобальную локализацию из игры, теперь ее нужно делать вручную
+	Silver			= "Серебро",--Blizzard удалила глобальную локализацию из игры, теперь ее нужно делать вручную
+	Gold			= "Золото",--Blizzard удалила глобальную локализацию из игры, теперь ее нужно делать вручную
+	Endless			= "Бесконечный",
 	ReplyWhisper	= "<Deadly Boss Mods> %s занят на арене испытаний (Режим: %s Волна: %d)"
 })
 
