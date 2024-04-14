@@ -208,9 +208,9 @@ end
 
 do
 	local mode = {
-		[1] = CHALLENGE_MODE_MEDAL1,
-		[2] = CHALLENGE_MODE_MEDAL2,
-		[3] = CHALLENGE_MODE_MEDAL3,
+		[1] = L.Bronze,
+		[2] = L.Silver,
+		[3] = L.Gold,
 		[4] = L.Endless,
 	}
 	function mod:CHAT_MSG_WHISPER(msg, name, _, _, _, status)
