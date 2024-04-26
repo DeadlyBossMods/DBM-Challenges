@@ -358,7 +358,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			if GetNumGroupMembers() > 1 then
 				yellDesperateRetching:Yell()
 			end
-		elseif self:CheckDispelFilter() then
+		elseif self:CheckDispelFilter("disease") then
 			specWarnDesperateRetchingD:Show(args.destName)
 			specWarnDesperateRetchingD:Play("helpdispel")
 		end

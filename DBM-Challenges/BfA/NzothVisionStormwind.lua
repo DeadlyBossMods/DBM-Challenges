@@ -287,11 +287,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnWaveringWill:Play("stopattack")
 	elseif spellId == 308380 then
 		warnConvert:Show(args.destName)
-	elseif spellId == 308366 and self:CheckDispelFilter() then
+	elseif spellId == 308366 and self:CheckDispelFilter("curse") then
 		specWarnAgonizingTormentD:Show(args.destName)
 		specWarnAgonizingTormentD:Play("helpdispel")
 	elseif spellId == 308265 then
-		if self:CheckDispelFilter() then
+		if self:CheckDispelFilter("disease") then
 			specWarnCorruptedBlight:Show(args.destName)
 			specWarnCorruptedBlight:Play("helpdispel")
 		end

@@ -238,10 +238,10 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnBoneShrapnel:Show(amount)
 			specWarnBoneShrapnel:Play("stackhigh")
 		end
-	elseif spellId == 304093 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter() then
+	elseif spellId == 304093 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter("magic") then
 		specWarnMassCripple:CombinedShow(0.5, args.destName)
 		specWarnMassCripple:ScheduleVoice(0.5, "helpdispel")
-	elseif spellId == 294526 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter() then
+	elseif spellId == 294526 and self:IsValidWarning(args.destGUID) and args:IsDestTypePlayer() and self:CheckDispelFilter("curse") then
 		specWarnCurseofFrailtyDispel:CombinedShow(0.5, args.destName)
 		specWarnCurseofFrailtyDispel:ScheduleVoice(0.5, "helpdispel")
 	elseif spellId == 277040 then
