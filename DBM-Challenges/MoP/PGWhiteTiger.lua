@@ -186,8 +186,8 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:SCENARIO_UPDATE(newStep)
-	local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+function mod:SCENARIO_UPDATE()
+	local diffID = C_Scenario.GetProvingGroundsInfo()--, currWave, maxWave, duration
 	if diffID > 0 then
 		if not started then
 			started = true
@@ -197,7 +197,8 @@ function mod:SCENARIO_UPDATE(newStep)
 				"SPELL_AURA_APPLIED_DOSE 144383",
 				"SPELL_CAST_SUCCESS 144084 144091 144088 144086 144087 145260 142838 145198",
 				"UNIT_DIED",
-				"CHAT_MSG_WHISPER"
+				"CHAT_MSG_WHISPER",
+				"CHAT_MSG_BN_WHISPER"
 			)
 		end
 	elseif started then
@@ -217,7 +218,7 @@ do
 		if DBM.Options.AutoRespond and started then
 			if status ~= "GM" then--Filter GMs
 				name = Ambiguate(name, "none")
-				local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
+				local diffID, currWave = C_Scenario.GetProvingGroundsInfo()--, maxWave, duration
 				local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
 				if msg == "status" then
 					SendChatMessage(message, "WHISPER", nil, name)
@@ -225,6 +226,14 @@ do
 					SendChatMessage(message, "WHISPER", nil, name)
 				end
 			end
+		end
+	end
+	function mod:CHAT_MSG_BN_WHISPER(msg, ...)
+		if DBM.Options.AutoRespond and started then
+			local presenceId = select(12, ...)
+			local diffID, currWave = C_Scenario.GetProvingGroundsInfo()--, maxWave, duration
+			local message = L.ReplyWhisper:format(UnitName("player"), mode[diffID], currWave)
+			BNSendWhisper(presenceId, message)
 		end
 	end
 end
