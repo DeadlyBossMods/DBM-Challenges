@@ -33,6 +33,7 @@ globals = {
 
 	"C_Scenario.GetProvingGroundsInfo",
 	"Ambiguate",
+	"BNSendWhisper",
 	"GetLocale",
 	"GetNumGroupMembers",
 	"GetCVar",
