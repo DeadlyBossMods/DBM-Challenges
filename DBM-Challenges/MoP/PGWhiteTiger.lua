@@ -48,13 +48,13 @@ local specWarnAquaBomb		= mod:NewSpecialWarningTarget(145206, nil, nil, nil, 1, 
 
 --Tank
 local timerWindBlastCD		= mod:NewCDNPTimer(17.7, 144106, nil, nil, nil, 5)
-local timerPowerfulSlamCD	= mod:NewCDNPTimer(14.5, 144401, nil, nil, nil, 3)--15-17sec variation. Off by default do to timer spam
+local timerPowerfulSlamCD	= mod:NewCDNPTimer(14.5, 144401, nil, nil, nil, 3)--15-17sec variation.
 --Damager
 local timerAmberGlobCD		= mod:NewCDNPTimer(8.5, 142189, nil, nil, nil, 5)--Now off by default do to spam
-local timerHealIllusionCD	= mod:NewCDNPTimer(20, 142238, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--Off by default do to timer spam
+local timerHealIllusionCD	= mod:NewCDNPTimer(17, 142238, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 --Healer
 local timerAquaBombCD		= mod:NewCDNPTimer(12, 145206, nil, false, nil, 5)--12-22 second variation? off by default do to this
---local timerSonicBlastCD		= mod:NewCDNPTimer(6, 145200, nil, nil, nil, 2)--8-11sec variation, off by default because maybe spammy?
+--local timerSonicBlastCD		= mod:NewCDNPTimer(6, 145200, nil, nil, nil, 2)--3-11sec variation?
 
 local started = false
 
