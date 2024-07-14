@@ -84,7 +84,7 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 237950 then
-		specWarnEarthquake:Show(args.sourceName)
+		specWarnEarthquake:Show()
 		specWarnEarthquake:Play("aesoon")
 		timerEarthquakeCD:Start()
 	elseif spellId == 242730 then
