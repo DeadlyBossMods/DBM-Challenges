@@ -14,7 +14,7 @@ mod:SetWipeTime(30)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 345680",
 	"SPELL_CAST_SUCCESS 345441",
-	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"CRITERIA_COMPLETE"
 )
 
@@ -50,7 +50,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 	if spellId == 333198 or spellId == 348955 then--[DNT] Set World State: Win Encounter-/Kill Credit to Player Only
 		DBM:EndCombat(self)
 	elseif spellId == 345685 and self:AntiSpam(3, 1) then

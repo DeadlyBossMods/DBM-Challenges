@@ -17,7 +17,7 @@ mod:RegisterEventsInCombat(
 --	"SPELL_AURA_APPLIED_DOSE",
 --	"SPELL_AURA_REMOVED",
 --	"UNIT_DIED"
-	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"CRITERIA_COMPLETE"
 )
 local warnTetheringSpear					= mod:NewSpellAnnounce(332985, 4)
@@ -43,7 +43,7 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 	if spellId == 333198 then--[DNT] Set World State: Win Encounter-
 		DBM:EndCombat(self)
 	end
