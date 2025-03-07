@@ -110,7 +110,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnBerserkersRage:Show()
 		specWarnBerserkersRage:Play("justrun")
 		local timer = berserkerRageTimers[berserkerCount+1]
-		if timer then
+		if timer and timer > 0 then
 			timerBerserkersRageCD:Start(timer, berserkerCount+1)
 		end
 	elseif spellId == 237945 then
@@ -118,7 +118,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnBloodFather:Show(args.sourceName)
 		specWarnBloodFather:Play("crowdcontrol")
 		local timer = bloodFatherTimers[bloodCount+1]
-		if timer then
+		if timer and timer > 0 then
 			timerBloodFatherCD:Start(timer, bloodCount+1)
 		end
 	elseif spellId == 237857 then
@@ -126,7 +126,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnBladeStorm:Show()
 		specWarnBladeStorm:Play("justrun")
 		local timer = bladeStormTimers[bladeCount+1]
-		if timer then
+		if timer and timer > 0 then
 			timerBladeStormCD:Start(timer, bladeCount+1)
 		end
 	elseif spellId == 237952 then
@@ -134,7 +134,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnKnowledge:Show()
 		specWarnKnowledge:Play("targetchange")
 		local timer = ancestralKnowledgeTimers[knowledgeCast+1] or 25
-		if timer then
+		if timer and timer > 0 then
 			timerKnowledgeCD:Start(timer, knowledgeCast+1)
 		end
 	end

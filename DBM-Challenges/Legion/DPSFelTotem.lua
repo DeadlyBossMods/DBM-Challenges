@@ -75,7 +75,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnFelBurst:Show()
 		specWarnFelBurst:Play("crowdcontrol")--CC based interrupts
 		local timer = felBurstTimers[felburstCount+1]
-		if timer then
+		if timer and timer > 0 then
 			timerFelBurstCD:Start(timer, felburstCount+1)
 		end
 	end
