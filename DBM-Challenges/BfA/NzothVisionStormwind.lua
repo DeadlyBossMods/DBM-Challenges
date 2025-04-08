@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("@file-date-integer@")
 
-mod:RegisterCombat("scenario", 2213)--2212, 2213 (org, stormwind)
+mod:RegisterCombat("scenario", 2213, 2827)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998 308265 296669",
