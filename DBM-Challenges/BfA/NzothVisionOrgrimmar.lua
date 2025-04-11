@@ -80,19 +80,19 @@ local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil
 local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 2, 2)
 
 --General
-local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
+local timerGiftoftheTitan			= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
 --Affixes/Masks
-local timerDarkImaginationCD	= mod:NewCDTimer(60, 315976, nil, nil, nil, 1, 296733)
+local timerDarkImaginationCD		= mod:NewCDTimer(60, 315976, nil, nil, nil, 1, 296733)
 --Thrall
-local timerSurgingDarknessCD	= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
-local timerSeismicSlamCD		= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
+local timerSurgingDarknessCD		= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
+local timerSeismicSlamCD			= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
-local timerDefiledGroundCD		= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
+local timerDefiledGroundCD			= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
 --Other notable elite timers
-local timerSurgingFistCD		= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
-local timerDecimatorCD			= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
-local timerToxicBreathCD		= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
-local timerToxicVolleyCD		= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
+local timerSurgingFistCD			= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
+local timerDecimatorCD				= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
+local timerToxicBreathCD			= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
+local timerToxicVolleyCD			= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
@@ -404,26 +404,26 @@ end
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 152089 then--Thrall
+	if cid == 152089 or cid == 234034 then--Thrall
 		timerSurgingDarknessCD:Stop()
 		timerSeismicSlamCD:Stop()
 		--timerCriesoftheVoidCD:Stop()
 		timerDefiledGroundCD:Stop()
 		DBM:EndCombat(self)
-	elseif cid == 156161 then--Inquisitor Gnshal
+	elseif cid == 156161 or cid == 234035 then--Inquisitor Gnshal
 		--timerCriesoftheVoidCD:Stop()
 		self.vb.GnshalCleared = true
-	elseif cid == 152874 then--Vez'okk the Lightless
+	elseif cid == 152874 or cid == 234037 then--Vez'okk the Lightless
 		timerDefiledGroundCD:Stop()
 		self.vb.VezokkCleared = true
-	elseif cid == 153943 then
+	elseif cid == 153943 then--Decimator Shiq'voth (unknown TWW variant ID)
 		timerSurgingFistCD:Stop()
 		timerDecimatorCD:Stop()
-	elseif cid == 153401 then--K'thir Dominator
+	elseif cid == 153401 or cid == 244186 then--K'thir Dominator
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
 		end
-	elseif cid == 153532 then--Big Bug Guy
+	elseif cid == 153532 then--Aqir Mindhunter (Unknown TWW variant ID)
 		timerToxicVolleyCD:Stop()
 		timerToxicBreathCD:Stop()
 	end
@@ -431,14 +431,14 @@ end
 
 function mod:ENCOUNTER_START(encounterID)
 	if not self:IsInCombat() then return end
-	if encounterID == 2332 then--Thrall
+	if encounterID == 2332 or encounterID == 3086 then--Thrall
 		timerSurgingDarknessCD:Start(11.1)
 		if self.vb.VezokkCleared then
 			timerDefiledGroundCD:Start(1)
 		else
 			timerSeismicSlamCD:Start(4.6)
 		end
-	elseif encounterID == 2373 then--Vezokk
+	elseif encounterID == 2373 or encounterID == 3089 then--Vezokk
 		timerDefiledGroundCD:Start(3.4)
 	end
 end

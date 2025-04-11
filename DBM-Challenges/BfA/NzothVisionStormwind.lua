@@ -335,23 +335,23 @@ end
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 152718 then--Alleria Windrunner
+	if cid == 152718 or cid == 233675 then--Alleria Windrunner
 		timerDarkenedSkyCD:Stop()
 		timerVoidEruptionCD:Stop()
 		--timerTaintedPolymorphCD:Stop()
 		--timerExplosiveOrdnanceCD:Stop()
 		DBM:EndCombat(self)
-	elseif cid == 156577 then--Therum Deepforge
+	elseif cid == 156577 or cid == 233679 then--Therum Deepforge
 		--timerExplosiveOrdnanceCD:Stop()
 		self.vb.TherumCleared = true
-	elseif cid == 153541 then--slavemaster-ulrok
+	elseif cid == 153541 or cid == 233685 then--Slavemaster Ul'rok
 		self.vb.UlrokCleared = true
-	elseif cid == 158157 then--Overlord Mathias Shaw
+	elseif cid == 158157 or cid == 233684 then--Overlord Mathias Shaw
 		self.vb.ShawCleared = true
-	elseif cid == 158035 then--Magister Umbric
+	elseif cid == 158035 or cid == 233681 then--Magister Umbric
 		--timerTaintedPolymorphCD:Stop()
 		self.vb.UmbricCleared = true
-	elseif cid == 156795 then--S.I. Informant
+	elseif cid == 156795 then--S.I. Informant (Unknownn variant ID for TWW)
 		if self.Options.NPAuraOnAbyss then
 			DBM.Nameplate:Hide(true, args.destGUID, 298033)
 		end
@@ -359,7 +359,7 @@ function mod:UNIT_DIED(args)
 end
 
 function mod:ENCOUNTER_START(encounterID)
-	if encounterID == 2338 and self:IsInCombat() then
+	if (encounterID == 2338 or encounterID == 3081) and self:IsInCombat() then--Alleria Windrunner
 		timerDarkenedSkyCD:Start(4.9)
 		timerVoidEruptionCD:Start(20.5)
 		--if self.vb.TherumCleared then
