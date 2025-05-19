@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2212, 2828)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315",
-	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055 304165",
+	"SPELL_AURA_APPLIED 311390 315385 311641 299055 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 298033",
 	"SPELL_CAST_SUCCESS 297237 305378",
@@ -19,8 +19,10 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
+	"RAID_BOSS_WHISPER",
 	"NAME_PLATE_UNIT_ADDED",
-	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
+	"FORBIDDEN_NAME_PLATE_UNIT_ADDED",
+	"GOSSIP_SHOW"
 )
 
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
@@ -49,15 +51,15 @@ local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil
 local specWarnWaveringWill			= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
 --Thrall
 local specWarnSurgingDarkness		= mod:NewSpecialWarningDodge(297822, nil, nil, nil, 2, 2)
-local specWarnSeismicSlam			= mod:NewSpecialWarningDodge(297746, nil, nil, nil, 2, 2)
+local specWarnSeismicSlam			= mod:NewSpecialWarningDodge(297746, nil, nil, nil, 2, 15)
 local yellSeismicSlam				= mod:NewYell(297746)
 local yellDefiledGround				= mod:NewYell(306726)
 --Extra Abilities (used by Thrall and the area LTs)
 local specWarnHopelessness			= mod:NewSpecialWarningMoveTo(297574, nil, nil, nil, 1, 2)
-local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil, 2, 2)--Can this be dodged?
+local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil, 2, 15)
 --Other notable abilities by mini bosses/trash
 local specWarnOrbofAnnihilation		= mod:NewSpecialWarningDodge(299110, nil, nil, nil, 2, 2)
-local specWarnDarkForce				= mod:NewSpecialWarningYou(299055, nil, nil, nil, 1, 2)
+local specWarnDarkForce				= mod:NewSpecialWarningYou(299055, nil, nil, nil, 1, 13)
 local specWarnVoidTorrent			= mod:NewSpecialWarningYou(307863, nil, nil, nil, 4, 2)
 local yellVoidTorrent				= mod:NewYell(307863)
 local specWarnSurgingFist			= mod:NewSpecialWarningDodge(300351, nil, nil, nil, 2, 2)
@@ -75,7 +77,7 @@ local specWarnMentalAssault			= mod:NewSpecialWarningInterrupt(296537, "HasInter
 local specWarnTouchoftheAbyss		= mod:NewSpecialWarningInterrupt(298033, "HasInterrupt", nil, nil, 1, 2)
 local specWarnVenomBolt				= mod:NewSpecialWarningInterrupt(305236, "HasInterrupt", nil, nil, 1, 2)
 local specWarnVoidBuffet			= mod:NewSpecialWarningInterrupt(297315, "HasInterrupt", nil, nil, 1, 2)
-local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 2)
+local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 15)
 local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil, 2, 2)
 local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 2, 2)
 
@@ -98,6 +100,7 @@ mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
 mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
 mod:AddNamePlateOption("NPAuraOnHorrifyingShout", 305378)
+mod:AddGossipOption(true, "Action")
 
 --AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs
 local playerName = UnitName("player")
@@ -206,7 +209,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 297746 then
 		if self:AntiSpam(3, 3) then
 			specWarnSeismicSlam:Show()
-			specWarnSeismicSlam:Play("shockwave")
+			specWarnSeismicSlam:Play("frontal")
 		end
 		timerSeismicSlamCD:Start()
 		if GetNumGroupMembers() > 1 then
@@ -217,13 +220,13 @@ function mod:SPELL_CAST_START(args)
 		--timerCriesoftheVoidCD:Start()
 	elseif spellId == 297574 then
 		specWarnHopelessness:Show(DBM_COMMON_L.ORB)
-		specWarnHopelessness:Play("orbrun")--Technically not quite accurate but closest match to "find orb"
+		specWarnHopelessness:Play("movetoyelloworb")
 	elseif spellId == 304251 and self:AntiSpam(3.5, 1) then--1-4 boars, 3.5 second throttle
 		warnVoidQuills:Show()
 	elseif spellId == 306726 or spellId == 306828 then
 		if self:AntiSpam(3, 3) then
 			specWarnDefiledGround:Show()
-			specWarnDefiledGround:Play("shockwave")
+			specWarnDefiledGround:Play("frontal")
 		end
 		timerDefiledGroundCD:Start()
 		if GetNumGroupMembers() > 1 then
@@ -295,7 +298,7 @@ function mod:SPELL_CAST_START(args)
 		end
 	elseif spellId == 298630 and self:AntiSpam(3, 3) then
 		specWarnShockwave:Show()
-		specWarnShockwave:Play("shockwave")
+		specWarnShockwave:Play("frontal")
 	elseif spellId == 304169 then
 		if self:AntiSpam(2, 2) then
 			specWarnToxicVolley:Show()
@@ -345,9 +348,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if GetNumGroupMembers() > 1 then--Warn allies if in scenario with others
 			yellScorchedFeet:Yell()
 		end
-	elseif spellId == 316481 and args:IsPlayer() then
-		specWarnSplitPersonality:Show()
-		specWarnSplitPersonality:Play("targetyou")
+--	elseif spellId == 316481 and args:IsPlayer() then
+--		specWarnSplitPersonality:Show()
+--		specWarnSplitPersonality:Play("stopmove")
 	elseif spellId == 311641 and args:IsPlayer() then
 		specWarnWaveringWill:Show(playerName)
 		specWarnWaveringWill:Play("stopattack")
@@ -365,7 +368,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 299055 then
 		if args:IsPlayer() then
 			specWarnDarkForce:Show()
-			specWarnDarkForce:Play("targetyou")
+			specWarnDarkForce:Play("pushbackincoming")
 		else
 			warnDarkForce:Show(args.destName)
 		end
@@ -481,6 +484,13 @@ do
 	end
 end
 
+function mod:RAID_BOSS_WHISPER(msg, npcName)
+	if msg:find("spell:316473") then
+		specWarnSplitPersonality:Show()
+		specWarnSplitPersonality:Play("stopmove")
+	end
+end
+
 function mod:NAME_PLATE_UNIT_ADDED(unit)
 	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then
 		local guid = UnitGUID(unit)
@@ -498,6 +508,16 @@ function mod:NAME_PLATE_UNIT_ADDED(unit)
 	end
 end
 mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED--Just in case blizzard fixes map restrictions
+
+function mod:GOSSIP_SHOW()
+	local gossipOptionID = self:GetGossipID()
+	if gossipOptionID then
+		--Garona
+		if self.Options.AutoGossipAction and gossipOptionID == 152993 then
+			self:SelectGossip(gossipOptionID)
+		end
+	end
+end
 
 function mod:OnSync(msg)
 	if not self:IsInCombat() then return end

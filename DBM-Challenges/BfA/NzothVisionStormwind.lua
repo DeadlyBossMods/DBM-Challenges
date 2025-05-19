@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2213, 2827)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998 308265 296669",
-	"SPELL_AURA_APPLIED 311390 315385 316481 311641 308380 308366 308265 308998",
+	"SPELL_AURA_APPLIED 311390 315385 311641 308380 308366 308265 308998",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 308998 298033",
 	"SPELL_CAST_SUCCESS 309035",
@@ -19,6 +19,7 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
+	"RAID_BOSS_WHISPER",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED"
 )
@@ -279,9 +280,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if GetNumGroupMembers() > 1 then--Warn allies if in scenario with others
 			yellScorchedFeet:Yell()
 		end
-	elseif spellId == 316481 and args:IsPlayer() then
-		specWarnSplitPersonality:Show()
-		specWarnSplitPersonality:Play("targetyou")
+--	elseif spellId == 316481 and args:IsPlayer() then
+--		specWarnSplitPersonality:Show()
+--		specWarnSplitPersonality:Play("targetyou")
 	elseif spellId == 311641 and args:IsPlayer() then
 		specWarnWaveringWill:Show(playerName)
 		specWarnWaveringWill:Play("stopattack")
@@ -413,6 +414,13 @@ do
 		elseif not hasTitan and titanWarned then
 			titanWarned = false
 		end
+	end
+end
+
+function mod:RAID_BOSS_WHISPER(msg, npcName)
+	if msg:find("spell:316473") then
+		specWarnSplitPersonality:Show()
+		specWarnSplitPersonality:Play("stopmove")
 	end
 end
 
