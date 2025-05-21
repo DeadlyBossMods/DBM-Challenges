@@ -95,10 +95,11 @@ local timerTaintedPolymorphCD	= mod:NewVarTimer("v22.3-30.4", 309648, nil, nil, 
 local timerExplosiveOrdnanceCD	= mod:NewVarTimer("v20.6-29.1", 305672, nil, nil, nil, 3)--20-29.1 on alleria, 12.1 on LT
 local timerForgeBreathCD		= mod:NewCDTimer(13.3, 309671, nil, nil, nil, 3)--13.3-14.6
 local timerEntropicMissilesCD	= mod:NewCDTimer(10.1, 309035, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--10.1-17.1
+--Other notable abilities for trash
+local timerTouchoftheAbyss		= mod:NewCastNPTimer(2, 298033, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
-mod:AddNamePlateOption("NPAuraOnAbyss", 298033)
 mod:AddNamePlateOption("NPAuraOnMorale", 308998)
 
 --Antispam 1: Boss throttles, 2: GTFOs, 3: Dodge stuff on ground. 4: Face Away/special action. 5: Dodge Shockwaves
@@ -156,7 +157,7 @@ function mod:OnCombatStart(delay)
 			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
 		end
 	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale then
+	if self.Options.NPAuraOnMorale then
 		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
 	if self.Options.InfoFrame then
@@ -170,8 +171,8 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
-	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting2 or self.Options.NPAuraOnMorale then
-		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnMorale, self.Options.CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
+	if self.Options.NPAuraOnHaunting2 or self.Options.NPAuraOnMorale then
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnMorale, self.Options.CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 	--Check if we changed users nameplate options and restore them
 	DelayedNameplateFix(self)
@@ -229,9 +230,7 @@ function mod:SPELL_CAST_START(args)
 		else
 			warnTouchoftheAbyss:Show()
 		end
-		if self.Options.NPAuraOnAbyss then
-			DBM.Nameplate:Show(true, args.sourceGUID, 298033, nil, 7)
-		end
+		timerTouchoftheAbyss:Start(nil, args.sourceGUID)
 	elseif spellId == 308406 then
 		warnEntropicLeap:Show()
 	elseif spellId == 311456 and self:AntiSpam(3, 5) then
@@ -323,9 +322,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			DBM.Nameplate:Hide(true, args.destGUID, spellId)
 		end
 	elseif spellId == 298033 then
-		if self.Options.NPAuraOnAbyss then
-			DBM.Nameplate:Hide(true, args.sourceGUID, 298033)
-		end
+		timerTouchoftheAbyss:Stop(args.sourceGUID)
 	end
 end
 
@@ -339,9 +336,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
-		if self.Options.NPAuraOnAbyss then
-			DBM.Nameplate:Hide(true, args.destGUID, 298033)
-		end
+		timerTouchoftheAbyss:Stop(args.destGUID)
 	end
 end
 
@@ -366,9 +361,7 @@ function mod:UNIT_DIED(args)
 		timerEntropicMissilesCD:Stop()
 		self.vb.UmbricCleared = true
 	elseif cid == 156795 then--S.I. Informant (Unknownn variant ID for TWW)
-		if self.Options.NPAuraOnAbyss then
-			DBM.Nameplate:Hide(true, args.destGUID, 298033)
-		end
+		timerTouchoftheAbyss:Stop(args.destGUID)
 	end
 end
 
@@ -408,10 +401,8 @@ end
 
 function mod:UNIT_SPELLCAST_INTERRUPTED_UNFILTERED(uId, _, spellId)
 	if spellId == 298033 then
-		if self.Options.NPAuraOnAbyss then
-			local guid = UnitGUID(uId)
-			DBM.Nameplate:Hide(true, guid, 298033)
-		end
+		local guid = UnitGUID(uId)
+		timerTouchoftheAbyss:Stop(guid)
 	end
 end
 
