@@ -19,7 +19,6 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
-	"RAID_BOSS_WHISPER",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED",
 	"GOSSIP_SHOW"
@@ -47,7 +46,7 @@ local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 
 local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, false, nil, 4, 1, 2)
 local specWarnScorchedFeet			= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet				= mod:NewYell(315385)
-local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
+--local specWarnSplitPersonality		= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
 local specWarnWaveringWill			= mod:NewSpecialWarningReflect(311641, "false", nil, nil, 1, 2)--Off by default, it's only 5%, but that might matter to some classes
 --Thrall
 local specWarnSurgingDarkness		= mod:NewSpecialWarningDodge(297822, nil, nil, nil, 2, 2)
@@ -481,13 +480,6 @@ do
 		elseif not hasTitan and titanWarned then
 			titanWarned = false
 		end
-	end
-end
-
-function mod:RAID_BOSS_WHISPER(msg, npcName)
-	if msg:find("spell:316473") then
-		specWarnSplitPersonality:Show()
-		specWarnSplitPersonality:Play("stopmove")
 	end
 end
 
