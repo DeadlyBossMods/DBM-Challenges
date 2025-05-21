@@ -6,7 +6,7 @@ mod:SetRevision("@file-date-integer@")
 mod:RegisterCombat("scenario", 2212, 2828)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315",
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870",
 	"SPELL_AURA_APPLIED 311390 315385 311641 299055 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 298033",
@@ -21,12 +21,15 @@ mod:RegisterEventsInCombat(
 	"UNIT_AURA player",
 	"NAME_PLATE_UNIT_ADDED",
 	"FORBIDDEN_NAME_PLATE_UNIT_ADDED",
-	"GOSSIP_SHOW"
+	"GOSSIP_SHOW",
+	"UNIT_POWER_UPDATE player"
 )
 
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
+local warnSanity					= mod:NewCountAnnounce(307831, 3)
+local warnSanityOrb					= mod:NewCastAnnounce(307870, 1)
 local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
 local warnScorchedFeet				= mod:NewSpellAnnounce(315385, 4)
 --Extra Abilities (used by main boss and the area LTs)
@@ -41,6 +44,7 @@ local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 local warnToxicBreath				= mod:NewSpellAnnounce(298502, 2)
 
 --General (GTFOs and Affixes)
+local specwarnSanity				= mod:NewSpecialWarningCount(307831, nil, nil, nil, 1, 10)
 local specWarnGTFO					= mod:NewSpecialWarningGTFO(303594, nil, nil, nil, 1, 8)
 local specWarnEntomophobia			= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
 local specWarnHauntingShadows		= mod:NewSpecialWarningDodge(306545, false, nil, 4, 1, 2)
@@ -106,6 +110,7 @@ local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
 local warnedGUIDs = {}
+local lastSanity = 500
 
 --If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
 local function DelayedNameplateFix(self, once)
@@ -157,6 +162,7 @@ function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
 	table.wipe(warnedGUIDs)
+	lastSanity = 500
 	DelayedNameplateFix(self, true)--Repair settings from previous session if they didn't get repaired in last session
 	if self.Options.SpecWarn306545dodge4 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
@@ -315,6 +321,8 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 297315 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnVoidBuffet:Show(args.sourceName)
 		specWarnVoidBuffet:Play("kickcast")
+	elseif spellId == 307870 then
+		warnSanityOrb:Show()
 	end
 end
 
@@ -507,6 +515,33 @@ function mod:GOSSIP_SHOW()
 		--Garona
 		if self.Options.AutoGossipAction and gossipOptionID == 152993 then
 			self:SelectGossip(gossipOptionID)
+		end
+	end
+end
+
+function mod:UNIT_POWER_UPDATE(uId)
+	local currentSanity = UnitPower(uId, ALTERNATE_POWER_INDEX)
+	if currentSanity > lastSanity then
+		lastSanity = currentSanity
+		return
+	end
+	if self:AntiSpam(5, 6) then--Additional throttle in case you lose sanity VERY rapidly with increased ICD for special warning
+		if currentSanity == 40 and lastSanity > 40 then
+			lastSanity = 40
+			specwarnSanity:Show(lastSanity)
+			specwarnSanity:Play("lowsanity")
+		elseif currentSanity == 80 and lastSanity > 80 then
+			lastSanity = 80
+			specwarnSanity:Show(lastSanity)
+			specwarnSanity:Play("lowsanity")
+		end
+	elseif self:AntiSpam(3, 7) then--Additional throttle in case you lose sanity VERY rapidly
+		if currentSanity == 120 and lastSanity > 120 then
+			lastSanity = 120
+			warnSanity:Show(lastSanity)
+		elseif currentSanity == 160 and lastSanity > 160 then
+			lastSanity = 160
+			warnSanity:Show(lastSanity)
 		end
 	end
 end
