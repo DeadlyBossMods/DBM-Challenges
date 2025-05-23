@@ -384,7 +384,8 @@ end
 --None of these boss abilities are in combat log
 function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 	if (spellId == 305708 or spellId == 312260) and self:AntiSpam(2, 1) then--First one is mini boss second is alleria
-		self:SendSync("ExplosiveOrd")
+		local cid = self:GetUnitCreatureId(uId)
+		self:SendSync("ExplosiveOrd", cid)
 	elseif spellId == 309035 and self:AntiSpam(2, 1) then
 		self:SendSync("EntropicMissiles")
 	elseif spellId == 311530 and self:AntiSpam(2, 1) then
@@ -468,10 +469,13 @@ end
 
 function mod:OnSync(msg, creatureId)
 	if not self:IsInCombat() then return end
-	if msg == "ExplosiveOrd" and creatureId then
+	if msg == "ExplosiveOrd" then
+		creatureId = tonumber(creatureId)
 		warnExplosiveOrdnance:Show()
-		local timer = creatureId == 233679 and 12.1 or 29.1
-		timerExplosiveOrdnanceCD:Start(timer)
+		if creatureId then
+			local timer = (creatureId == 233679 or creatureId == 156577) and 12.1 or 29.1
+			timerExplosiveOrdnanceCD:Start(timer)
+		end
 	elseif msg == "EntropicMissiles" then
 		warnEntropicMissiles:Show()
 		timerEntropicMissilesCD:Start()
