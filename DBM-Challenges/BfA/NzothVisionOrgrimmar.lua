@@ -4,6 +4,7 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision("@file-date-integer@")
 
 mod:RegisterCombat("scenario", 2212, 2828)
+mod:RegisterZoneCombat(2828)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870",
@@ -526,21 +527,21 @@ function mod:UNIT_POWER_UPDATE(uId)
 		return
 	end
 	if self:AntiSpam(5, 6) then--Additional throttle in case you lose sanity VERY rapidly with increased ICD for special warning
-		if currentSanity == 40 and lastSanity > 40 then
-			lastSanity = 40
+		if currentSanity < 40 and lastSanity > 40 then
+			lastSanity = currentSanity
 			specwarnSanity:Show(lastSanity)
 			specwarnSanity:Play("lowsanity")
-		elseif currentSanity == 80 and lastSanity > 80 then
-			lastSanity = 80
+		elseif currentSanity < 80 and lastSanity > 80 then
+			lastSanity = currentSanity
 			specwarnSanity:Show(lastSanity)
 			specwarnSanity:Play("lowsanity")
 		end
 	elseif self:AntiSpam(3, 7) then--Additional throttle in case you lose sanity VERY rapidly
-		if currentSanity == 120 and lastSanity > 120 then
-			lastSanity = 120
+		if currentSanity < 120 and lastSanity > 120 then
+			lastSanity = currentSanity
 			warnSanity:Show(lastSanity)
-		elseif currentSanity == 160 and lastSanity > 160 then
-			lastSanity = 160
+		elseif currentSanity < 160 and lastSanity > 160 then
+			lastSanity = currentSanity
 			warnSanity:Show(lastSanity)
 		end
 	end
@@ -551,4 +552,17 @@ function mod:OnSync(msg)
 	if msg == "DarkImagination" then
 		timerDarkImaginationCD:Start()
 	end
+end
+
+--All timers subject to a ~0.5 second clipping due to ScanEngagedUnits
+function mod:StartEngageTimers(guid, cid, delay)
+	if cid == 222305 then
+
+	end
+end
+
+--Abort timers when all players out of combat, so NP timers clear on a wipe
+--Caveat, it won't calls top with GUIDs, so while it might terminate bar objects, it may leave lingering nameplate icons
+function mod:LeavingZoneCombat()
+	self:Stop(true)
 end

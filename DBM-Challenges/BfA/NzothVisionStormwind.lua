@@ -4,9 +4,10 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision("@file-date-integer@")
 
 mod:RegisterCombat("scenario", 2213, 2827)
+mod:RegisterZoneCombat(2827)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998 308265 296669 307870",
+	"SPELL_CAST_START 308278 309819 309648 298691 308669 308366 308406 311456 296911 296537 308481 308575 298033 308375 309882 309671 308305 311399 297315 308998 308265 296669 307870 296718",
 	"SPELL_AURA_APPLIED 311390 315385 311641 308380 308366 308265 308998",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 308998 298033",
@@ -81,6 +82,7 @@ local specWarnCorruptedBlight	= mod:NewSpecialWarningDispel(308265, "RemoveDisea
 local specWarnBlightEruption	= mod:NewSpecialWarningMoveAway(308305, nil, nil, nil, 1, 2)
 local yellBlightEruption		= mod:NewYell(308305)
 local specWarnRiftStrike		= mod:NewSpecialWarningDodge(308481, nil, nil, nil, 2, 2)
+local specWarnDarkSmash			= mod:NewSpecialWarningDodge(296718, nil, nil, nil, 2, 2)
 
 --General
 local timerGiftoftheTitan		= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
@@ -97,6 +99,8 @@ local timerForgeBreathCD		= mod:NewCDTimer(13.3, 309671, nil, nil, nil, 3)--13.3
 local timerEntropicMissilesCD	= mod:NewCDTimer(10.1, 309035, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--10.1-17.1
 --Other notable abilities for trash
 local timerTouchoftheAbyss		= mod:NewCastNPTimer(2, 298033, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
+local timerBladeFlourishCD		= mod:NewCDPNPTimer(14.6, 311399, nil, nil, nil, 3)
+local timerDarkSmashCD			= mod:NewCDNPTimer(7.3, 296718, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
@@ -108,7 +112,7 @@ local playerName = UnitName("player")
 mod.vb.TherumCleared = false
 mod.vb.UmbricCleared = false
 local warnedGUIDs = {}
-local lastSanity = 500
+local lastSanity = 1000
 
 --If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
 local function DelayedNameplateFix(self, once)
@@ -137,7 +141,7 @@ function mod:OnCombatStart(delay)
 	self.vb.TherumCleared = false
 	self.vb.UmbricCleared = false
 	table.wipe(warnedGUIDs)
-	lastSanity = 500
+	lastSanity = 1000
 	DelayedNameplateFix(self, true)--Repair settings from previous session if they didn't get repaired in last session
 	if self.Options.SpecWarn306545dodge4 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
@@ -255,12 +259,19 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 311399 then
 		specWarnBladeFlourish:Show()
 		specWarnBladeFlourish:Play("justrun")
+		timerBladeFlourishCD:Start(nil, args.sourceGUID)
 	elseif spellId == 308265 then
 		warnCorruptedBlight:Show()
 	elseif spellId == 296669 then
 		warnLurkingAppendage:Show()
 	elseif spellId == 307870 then
 		warnSanityOrb:Show()
+	elseif spellId == 296718 then
+		timerDarkSmashCD:Start(nil, args.sourceGUID)
+		if self:AntiSpam(3, 3) then
+			specWarnDarkSmash:Show()
+			specWarnDarkSmash:Play("watchstep")
+		end
 	end
 end
 
@@ -362,8 +373,28 @@ function mod:UNIT_DIED(args)
 		self.vb.UmbricCleared = true
 	elseif cid == 156795 then--S.I. Informant (Unknownn variant ID for TWW)
 		timerTouchoftheAbyss:Stop(args.destGUID)
+	elseif cid == 156949 then--Alleyway bladeflourish guy
+		timerBladeFlourishCD:Stop(args.destGUID)
+	elseif cid == 152987 then
+		timerDarkSmashCD:Stop(args.destGUID)
 	end
 end
+
+--All timers subject to a ~0.5 second clipping due to ScanEngagedUnits
+function mod:StartEngageTimers(guid, cid, delay)
+	if cid == 156949 then
+--		timerBladeFlourishCD:Start(14.6-delay, guid)
+	elseif cid == 152987 then
+--		timerDarkSmashCD:Start(7.3-delay, guid)
+	end
+end
+
+--Abort timers when all players out of combat, so NP timers clear on a wipe
+--Caveat, it won't calls top with GUIDs, so while it might terminate bar objects, it may leave lingering nameplate icons
+function mod:LeavingZoneCombat()
+	self:Stop(true)
+end
+
 
 function mod:ENCOUNTER_START(encounterID)
 	if (encounterID == 2338 or encounterID == 3081) and self:IsInCombat() then--Alleria Windrunner
@@ -447,21 +478,21 @@ function mod:UNIT_POWER_UPDATE(uId)
 		return
 	end
 	if self:AntiSpam(5, 6) then--Additional throttle in case you lose sanity VERY rapidly with increased ICD for special warning
-		if currentSanity == 40 and lastSanity > 40 then
-			lastSanity = 40
+		if currentSanity < 40 and lastSanity > 40 then
+			lastSanity = currentSanity
 			specwarnSanity:Show(lastSanity)
 			specwarnSanity:Play("lowsanity")
-		elseif currentSanity == 80 and lastSanity > 80 then
-			lastSanity = 80
+		elseif currentSanity < 80 and lastSanity > 80 then
+			lastSanity = currentSanity
 			specwarnSanity:Show(lastSanity)
 			specwarnSanity:Play("lowsanity")
 		end
 	elseif self:AntiSpam(3, 7) then--Additional throttle in case you lose sanity VERY rapidly
-		if currentSanity == 120 and lastSanity > 120 then
-			lastSanity = 120
+		if currentSanity < 120 and lastSanity > 120 then
+			lastSanity = currentSanity
 			warnSanity:Show(lastSanity)
-		elseif currentSanity == 160 and lastSanity > 160 then
-			lastSanity = 160
+		elseif currentSanity < 160 and lastSanity > 160 then
+			lastSanity = currentSanity
 			warnSanity:Show(lastSanity)
 		end
 	end
