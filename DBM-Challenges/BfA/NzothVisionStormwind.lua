@@ -20,8 +20,6 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED_UNFILTERED",
 	"UNIT_SPELLCAST_INTERRUPTED_UNFILTERED",
 	"UNIT_AURA player",
-	"NAME_PLATE_UNIT_ADDED",
-	"FORBIDDEN_NAME_PLATE_UNIT_ADDED",
 	"UNIT_POWER_UPDATE player"
 )
 
@@ -52,7 +50,7 @@ local warnBrutalSmash			= mod:NewCastAnnounce(309882, 3)
 local specwarnSanity			= mod:NewSpecialWarningCount(307831, nil, nil, nil, 1, 10)
 local specWarnGTFO				= mod:NewSpecialWarningGTFO(312121, nil, nil, nil, 1, 8)
 local specWarnEntomophobia		= mod:NewSpecialWarningJump(311389, nil, nil, nil, 1, 6)
-local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(306545, false, nil, 4, 1, 2)
+--local specWarnHauntingShadows	= mod:NewSpecialWarningDodge(306545, false, nil, 4, 1, 2)
 local specWarnScorchedFeet		= mod:NewSpecialWarningYou(315385, false, nil, 2, 1, 2)
 local yellScorchedFeet			= mod:NewYell(315385, nil, false, 2)
 --local specWarnSplitPersonality	= mod:NewSpecialWarningYou(316481, nil, nil, nil, 1, 2)
@@ -103,7 +101,6 @@ local timerBladeFlourishCD		= mod:NewCDPNPTimer(14.6, 311399, nil, nil, nil, 3)
 local timerDarkSmashCD			= mod:NewCDNPTimer(7.3, 296718, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
-mod:AddNamePlateOption("NPAuraOnHaunting2", 306545, false)
 mod:AddNamePlateOption("NPAuraOnMorale", 308998)
 
 --Antispam 1: Boss throttles, 2: GTFOs, 3: Dodge stuff on ground. 4: Face Away/special action. 5: Dodge Shockwaves
@@ -114,53 +111,11 @@ mod.vb.UmbricCleared = false
 local warnedGUIDs = {}
 local lastSanity = 1000
 
---If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
-local function DelayedNameplateFix(self, once)
-	--Check if we changed users nameplate options and restore them
-	if self.Options.CVAR1 or self.Options.CVAR2 or self.Options.CVAR3 then
-		if InCombatLockdown() then
-			if once then return end
-			--In combat, delay nameplate fix
-			DBM:Schedule(2, DelayedNameplateFix, self)
-		else
-			if self.Options.CVAR1 then
-				SetCVar("nameplateShowFriends", self.Options.CVAR1)
-			end
-			if self.Options.CVAR2 then
-				SetCVar("nameplateShowFriendlyNPCs", self.Options.CVAR2)
-			end
-			if self.Options.CVAR3 then
-				SetCVar("nameplateShowOnlyNames", self.Options.CVAR3)
-			end
-			self.Options.CVAR1, self.Options.CVAR2, self.Options.CVAR3 = nil, nil, nil
-		end
-	end
-end
-
 function mod:OnCombatStart(delay)
 	self.vb.TherumCleared = false
 	self.vb.UmbricCleared = false
 	table.wipe(warnedGUIDs)
 	lastSanity = 1000
-	DelayedNameplateFix(self, true)--Repair settings from previous session if they didn't get repaired in last session
-	if self.Options.SpecWarn306545dodge4 then
-		--This warning requires friendly nameplates, because it's only way to detect it.
-		self.Options.CVAR1, self.Options.CVAR2, self.Options.CVAR3 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0), tonumber(GetCVar("nameplateShowOnlyNames") or 0)
-		--Check if they were disabled, if disabled, force enable them
-		if self.Options.CVAR1 == 0 then
-			SetCVar("nameplateShowFriends", 1)
-		end
-		if self.Options.CVAR2 == 0 then
-			SetCVar("nameplateShowFriendlyNPCs", 1)
-		end
-		if self.Options.CVAR3 == 0 then
-			SetCVar("nameplateShowOnlyNames", 1)
-		end
-		--Making this option rely on another option is kind of required because this won't work without nameplateShowFriendlyNPCs
-		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 then
-			DBM:FireEvent("BossMod_EnableFriendlyNameplates")
-		end
-	end
 	if self.Options.NPAuraOnMorale then
 		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
@@ -175,11 +130,9 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
-	if self.Options.NPAuraOnHaunting2 or self.Options.NPAuraOnMorale then
+	if self.Options.NPAuraOnMorale then
 		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnMorale, self.Options.CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
-	--Check if we changed users nameplate options and restore them
-	DelayedNameplateFix(self)
 end
 
 function mod:SPELL_CAST_START(args)
@@ -452,24 +405,6 @@ do
 		end
 	end
 end
-
-function mod:NAME_PLATE_UNIT_ADDED(unit)
-	if unit and (UnitName(unit) == playerName) and not (UnitPlayerOrPetInRaid(unit) or UnitPlayerOrPetInParty(unit)) then
-		local guid = UnitGUID(unit)
-		if not guid then return end
-		if not warnedGUIDs[guid] then
-			warnedGUIDs[guid] = true
-			if self:AntiSpam(2, 2) then--Throttled because sometimes two spawn at once
-				specWarnHauntingShadows:Show()
-				specWarnHauntingShadows:Play("runaway")
-			end
-		end
-		if not DBM:HasMapRestrictions() and self.Options.NPAuraOnHaunting2 then
-			DBM.Nameplate:Show(true, guid, 306545, 1029718, 5)
-		end
-	end
-end
-mod.FORBIDDEN_NAME_PLATE_UNIT_ADDED = mod.NAME_PLATE_UNIT_ADDED--Just in case blizzard fixes map restrictions
 
 function mod:UNIT_POWER_UPDATE(uId)
 	local currentSanity = UnitPower(uId, ALTERNATE_POWER_INDEX)
