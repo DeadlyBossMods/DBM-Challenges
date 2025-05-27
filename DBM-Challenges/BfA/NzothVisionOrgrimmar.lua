@@ -514,7 +514,7 @@ function mod:GOSSIP_SHOW()
 	local gossipOptionID = self:GetGossipID()
 	if gossipOptionID then
 		--Garona
-		if self.Options.AutoGossipAction and gossipOptionID == 152993 then
+		if self.Options.AutoGossipAction and gossipOptionID == 49742 then
 			self:SelectGossip(gossipOptionID)
 		end
 	end
