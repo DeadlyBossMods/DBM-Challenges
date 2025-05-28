@@ -476,7 +476,7 @@ function mod:UNIT_POWER_UPDATE(uId)
 		lastSanity = currentSanity
 		return
 	end
-	if self:AntiSpam(5, 6) then--Additional throttle in case you lose sanity VERY rapidly with increased ICD for special warning
+	if self:AntiSpam(5, 8) then--Additional throttle in case you lose sanity VERY rapidly with increased ICD for special warning
 		if currentSanity < 40 and lastSanity > 40 then
 			lastSanity = currentSanity
 			specwarnSanity:Show(lastSanity)
@@ -486,7 +486,7 @@ function mod:UNIT_POWER_UPDATE(uId)
 			specwarnSanity:Show(lastSanity)
 			specwarnSanity:Play("lowsanity")
 		end
-	elseif self:AntiSpam(3, 7) then--Additional throttle in case you lose sanity VERY rapidly
+	elseif self:AntiSpam(3, 9) then--Additional throttle in case you lose sanity VERY rapidly
 		if currentSanity < 120 and lastSanity > 120 then
 			lastSanity = currentSanity
 			warnSanity:Show(lastSanity)
