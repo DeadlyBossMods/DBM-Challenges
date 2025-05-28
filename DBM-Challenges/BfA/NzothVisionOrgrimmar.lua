@@ -7,8 +7,8 @@ mod:RegisterCombat("scenario", 2212, 2828)
 mod:RegisterZoneCombat(2828)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870",
-	"SPELL_AURA_APPLIED 311390 315385 311641 299055 304165",--316481
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870 299055 304165",
+	"SPELL_AURA_APPLIED 311390 315385 311641 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237",
 	"SPELL_PERIODIC_DAMAGE 303594 313303",
@@ -26,6 +26,7 @@ mod:RegisterEventsInCombat(
 --TODO, maybe add https://ptr.wowhead.com/spell=298510/aqiri-mind-toxin
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
+--TODO, add gamons whirlwind? he uses every 7.3 seconds and it's not really most threatening thing, just a small amount of extra damage
 local warnSanity					= mod:NewCountAnnounce(307831, 3)
 local warnSanityOrb					= mod:NewCastAnnounce(307870, 1)
 local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
@@ -34,12 +35,13 @@ local warnScorchedFeet				= mod:NewSpellAnnounce(315385, 4)
 local warnCriesoftheVoid			= mod:NewCastAnnounce(304976, 4)
 local warnVoidQuills				= mod:NewCastAnnounce(304251, 3)
 --Other notable abilities by mini bosses/trash
-local warnDarkForce					= mod:NewTargetNoFilterAnnounce(299055, 3)
 local warnExplosiveLeap				= mod:NewCastAnnounce(306001, 3)
 local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
 local warnHorrifyingShout			= mod:NewCastAnnounce(305378, 4)
 local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 local warnToxicBreath				= mod:NewSpellAnnounce(298502, 2)
+local warnCallGamon					= mod:NewSpellAnnounce(398139, 2, "236454")
+local warnWarStomp					= mod:NewSpellAnnounce(314723, 4)
 
 --General (GTFOs and Affixes)
 local specwarnSanity				= mod:NewSpecialWarningCount(307831, nil, nil, nil, 1, 10)
@@ -60,7 +62,7 @@ local specWarnHopelessness			= mod:NewSpecialWarningMoveTo(297574, nil, nil, nil
 local specWarnDefiledGround			= mod:NewSpecialWarningDodge(306726, nil, nil, nil, 2, 15)
 --Other notable abilities by mini bosses/trash
 local specWarnOrbofAnnihilation		= mod:NewSpecialWarningDodge(299110, nil, nil, nil, 2, 2)
-local specWarnDarkForce				= mod:NewSpecialWarningYou(299055, nil, nil, nil, 1, 13)
+local specWarnDarkForce				= mod:NewSpecialWarningDodge(299055, nil, nil, nil, 1, 15)
 local specWarnVoidTorrent			= mod:NewSpecialWarningYou(307863, nil, nil, nil, 4, 2)
 local yellVoidTorrent				= mod:NewYell(307863)
 local specWarnSurgingFist			= mod:NewSpecialWarningDodge(300351, nil, nil, nil, 2, 2)
@@ -91,13 +93,19 @@ local timerSurgingDarknessCD		= mod:NewCDTimer(20.6, 297822, nil, nil, nil, 3)
 local timerSeismicSlamCD			= mod:NewCDTimer(12.1, 297746, nil, nil, nil, 3)
 --Extra Abilities (used by Thrall and the area LTs)
 local timerDefiledGroundCD			= mod:NewCDTimer(12.1, 306726, nil, nil, nil, 3)
---Other notable elite timers
+--Other notable elite timers (mini bosses use hybrid timers, trash only use nameplate only)
 local timerSurgingFistCD			= mod:NewCDTimer(9.7, 300351, nil, nil, nil, 3)
 local timerDecimatorCD				= mod:NewCDTimer(9.7, 300412, nil, nil, nil, 3)
 local timerToxicBreathCD			= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
 local timerToxicVolleyCD			= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 local timerHorrifyingShout			= mod:NewCastNPTimer(2.5, 305378, nil, nil, nil, 4)
 local timerTouchoftheAbyss			= mod:NewCastNPTimer(2, 298033, nil, nil, nil, 4)
+local timerDarkForceCD				= mod:NewCDTimer(12.1, 299055, nil, nil, nil, 3)
+local timerOrbofAnnihilationCD		= mod:NewVarTimer("v4.8-7.3", 299110, nil, nil, nil, 3)
+local timerExplosiveLeapCD			= mod:NewCDTimer(12.1, 306001, nil, nil, nil, 3)
+local timerDesperateRetchingCD		= mod:NewCDTimer(16.9, 304165, nil, nil, nil, 3, nil, DBM_COMMON_L.DISEASE_ICON)
+local timerMaddeningRoarCD			= mod:NewCDTimer(20, 304101, nil, nil, nil, 3)--not fully vetted, need more than single cast
+local timerWarStompCD				= mod:NewCDPNPTimer(15.7, 314723, nil, nil, nil, 2)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddGossipOption(true, "Action")
@@ -175,7 +183,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnHopelessness:Play("movetoyelloworb")
 	elseif spellId == 304251 and self:AntiSpam(3.5, 1) then--1-4 boars, 3.5 second throttle
 		warnVoidQuills:Show()
-	elseif spellId == 306726 or spellId == 306828 then
+	elseif spellId == 306726 or spellId == 306828 then--306726 is Vez'okk the Lightless, 306828 is Thrall
 		if self:AntiSpam(3, 3) then
 			specWarnDefiledGround:Show()
 			specWarnDefiledGround:Play("frontal")
@@ -184,9 +192,12 @@ function mod:SPELL_CAST_START(args)
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "DefiledGroundTarget", 0.1, 7)
 		end
-	elseif spellId == 299110 and self:AntiSpam(2, 2) then
-		specWarnOrbofAnnihilation:Show()
-		specWarnOrbofAnnihilation:Play("watchstep")
+	elseif spellId == 299110 then
+		timerOrbofAnnihilationCD:Start(nil, args.sourceGUID)
+		if self:AntiSpam(2, 2) then
+			specWarnOrbofAnnihilation:Show()
+			specWarnOrbofAnnihilation:Play("watchstep")
+		end
 	elseif spellId == 307863 then
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "VoidTorrentTarget", 0.1, 7)
@@ -205,11 +216,13 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 304101 then
 		specWarnMaddeningRoar:Show()
 		specWarnMaddeningRoar:Play("justrun")
+		timerMaddeningRoarCD:Start(nil, args.sourceGUID)
 	elseif spellId == 304282 and self:AntiSpam(2, 2) then
 		specWarnStampedingCorruption:Show()
 		specWarnStampedingCorruption:Play("watchstep")
 	elseif spellId == 306001 then
 		warnExplosiveLeap:Show()
+		timerExplosiveLeapCD:Start(nil, args.sourceGUID)
 	elseif spellId == 306199 then
 		specWarnHowlinginPain:Show()
 		specWarnHowlinginPain:Play("stopcast")
@@ -266,6 +279,12 @@ function mod:SPELL_CAST_START(args)
 		specWarnVoidBuffet:Play("kickcast")
 	elseif spellId == 307870 then
 		warnSanityOrb:Show()
+	elseif spellId == 299055 then
+		specWarnDarkForce:Show()
+		specWarnDarkForce:Play("frontal")
+		timerDarkForceCD:Start(nil, args.sourceGUID)
+	elseif spellId == 304165 then
+		timerDesperateRetchingCD:Start(nil, args.sourceGUID)
 	end
 end
 
@@ -311,13 +330,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnDesperateRetchingD:Show(args.destName)
 			specWarnDesperateRetchingD:Play("helpdispel")
 		end
-	elseif spellId == 299055 then
-		if args:IsPlayer() then
-			specWarnDarkForce:Show()
-			specWarnDarkForce:Play("pushbackincoming")
-		else
-			warnDarkForce:Show(args.destName)
-		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -352,7 +364,7 @@ function mod:UNIT_DIED(args)
 	elseif cid == 152874 or cid == 234037 then--Vez'okk the Lightless
 		timerDefiledGroundCD:Stop()
 		self.vb.VezokkCleared = true
-	elseif cid == 153943 then--Decimator Shiq'voth (unknown TWW variant ID)
+	elseif cid == 153943 then--Decimator Shiq'voth
 		timerSurgingFistCD:Stop()
 		timerDecimatorCD:Stop()
 	elseif cid == 153401 or cid == 244186 then--K'thir Dominator
@@ -360,8 +372,41 @@ function mod:UNIT_DIED(args)
 	elseif cid == 153532 then--Aqir Mindhunter (Unknown TWW variant ID)
 		timerToxicVolleyCD:Stop()
 		timerToxicBreathCD:Stop()
+	elseif cid == 153942 then
+		timerDarkForceCD:Stop(args.destGUID)
+		timerOrbofAnnihilationCD:Stop(args.destGUID)
+	elseif cid == 156143 then
+		timerExplosiveLeapCD:Stop(args.destGUID)
+	elseif cid == 155656 then--Misha
+		timerDesperateRetchingCD:Stop(args.destGUID)
+		timerMaddeningRoarCD:Stop(args.destGUID)
+	elseif cid == 240672 then--Gamon
+		timerWarStompCD:Stop(args.destGUID)
 	end
 end
+
+--All timers subject to a ~0.5 second clipping due to ScanEngagedUnits
+function mod:StartEngageTimers(guid, cid, delay)
+	if cid == 153942 then--Decimator Shiq'voth
+		--Orb used instantly on pull
+		timerDarkForceCD:Start(4.8-delay, guid)
+	elseif cid == 156143 then
+		timerExplosiveLeapCD:Start(6.3-delay, guid)
+	elseif cid == 155656 then--Misha
+		timerDesperateRetchingCD:Start(3.4-delay, guid)
+		timerMaddeningRoarCD:Start(7.8-delay, guid)
+	elseif cid == 240672 then--Gamon
+		warnCallGamon:Show()
+		timerWarStompCD:Start(5.3-delay, guid)
+	end
+end
+
+--Abort timers when all players out of combat, so NP timers clear on a wipe
+--Caveat, it won't calls top with GUIDs, so while it might terminate bar objects, it may leave lingering nameplate icons
+function mod:LeavingZoneCombat()
+	self:Stop(true)
+end
+
 
 function mod:ENCOUNTER_START(encounterID)
 	if not self:IsInCombat() then return end
@@ -383,6 +428,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 		if cid == 164189 or cid == 164188 then
 			self:SendSync("DarkImagination")
 		end
+	elseif spellId == 314723 and self:AntiSpam(3, 7) then--War Stomp (not in combat log)
+		warnWarStomp:Show()
+		local guid = UnitGUID(uId)
+		timerWarStompCD:Start(nil, guid)
 	end
 end
 
@@ -453,17 +502,4 @@ function mod:OnSync(msg)
 	if msg == "DarkImagination" then
 		timerDarkImaginationCD:Start()
 	end
-end
-
---All timers subject to a ~0.5 second clipping due to ScanEngagedUnits
-function mod:StartEngageTimers(guid, cid, delay)
-	if cid == 222305 then
-
-	end
-end
-
---Abort timers when all players out of combat, so NP timers clear on a wipe
---Caveat, it won't calls top with GUIDs, so while it might terminate bar objects, it may leave lingering nameplate icons
-function mod:LeavingZoneCombat()
-	self:Stop(true)
 end
