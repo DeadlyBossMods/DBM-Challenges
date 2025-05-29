@@ -10,7 +10,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870 299055 304165",
 	"SPELL_AURA_APPLIED 311390 315385 311641 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 297237",
+	"SPELL_CAST_SUCCESS 297237 298033",
 	"SPELL_PERIODIC_DAMAGE 303594 313303",
 	"SPELL_PERIODIC_MISSED 303594 313303",
 	"SPELL_INTERRUPT",
@@ -27,6 +27,7 @@ mod:RegisterEventsInCombat(
 --TODO, improve https://ptr.wowhead.com/spell=306001/explosive-leap warning if can get throw target
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
 --TODO, add gamons whirlwind? he uses every 7.3 seconds and it's not really most threatening thing, just a small amount of extra damage
+--TODO, horrifying shout nampelate timer, gotta let mobs live longer
 local warnSanity					= mod:NewCountAnnounce(307831, 3)
 local warnSanityOrb					= mod:NewCastAnnounce(307870, 1)
 local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
@@ -100,9 +101,10 @@ local timerToxicBreathCD			= mod:NewCDTimer(7.3, 298502, nil, nil, nil, 3)
 local timerToxicVolleyCD			= mod:NewCDTimer(7.3, 304169, nil, nil, nil, 3)
 local timerHorrifyingShout			= mod:NewCastNPTimer(2.5, 305378, nil, nil, nil, 4)
 local timerTouchoftheAbyss			= mod:NewCastNPTimer(2, 298033, nil, nil, nil, 4)
+local timerTouchoftheAbyssCD		= mod:NewCDPNPTimer(18.6, 298033, nil, nil, nil, 4)--Needs bigger sample
 local timerDarkForceCD				= mod:NewCDTimer(12.1, 299055, nil, nil, nil, 3)
 local timerOrbofAnnihilationCD		= mod:NewVarTimer("v4.8-7.3", 299110, nil, nil, nil, 3)
-local timerExplosiveLeapCD			= mod:NewCDTimer(12.1, 306001, nil, nil, nil, 3)
+local timerExplosiveLeapCD			= mod:NewCDTimer(12.1, 306001, nil, nil, nil, 3, nil, nil, nil, nil, nil, nil, nil, nil, nil, true)--Priority CD
 local timerDesperateRetchingCD		= mod:NewCDTimer(16.9, 304165, nil, nil, nil, 3, nil, DBM_COMMON_L.DISEASE_ICON)
 local timerMaddeningRoarCD			= mod:NewCDTimer(20, 304101, nil, nil, nil, 3)--not fully vetted, need more than single cast
 local timerWarStompCD				= mod:NewCDPNPTimer(15.7, 314723, nil, nil, nil, 2)
@@ -208,11 +210,11 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 300351 then
 		specWarnSurgingFist:Show()
 		specWarnSurgingFist:Play("chargemove")
-		timerSurgingFistCD:Start()
+		timerSurgingFistCD:Start(nil, args.sourceGUID)
 	elseif spellId == 300388 then
 		specWarnDecimator:Show()
 		specWarnDecimator:Play("watchorb")
-		timerDecimatorCD:Start()
+		timerDecimatorCD:Start(nil, args.sourceGUID)
 	elseif spellId == 304101 then
 		specWarnMaddeningRoar:Show()
 		specWarnMaddeningRoar:Play("justrun")
@@ -265,14 +267,14 @@ function mod:SPELL_CAST_START(args)
 			specWarnToxicVolley:Show()
 			specWarnToxicVolley:Play("watchstep")
 		end
-		timerToxicVolleyCD:Start()
+		timerToxicVolleyCD:Start(nil, args.sourceGUID)
 	elseif spellId == 298502 then
 		if self:AntiSpam(3, 3) then
 			warnToxicBreath:Show()
 		end
 		local cid = self:GetCIDFromGUID(args.sourceGUID)
 		if cid == 153532 then
-			timerToxicBreathCD:Start()
+			timerToxicBreathCD:Start(nil, args.sourceGUID)
 		end
 	elseif spellId == 297315 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnVoidBuffet:Show(args.sourceName)
@@ -292,6 +294,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 297237 then
 		warnEndlessHungerTotem:Show()
+	elseif spellId == 298033 then
+		timerTouchoftheAbyssCD:Start(nil, args.sourceGUID)
 	end
 end
 
@@ -345,6 +349,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:SPELL_INTERRUPT(args)
 	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
 		timerTouchoftheAbyss:Stop(args.destGUID)
+		timerTouchoftheAbyssCD:Start(18.6, args.destGUID)
 	elseif type(args.extraSpellId) == "number" and args.extraSpellId == 305378 then
 		timerHorrifyingShout:Stop(args.destGUID)
 	end
@@ -365,17 +370,18 @@ function mod:UNIT_DIED(args)
 		timerDefiledGroundCD:Stop()
 		self.vb.VezokkCleared = true
 	elseif cid == 153943 then--Decimator Shiq'voth
-		timerSurgingFistCD:Stop()
-		timerDecimatorCD:Stop()
-	elseif cid == 153401 or cid == 244186 then--K'thir Dominator
+		timerSurgingFistCD:Stop(args.destGUID)
+		timerDecimatorCD:Stop(args.destGUID)
+	elseif cid == 153401 or cid == 244186 or cid == 157610 then--K'thir Dominator
 		timerTouchoftheAbyss:Stop(args.destGUID)
-	elseif cid == 153532 then--Aqir Mindhunter (Unknown TWW variant ID)
-		timerToxicVolleyCD:Stop()
-		timerToxicBreathCD:Stop()
-	elseif cid == 153942 then
+		timerTouchoftheAbyssCD:Stop(args.destGUID)
+	elseif cid == 153532 then--Aqir Mindhunter
+		timerToxicVolleyCD:Stop(args.destGUID)
+		timerToxicBreathCD:Stop(args.destGUID)
+	elseif cid == 153942 then--Annihilator Lak'hal
 		timerDarkForceCD:Stop(args.destGUID)
 		timerOrbofAnnihilationCD:Stop(args.destGUID)
-	elseif cid == 156143 then
+	elseif cid == 156143 then--Voidcrazed Hulk
 		timerExplosiveLeapCD:Stop(args.destGUID)
 	elseif cid == 155656 then--Misha
 		timerDesperateRetchingCD:Stop(args.destGUID)
@@ -387,11 +393,21 @@ end
 
 --All timers subject to a ~0.5 second clipping due to ScanEngagedUnits
 function mod:StartEngageTimers(guid, cid, delay)
-	if cid == 153942 then--Decimator Shiq'voth
+	if cid == 152874 or cid == 234037 then--Vez'okk the Lightless
+		timerDefiledGroundCD:Start(3.3-delay, guid)
+	elseif cid == 153943 then--Decimator Shiq'voth
+		timerSurgingFistCD:Start(3.5-delay, guid)
+		timerDecimatorCD:Start(5.9-delay, guid)
+	elseif cid == 153401 or cid == 244186 or cid == 157610 then--K'thir Dominator
+		timerTouchoftheAbyssCD:Start(3.5-delay, guid)
+	elseif cid == 153532 then--Aqir Mindhunter
+		timerToxicBreathCD:Start(1.7-delay, guid)
+		timerToxicVolleyCD:Start(5.4-delay, guid)
+	elseif cid == 153942 then--Annihilator Lak'hal
 		--Orb used instantly on pull
 		timerDarkForceCD:Start(4.8-delay, guid)
-	elseif cid == 156143 then
-		timerExplosiveLeapCD:Start(6.3-delay, guid)
+	elseif cid == 156143 then--Voidcrazed Hulk
+		timerExplosiveLeapCD:Start(5.5-delay, guid)
 	elseif cid == 155656 then--Misha
 		timerDesperateRetchingCD:Start(3.4-delay, guid)
 		timerMaddeningRoarCD:Start(7.8-delay, guid)
