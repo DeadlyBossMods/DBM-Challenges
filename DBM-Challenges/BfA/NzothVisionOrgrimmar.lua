@@ -10,7 +10,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870 299055 304165",
 	"SPELL_AURA_APPLIED 311390 315385 311641 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
-	"SPELL_CAST_SUCCESS 297237 298033",
+	"SPELL_CAST_SUCCESS 297237 298033 297746",
 	"SPELL_PERIODIC_DAMAGE 303594 313303",
 	"SPELL_PERIODIC_MISSED 303594 313303",
 	"SPELL_INTERRUPT",
@@ -28,6 +28,7 @@ mod:RegisterEventsInCombat(
 --TODO, can https://ptr.wowhead.com/spell=305875/visceral-fluid be dodged? If so upgrade the warning
 --TODO, add gamons whirlwind? he uses every 7.3 seconds and it's not really most threatening thing, just a small amount of extra damage
 --TODO, horrifying shout nampelate timer, gotta let mobs live longer
+--TODO, add collagulated horror
 local warnSanity					= mod:NewCountAnnounce(307831, 3)
 local warnSanityOrb					= mod:NewCastAnnounce(307870, 1)
 local warnGiftoftheTitans			= mod:NewSpellAnnounce(313698, 1)
@@ -173,7 +174,6 @@ function mod:SPELL_CAST_START(args)
 			specWarnSeismicSlam:Show()
 			specWarnSeismicSlam:Play("frontal")
 		end
-		timerSeismicSlamCD:Start()
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "SeismicSlamTarget", 0.1, 7)
 		end
@@ -296,6 +296,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnEndlessHungerTotem:Show()
 	elseif spellId == 298033 then
 		timerTouchoftheAbyssCD:Start(nil, args.sourceGUID)
+	elseif spellId == 297746 then
+		timerSeismicSlamCD:Start(10.1)--12.1-2 seconds after cast ends
 	end
 end
 
@@ -405,7 +407,7 @@ function mod:StartEngageTimers(guid, cid, delay)
 		timerToxicVolleyCD:Start(5.4-delay, guid)
 	elseif cid == 153942 then--Annihilator Lak'hal
 		--Orb used instantly on pull
-		timerDarkForceCD:Start(4.8-delay, guid)
+		timerDarkForceCD:Start(4-delay, guid)
 	elseif cid == 156143 then--Voidcrazed Hulk
 		timerExplosiveLeapCD:Start(5.5-delay, guid)
 	elseif cid == 155656 then--Misha
