@@ -416,6 +416,8 @@ function mod:StartEngageTimers(guid, cid, delay)
 	elseif cid == 240672 then--Gamon
 		warnCallGamon:Show()
 		timerWarStompCD:Start(5.3-delay, guid)
+	elseif (cid == 164189 or cid == 164188) and self:AntiSpam(5, 8) then--Horrific Fragment
+		timerDarkImaginationCD:Start()
 	end
 end
 
@@ -441,15 +443,15 @@ function mod:ENCOUNTER_START(encounterID)
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
-	if spellId == 18950 and self:AntiSpam(2, 6) then
-		local cid = self:GetUnitCreatureId(uId)
-		if cid == 164189 or cid == 164188 then
-			self:SendSync("DarkImagination")
-		end
-	elseif spellId == 314723 and self:AntiSpam(3, 7) then--War Stomp (not in combat log)
+	if spellId == 314723 and self:AntiSpam(3, 7) then--War Stomp (not in combat log)
 		warnWarStomp:Show()
 		local guid = UnitGUID(uId)
 		timerWarStompCD:Start(nil, guid)
+	--elseif spellId == 18950 and self:AntiSpam(2, 6) then
+	--	local cid = self:GetUnitCreatureId(uId)
+	--	if cid == 164189 or cid == 164188 then
+	--		self:SendSync("DarkImagination")
+	--	end
 	end
 end
 
@@ -515,9 +517,11 @@ function mod:UNIT_POWER_UPDATE(uId)
 	end
 end
 
+--[[
 function mod:OnSync(msg)
 	if not self:IsInCombat() then return end
 	if msg == "DarkImagination" then
 		timerDarkImaginationCD:Start()
 	end
 end
+--]]
