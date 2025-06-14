@@ -7,7 +7,7 @@ mod:RegisterCombat("scenario", 2212, 2828)
 mod:RegisterZoneCombat(2828)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870 299055 304165",
+	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315 307870 299055 304165 305369 296718",
 	"SPELL_AURA_APPLIED 311390 315385 311641 304165",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_CAST_SUCCESS 297237 298033 297746",
@@ -38,12 +38,12 @@ local warnCriesoftheVoid			= mod:NewCastAnnounce(304976, 4)
 local warnVoidQuills				= mod:NewCastAnnounce(304251, 3)
 --Other notable abilities by mini bosses/trash
 local warnExplosiveLeap				= mod:NewCastAnnounce(306001, 3)
-local warnEndlessHungerTotem		= mod:NewSpellAnnounce(297237, 4)
 local warnHorrifyingShout			= mod:NewCastAnnounce(305378, 4)
 local warnTouchoftheAbyss			= mod:NewCastAnnounce(298033, 4)
 local warnToxicBreath				= mod:NewSpellAnnounce(298502, 2)
 local warnCallGamon					= mod:NewSpellAnnounce(398139, 2, "236454")
 local warnWarStomp					= mod:NewSpellAnnounce(314723, 4)
+local warnBreakSpirit				= mod:NewCastAnnounce(305369, 3)
 
 --General (GTFOs and Affixes)
 local specwarnSanity				= mod:NewSpecialWarningCount(307831, nil, nil, nil, 1, 10)
@@ -85,6 +85,9 @@ local specWarnVoidBuffet			= mod:NewSpecialWarningInterrupt(297315, "HasInterrup
 local specWarnShockwave				= mod:NewSpecialWarningDodge(298630, nil, nil, nil, 2, 15)
 local specWarnVisceralFluid			= mod:NewSpecialWarningDodge(305875, nil, nil, nil, 2, 2)
 local specWarnToxicVolley			= mod:NewSpecialWarningDodge(304169, nil, nil, nil, 2, 2)
+local specWarnRupture				= mod:NewSpecialWarningDodge(305155, nil, nil, nil, 2, 2)
+local specWarnEndlessHungerTotem	= mod:NewSpecialWarningSwitch(297237, nil, nil, nil, 1, 2)
+local specWarnDarkSmash				= mod:NewSpecialWarningDodge(296718, nil, nil, nil, 2, 2)
 
 --General
 local timerGiftoftheTitan			= mod:NewBuffFadesTimer(20, 313698, nil, nil, nil, 5)
@@ -109,11 +112,14 @@ local timerExplosiveLeapCD			= mod:NewCDTimer(12.1, 306001, nil, nil, nil, 3, ni
 local timerDesperateRetchingCD		= mod:NewCDTimer(16.9, 304165, nil, nil, nil, 3, nil, DBM_COMMON_L.DISEASE_ICON)
 local timerMaddeningRoarCD			= mod:NewCDTimer(20, 304101, nil, nil, nil, 3)--not fully vetted, need more than single cast
 local timerWarStompCD				= mod:NewCDPNPTimer(15.7, 314723, nil, nil, nil, 2)
+local timerBreakSpiritCD			= mod:NewCDNPTimer(9.7, 305369, nil, nil, nil, 5)
+local timerShockwaveCD				= mod:NewCDNPTimer(9.7, 298630, nil, nil, nil, 3)
+local timerDarkSmashCD				= mod:NewCDNPTimer(7.3, 296718, nil, nil, nil, 3)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddGossipOption(true, "Action")
 
---AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs
+--AntiSpam Throttles: 1-Unique ability, 2-watch steps, 3-shockwaves, 4-GTFOs, 5--Role/Defensive
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
@@ -259,9 +265,12 @@ function mod:SPELL_CAST_START(args)
 			warnTouchoftheAbyss:Show()
 		end
 		timerTouchoftheAbyss:Start(nil, args.sourceGUID)
-	elseif spellId == 298630 and self:AntiSpam(3, 3) then
-		specWarnShockwave:Show()
-		specWarnShockwave:Play("frontal")
+	elseif spellId == 298630 then
+		timerShockwaveCD:Start(nil, args.sourceGUID)
+		if self:AntiSpam(3, 3) then
+			specWarnShockwave:Show()
+			specWarnShockwave:Play("frontal")
+		end
 	elseif spellId == 304169 then
 		if self:AntiSpam(2, 2) then
 			specWarnToxicVolley:Show()
@@ -287,13 +296,25 @@ function mod:SPELL_CAST_START(args)
 		timerDarkForceCD:Start(nil, args.sourceGUID)
 	elseif spellId == 304165 then
 		timerDesperateRetchingCD:Start(nil, args.sourceGUID)
+	elseif spellId == 305369 then
+		timerBreakSpiritCD:Start(nil, args.sourceGUID)
+		if self:AntiSpam(3, 5) then
+			warnBreakSpirit:Show()
+		end
+	elseif spellId == 296718 then
+		timerDarkSmashCD:Start(nil, args.sourceGUID)
+		if self:AntiSpam(3, 2) then
+			specWarnDarkSmash:Show()
+			specWarnDarkSmash:Play("watchstep")
+		end
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 297237 then
-		warnEndlessHungerTotem:Show()
+		specWarnEndlessHungerTotem:Show()
+		specWarnEndlessHungerTotem:Play("attacktotem")
 	elseif spellId == 298033 then
 		timerTouchoftheAbyssCD:Start(nil, args.sourceGUID)
 	elseif spellId == 297746 then
@@ -390,6 +411,12 @@ function mod:UNIT_DIED(args)
 		timerMaddeningRoarCD:Stop(args.destGUID)
 	elseif cid == 240672 then--Gamon
 		timerWarStompCD:Stop(args.destGUID)
+	elseif cid == 156406 then--Voidbound Honor Guard
+		timerBreakSpiritCD:Stop(args.destGUID)
+	elseif cid == 156146 then--Voidbound Shieldbearer
+		timerShockwaveCD:Stop(args.destGUID)
+	elseif cid == 152987 then
+		timerDarkSmashCD:Stop(args.destGUID)
 	end
 end
 
@@ -418,6 +445,12 @@ function mod:StartEngageTimers(guid, cid, delay)
 		timerWarStompCD:Start(5.3-delay, guid)
 	elseif (cid == 164189 or cid == 164188) and self:AntiSpam(5, 8) then--Horrific Fragment
 		timerDarkImaginationCD:Start()
+	elseif cid == 156406 then--Voidbound Honor Guard
+		timerBreakSpiritCD:Start(4.4-delay, guid)
+	elseif cid == 156146 then--Voidbound Shieldbearer
+		timerShockwaveCD:Start(4.7-delay, guid)
+--	elseif cid == 152987 then
+--		timerDarkSmashCD:Start(10.8-delay, guid)
 	end
 end
 
@@ -447,6 +480,9 @@ function mod:UNIT_SPELLCAST_SUCCEEDED_UNFILTERED(uId, _, spellId)
 		warnWarStomp:Show()
 		local guid = UnitGUID(uId)
 		timerWarStompCD:Start(nil, guid)
+	elseif spellId == 298074 and self:AntiSpam(3, 3) then--Rupture (not in combatlog)
+		specWarnRupture:Show()
+		specWarnRupture:Play("watchstep")
 	--elseif spellId == 18950 and self:AntiSpam(2, 6) then
 	--	local cid = self:GetUnitCreatureId(uId)
 	--	if cid == 164189 or cid == 164188 then

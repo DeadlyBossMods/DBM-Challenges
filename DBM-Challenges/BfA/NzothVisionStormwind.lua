@@ -11,7 +11,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 311390 315385 311641 308380 308366 308265 308998",--316481
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 308998 298033",
-	"SPELL_CAST_SUCCESS 309035 1223112 1223111 308308 308865",
+	"SPELL_CAST_SUCCESS 309035 1223112 1223111 308308 308865 298033",
 	"SPELL_PERIODIC_DAMAGE 312121 296674 308807 313303",
 	"SPELL_PERIODIC_MISSED 312121 296674 308807 313303",
 	"SPELL_INTERRUPT",
@@ -104,19 +104,19 @@ local timerExplosiveOrdnanceCD	= mod:NewVarTimer("v20.6-29.1", 305672, nil, nil,
 local timerForgeBreathCD		= mod:NewCDTimer(13.3, 309671, nil, nil, nil, 3)--13.3-14.6
 local timerEntropicMissilesCD	= mod:NewCDTimer(10.1, 309035, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--10.1-17.1
 --Other notable abilities for trash
-local timerEntropicLeapCD		= mod:NewCDNPTimer(10.1, 308406, nil, nil, nil, 3)--Unknown recast time, even with 8 masks this guy usually doesn't live long enough to cast it again
---local timerTouchoftheAbyssCD	= mod:NewCDNPTimer(12, 298033, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--Insuffiicent data
+local timerEntropicLeapCD		= mod:NewCDTimer(10.1, 308406, nil, nil, nil, 3, nil, nil, nil, nil, nil, nil, nil, nil, nil, true)--Priority CD--Unknown recast time, even with 8 masks this guy usually doesn't live long enough to cast it again
+local timerTouchoftheAbyssCD	= mod:NewCDPNPTimer(12, 298033, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--Insuffiicent data
 local timerTouchoftheAbyss		= mod:NewCastNPTimer(2, 298033, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
-local timerBladeFlourishCD		= mod:NewCDPNPTimer(14.6, 311399, nil, nil, nil, 3)--14.6-15.8
-local timerRoaringBlastCD		= mod:NewCDNPTimer(17, 311456, nil, nil, nil, 3)
+local timerBladeFlourishCD		= mod:NewCDTimer(14.6, 311399, nil, nil, nil, 3, nil, nil, nil, nil, nil, nil, nil, nil, nil, true)--Priority CD / 14.6-15.8
+local timerRoaringBlastCD		= mod:NewCDTimer(17, 311456, nil, nil, nil, 3)
 local timerDarkSmashCD			= mod:NewCDNPTimer(7.3, 296718, nil, nil, nil, 3)
 local timerMaddeningCallCD		= mod:NewCDNPTimer(20.7, 1223112, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--Insufficient Data to determine if it goes on CD on cast or cast finish/interrupt
 local timerViciousSliceCD		= mod:NewCDNPTimer(10.9, 1223111, nil, nil, nil, 5)
 local timerPiercingShotCD		= mod:NewCDNPTimer(12.1, 308308, nil, nil, nil, 3)--12.1-13.4
 local timerRiftStrikeCD			= mod:NewCDNPTimer(14.6, 308481, nil, nil, nil, 3)
-local timerChaosBreathCD		= mod:NewCDPNPTimer(13.4, 296911, nil, nil, nil, 3)--13.4-14.6
-local timerRainofFireCD			= mod:NewCDNPTimer(10.9, 308801, nil, nil, nil, 3)--10.9-13
-local timerTwistedSummonsCD		= mod:NewCDNPTimer(16.6, 308865, nil, nil, nil, 1)
+local timerChaosBreathCD		= mod:NewCDTimer(13.4, 296911, nil, nil, nil, 3, nil, nil, nil, nil, nil, nil, nil, nil, nil, true)--Priority CD / 13.4-14.6
+local timerRainofFireCD			= mod:NewCDTimer(10.9, 308801, nil, nil, nil, 3)--10.9-13
+local timerTwistedSummonsCD		= mod:NewCDTimer(16.6, 308865, nil, nil, nil, 1)
 
 mod:AddInfoFrameOption(307831, true)
 mod:AddNamePlateOption("NPAuraOnMorale", 308998)
@@ -286,6 +286,15 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif spellId == 308865 then
 		warnTwistedSummons:Show()
 		timerTwistedSummonsCD:Start(nil, args.sourceGUID)
+	elseif spellId == 298033 then
+		timerTouchoftheAbyssCD:Start(18.6, args.sourceGUID)
+	end
+end
+
+function mod:SPELL_INTERRUPT(args)
+	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
+		timerTouchoftheAbyss:Stop(args.destGUID)
+		timerTouchoftheAbyssCD:Start(18.6, args.destGUID)
 	end
 end
 
@@ -338,8 +347,6 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.NPAuraOnMorale then
 			DBM.Nameplate:Hide(true, args.destGUID, spellId)
 		end
-	elseif spellId == 298033 then
-		timerTouchoftheAbyss:Stop(args.sourceGUID)
 	end
 end
 
@@ -350,12 +357,6 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spell
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
-
-function mod:SPELL_INTERRUPT(args)
-	if type(args.extraSpellId) == "number" and args.extraSpellId == 298033 then
-		timerTouchoftheAbyss:Stop(args.destGUID)
-	end
-end
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -379,7 +380,7 @@ function mod:UNIT_DIED(args)
 		self.vb.UmbricCleared = true
 	elseif cid == 156795 then--S.I. Informant (Unknownn variant ID for TWW)
 		timerTouchoftheAbyss:Stop(args.destGUID)
---		timerTouchoftheAbyssCD:Stop(args.destGUID)
+		timerTouchoftheAbyssCD:Stop(args.destGUID)
 	elseif cid == 156949 then--Armsmaster Terenson
 		timerBladeFlourishCD:Stop(args.destGUID)
 		timerRoaringBlastCD:Stop(args.destGUID)
@@ -407,10 +408,10 @@ function mod:StartEngageTimers(guid, cid, delay)
 	if cid == 156949 then--Armsmaster Terenson
 		timerBladeFlourishCD:Start(3.7-delay, guid)
 		timerRoaringBlastCD:Start(9.7-delay, guid)
-	elseif cid == 152987 then
-		timerDarkSmashCD:Start(10.8-delay, guid)
---	elseif cid == 156795 then
---		timerTouchoftheAbyssCD:Start(12-delay, guid)
+--	elseif cid == 152987 then
+--		timerDarkSmashCD:Start(10.8-delay, guid)
+	elseif cid == 156795 then
+		timerTouchoftheAbyssCD:Start(12-delay, guid)
 	elseif (cid == 164189 or cid == 164188) and self:AntiSpam(5, 8) then--Horrific Fragment
 		timerDarkImaginationCD:Start()
 	elseif cid == 239437 then
